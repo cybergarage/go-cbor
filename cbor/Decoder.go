@@ -14,16 +14,25 @@
 
 package cbor
 
-import "io"
+import (
+	"io"
+)
 
 // An Decoder reads CBOR values from an output stream.
 type Decoder struct {
-	r io.Reader
+	reader io.Reader
+	header []byte
 }
 
 // NewDecoder returns a new decoder that reads from the specified writer.
 func NewDecoder(r io.Reader) *Decoder {
 	return &Decoder{
-		r: r,
+		reader: r,
+		header: make([]byte, 1),
 	}
+}
+
+// Decode returns the next item if available, otherwise returns EOF or error.
+func (dec *Decoder) Decode() (interface{}, error) {
+	return nil, io.EOF
 }
