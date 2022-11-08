@@ -38,12 +38,20 @@ func (dec *Decoder) Decode() (interface{}, error) {
 		return nil, err
 	}
 
-	majorType := MajorType(dec.header[0] >> majorTypeShift)
-	// shortCount := dec.header[0] & shortCountMask
+	majorType := MajorType(dec.header[0] & majorTypeMask)
+	addInfo := AddInfo(dec.header[0] & addInfoMask)
 
 	switch majorType {
 	case Uint:
-		return 1, nil
+		// 3. Specification of the CBOR Encoding.
+		var v uint64
+		switch {
+		case addInfo < uIntImmdiate:
+			v = uint64(addInfo)
+		case addInfo == uIntOneByte:
+			v = uint64(addInfo)
+		}
+		return v, nil
 	case Negint:
 		return 1, nil
 	case Bytes:
