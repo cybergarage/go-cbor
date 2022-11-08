@@ -18,7 +18,6 @@ type AddInfo byte
 
 const (
 	// 3. Specification of the CBOR Encoding.
-	uIntImmdiate AddInfo = 24
 	uIntOneByte  AddInfo = 24
 	uIntTwoByte  AddInfo = 25
 	uIntFourByte AddInfo = 26
