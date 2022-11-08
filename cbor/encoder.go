@@ -29,6 +29,15 @@ func NewEncoder(w io.Writer) *Encoder {
 }
 
 // Encode writes the specified object to the specified writer.
-func (enc *Encoder) Encode(obj interface{}) error {
+func (enc *Encoder) Encode(item interface{}) error {
+	switch v := item.(type) {
+	case int:
+		return nil
+	case string:
+		if _, err := io.WriteString(enc.writer, v); err != nil {
+			return err
+		}
+		return nil
+	}
 	return nil
 }
