@@ -17,12 +17,12 @@ package cbor
 type MajorType byte
 
 const (
-	Uint   MajorType = 0x00
-	Negint MajorType = 0x20
-	Bytes  MajorType = 0x40
-	Text   MajorType = 0x60
-	Array  MajorType = 0x80
-	Map    MajorType = 0xA0
-	Tag    MajorType = 0xC0
-	Float  MajorType = 0xE0
+	Uint  MajorType = 0x00
+	NInt  MajorType = 0x20
+	Bytes MajorType = 0x40
+	Text  MajorType = 0x60
+	Array MajorType = 0x80
+	Map   MajorType = 0xA0
+	Tag   MajorType = 0xC0
+	Float MajorType = 0xE0
 )
