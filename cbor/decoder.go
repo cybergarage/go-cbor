@@ -45,14 +45,16 @@ func (dec *Decoder) Decode() (interface{}, error) {
 	case Uint:
 		// 3. Specification of the CBOR Encoding.
 		var v uint64
-		switch {
-		case addInfo < uIntImmdiate:
+		if addInfo < uIntOneByte {
 			v = uint64(addInfo)
-		case addInfo == uIntOneByte:
+			return v, nil
+		}
+		switch addInfo {
+		case uIntOneByte, uIntTwoByte, uIntFourByte, uIntEightByte:
 			v = uint64(addInfo)
 		}
 		return v, nil
-	case Negint:
+	case NInt:
 		return 1, nil
 	case Bytes:
 		return 1, nil
