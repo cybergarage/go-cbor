@@ -15,6 +15,6 @@
 package cbor
 
 const (
-	majorTypeMask      = 0xE0
-	additionalinfoMask = 0x1F
+	majorTypeMask = 0xE0
+	addInfoMask   = 0x1F
 )
