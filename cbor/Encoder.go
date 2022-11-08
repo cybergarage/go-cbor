@@ -18,12 +18,17 @@ import "io"
 
 // An Encoder writes CBOR values to an output stream.
 type Encoder struct {
-	w io.Writer
+	writer io.Writer
 }
 
 // NewEncoder returns a new encoder that writes to the specified writer.
 func NewEncoder(w io.Writer) *Encoder {
 	return &Encoder{
-		w: w,
+		writer: w,
 	}
+}
+
+// Encode writes the specified object to the specified writer.
+func (enc *Encoder) Encode(obj interface{}) error {
+	return nil
 }
