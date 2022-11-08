@@ -34,5 +34,31 @@ func NewDecoder(r io.Reader) *Decoder {
 
 // Decode returns the next item if available, otherwise returns EOF or error.
 func (dec *Decoder) Decode() (interface{}, error) {
+	if _, err := io.ReadFull(dec.reader, dec.header); err != nil {
+		return nil, err
+	}
+
+	majorType := MajorType(dec.header[0] >> majorTypeShift)
+	// shortCount := dec.header[0] & shortCountMask
+
+	switch majorType {
+	case Uint:
+		return 1, nil
+	case Negint:
+		return 1, nil
+	case Bytes:
+		return 1, nil
+	case Text:
+		return 1, nil
+	case Array:
+		return 1, nil
+	case Map:
+		return 1, nil
+	case Tag:
+		return 1, nil
+	case Float:
+		return 1, nil
+	}
+
 	return nil, io.EOF
 }
