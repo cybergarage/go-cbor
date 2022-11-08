@@ -14,9 +14,7 @@
 
 package cbor
 
-const majorTypeShift = 5
-
-/*
-const shortCountMask = 0x1F
-const majorTypeMask = 0xE0
-*/
+const (
+	majorTypeMask  = 0xE0
+	shortCountMask = 0x1F
+)
