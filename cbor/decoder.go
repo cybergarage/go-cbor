@@ -33,7 +33,7 @@ func NewDecoder(r io.Reader) *Decoder {
 }
 
 // Decode returns the next item if available, otherwise returns EOF or error.
-func (dec *Decoder) Decode() (interface{}, error) {
+func (dec *Decoder) Decode() (any, error) {
 	if _, err := io.ReadFull(dec.reader, dec.header); err != nil {
 		return nil, err
 	}
