@@ -15,14 +15,12 @@
 package cbor
 
 const (
-	errorUnknownType         = "unknown data type : %X"
-	errorInvalidTypeBytes    = "invalid type bytes : %v"
-	errorInvalidValueType    = "invalid value : %v (%T)"
-	errorInvalidArray        = "invalid array : %v"
-	errorInvalidDictionary   = "invalid dictionary : %v"
-	errorInvalidBooleanBytes = "invalid boolean bytes : %v"
-	errorInvalidNullBytes    = "invalid null bytes : %v"
-	errorInvalidStringBytes  = "invalid string bytes : %d < %d %v"
-	errorInvalidBinaryBytes  = "invalid binary bytes : %d < %d %v"
-	errorInvalidIntegerBytes = "invalid integer bytes : %v"
+	errorNotSupportedDataType = "data type (%v) is not supported"
+	errorInvalidArray         = "invalid array : %v"
+	errorInvalidDictionary    = "invalid dictionary : %v"
+	errorInvalidBooleanBytes  = "invalid boolean bytes : %v"
+	errorInvalidNullBytes     = "invalid null bytes : %v"
+	errorInvalidStringBytes   = "invalid string bytes : %d < %d %v"
+	errorInvalidBinaryBytes   = "invalid binary bytes : %d < %d %v"
+	errorInvalidIntegerBytes  = "invalid integer bytes : %v"
 )
