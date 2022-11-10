@@ -14,7 +14,10 @@
 
 package cbor
 
-import "io"
+import (
+	"fmt"
+	"io"
+)
 
 // An Encoder writes CBOR values to an output stream.
 type Encoder struct {
@@ -31,6 +34,8 @@ func NewEncoder(w io.Writer) *Encoder {
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) Encode(item any) error {
 	switch v := item.(type) {
+	case uint8:
+		return nil
 	case int:
 		return nil
 	case string:
@@ -39,5 +44,5 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return nil
 	}
-	return nil
+	return fmt.Errorf(errorNotSupportedDataType, item)
 }
