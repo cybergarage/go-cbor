@@ -36,7 +36,8 @@ func TestEncodeDecodeFunc(t *testing.T) {
 				t.Error(err)
 				continue
 			}
-			val, _, err := readInt8Bytes(w.Bytes())
+			reader := bytes.NewReader(w.Bytes())
+			val, err := readInt8Bytes(reader)
 			if err != nil {
 				t.Error(err)
 				continue
