@@ -15,6 +15,7 @@
 package cbor
 
 import (
+	"bytes"
 	"math"
 	"testing"
 )
@@ -29,8 +30,13 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxInt8,
 		}
 		for _, testVal := range testValues {
-			testBytes := appendInt8Bytes([]byte{}, testVal)
-			val, _, err := readInt8Bytes(testBytes)
+			var w bytes.Buffer
+			err := writeInt8Bytes(&w, testVal)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			val, _, err := readInt8Bytes(w.Bytes())
 			if err != nil {
 				t.Error(err)
 				continue

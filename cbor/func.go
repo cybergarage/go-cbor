@@ -16,6 +16,7 @@ package cbor
 
 import (
 	"fmt"
+	"io"
 )
 
 ////////////////////////////////////////////////////////////
@@ -30,10 +31,9 @@ func readInt8Bytes(src []byte) (int8, []byte, error) {
 	return int8(src[0]), src[1:], nil
 }
 
-func appendInt8Bytes(buf []byte, val int8) []byte {
-	return append(buf,
-		byte(val),
-	)
+func writeInt8Bytes(w io.Writer, val int8) error {
+	_, err := w.Write([]byte{byte(val)})
+	return err
 }
 
 ////////////////////////////////////////////////////////////

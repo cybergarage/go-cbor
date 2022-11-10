@@ -15,12 +15,37 @@
 package cbortest
 
 import (
+	"bytes"
+	"encoding/hex"
 	"testing"
 
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
-func EncorderTest(t *testing.T) {
-	t.Helper()
-	cbor.NewEncoder(nil)
+func TestEncoder(t *testing.T) {
+	t.Run("RFC-8949", func(t *testing.T) {
+		t.Run("AppendixA", func(t *testing.T) {
+			t.Run("uint8", func(t *testing.T) {
+				tests := []struct {
+					value    any
+					expected string
+				}{
+					{value: uint8(0), expected: "00"},
+				}
+				for _, test := range tests {
+					var writer bytes.Buffer
+					encoder := cbor.NewEncoder(&writer)
+					err := encoder.Encode(test.value)
+					if err != nil {
+						t.Errorf("%v (%s)", test.value, err.Error())
+						continue
+					}
+					encoded := hex.EncodeToString(writer.Bytes())
+					if encoded != test.expected {
+						t.Errorf("%s != %s", encoded, test.expected)
+					}
+				}
+			})
+		})
+	})
 }
