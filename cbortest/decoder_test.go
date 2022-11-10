@@ -32,6 +32,12 @@ func TestDecoder(t *testing.T) {
 					expected any
 				}{
 					{encoded: "00", expected: uint8(0)},
+					{encoded: "01", expected: uint8(1)},
+					{encoded: "0a", expected: uint8(10)},
+					{encoded: "17", expected: uint8(23)},
+					{encoded: "1818", expected: uint8(24)},
+					{encoded: "1819", expected: uint8(25)},
+					{encoded: "1864", expected: uint8(100)},
 				}
 				for _, test := range tests {
 					testBytes, err := hex.DecodeString(test.encoded)
