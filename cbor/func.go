@@ -37,12 +37,12 @@ func writeBytes(w io.Writer, val []byte) error {
 // int8
 ////////////////////////////////////////////////////////////
 
-func readInt8Bytes(src []byte) (int8, []byte, error) {
-	srcLen := len(src)
-	if srcLen < 1 {
-		return 0, nil, fmt.Errorf(errorInvalidIntegerBytes, src)
+func readInt8Bytes(reader io.Reader) (int8, error) {
+	buf := []byte{0}
+	if _, err := reader.Read(buf); err != nil {
+		return 0, err
 	}
-	return int8(src[0]), src[1:], nil
+	return int8(buf[0]), nil
 }
 
 func writeInt8Bytes(w io.Writer, val int8) error {
