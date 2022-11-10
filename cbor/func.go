@@ -93,6 +93,27 @@ func appendUint16Bytes(buf []byte, val uint16) []byte {
 }
 
 ////////////////////////////////////////////////////////////
+// int32
+////////////////////////////////////////////////////////////
+
+func readInt32Bytes(src []byte) (int32, []byte, error) {
+	srcLen := len(src)
+	if srcLen < 4 {
+		return 0, nil, fmt.Errorf(errorInvalidIntegerBytes, src)
+	}
+	return (int32(src[0])<<24 | int32(src[1])<<16 | int32(src[2])<<8 | int32(src[3])), src[4:], nil
+}
+
+func appendInt32Bytes(buf []byte, val int32) []byte {
+	return append(buf,
+		byte(val>>24),
+		byte(val>>16),
+		byte(val>>8),
+		byte(val),
+	)
+}
+
+////////////////////////////////////////////////////////////
 // uint32
 ////////////////////////////////////////////////////////////
 
