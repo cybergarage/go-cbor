@@ -15,12 +15,40 @@
 package cbortest
 
 import (
+	"bytes"
+	"encoding/hex"
+	"reflect"
 	"testing"
 
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
-func DecorderTest(t *testing.T) {
-	t.Helper()
-	cbor.NewDecoder(nil)
+func TestDecoder(t *testing.T) {
+	t.Run("RFC-8949", func(t *testing.T) {
+		t.Run("AppendixA", func(t *testing.T) {
+			t.Run("uint8", func(t *testing.T) {
+				tests := []struct {
+					encoded  string
+					expected any
+				}{
+					{encoded: "00", expected: uint8(0)},
+				}
+				for _, test := range tests {
+					testBytes, err := hex.DecodeString(test.encoded)
+					if err != nil {
+						t.Errorf("%s => (%s)", test.encoded, err.Error())
+						continue
+					}
+					decoder := cbor.NewDecoder(bytes.NewReader(testBytes))
+					v, err := decoder.Decode()
+					if err != nil {
+						t.Errorf("%s => %v", test.encoded, test.expected)
+					}
+					if !reflect.DeepEqual(v, test.expected) {
+						t.Errorf("%v != %v", v, test.expected)
+					}
+				}
+			})
+		})
+	})
 }
