@@ -37,16 +37,16 @@ func writeBytes(w io.Writer, val []byte) error {
 // int8
 ////////////////////////////////////////////////////////////
 
-func readInt8Bytes(reader io.Reader) (int8, error) {
+func readInt8Bytes(r io.Reader) (int8, error) {
 	buf := []byte{0}
-	if _, err := reader.Read(buf); err != nil {
+	if _, err := r.Read(buf); err != nil {
 		return 0, err
 	}
 	return int8(buf[0]), nil
 }
 
-func writeInt8Bytes(w io.Writer, val int8) error {
-	_, err := w.Write([]byte{byte(val)})
+func writeInt8Bytes(w io.Writer, v int8) error {
+	_, err := w.Write([]byte{byte(v)})
 	return err
 }
 
@@ -54,18 +54,17 @@ func writeInt8Bytes(w io.Writer, val int8) error {
 // uint8
 ////////////////////////////////////////////////////////////
 
-func readUint8Bytes(src []byte) (uint8, []byte, error) {
-	srcLen := len(src)
-	if srcLen < 1 {
-		return 0, nil, fmt.Errorf(errorInvalidIntegerBytes, src)
+func readUint8Bytes(r io.Reader) (uint8, error) {
+	buf := []byte{0}
+	if _, err := r.Read(buf); err != nil {
+		return 0, err
 	}
-	return src[0], src[1:], nil
+	return buf[0], nil
 }
 
-func appendUint8Bytes(buf []byte, val uint8) []byte {
-	return append(buf,
-		val,
-	)
+func writeUint8Bytes(w io.Writer, v uint8) error {
+	_, err := w.Write([]byte{v})
+	return err
 }
 
 ////////////////////////////////////////////////////////////
