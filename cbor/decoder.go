@@ -46,8 +46,7 @@ func (dec *Decoder) Decode() (any, error) {
 		// 3. Specification of the CBOR Encoding.
 		var v uint64
 		if addInfo < uIntOneByte {
-			v = uint64(addInfo)
-			return v, nil
+			return uint8(addInfo), nil
 		}
 		switch addInfo {
 		case uIntOneByte, uIntTwoByte, uIntFourByte, uIntEightByte:
