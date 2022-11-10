@@ -98,6 +98,24 @@ func TestEncodeDecodeFunc(t *testing.T) {
 		}
 	})
 	t.Run("int32", func(t *testing.T) {
+		testValues := []int32{
+			math.MinInt32,
+			math.MinInt32 / 2,
+			0,
+			math.MaxInt32 / 2,
+			math.MaxInt32,
+		}
+		for _, testVal := range testValues {
+			testBytes := appendInt32Bytes([]byte{}, testVal)
+			val, _, err := readInt32Bytes(testBytes)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			if val != testVal {
+				t.Errorf("%d != %d", val, testVal)
+			}
+		}
 	})
 	t.Run("uint32", func(t *testing.T) {
 		testValues := []uint32{
