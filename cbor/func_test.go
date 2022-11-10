@@ -19,102 +19,124 @@ import (
 	"testing"
 )
 
-func TestInt8Bytes(t *testing.T) {
-	testValues := []int8{
-		math.MinInt8,
-		math.MinInt8 + 1,
-		0,
-		math.MaxInt8 / 2,
-		math.MaxInt8,
-	}
-	for _, testVal := range testValues {
-		testBytes := appendInt8Bytes([]byte{}, testVal)
-		val, _, err := readInt8Bytes(testBytes)
-		if err != nil {
-			t.Error(err)
-			continue
+func TestEncodeDecodeFunc(t *testing.T) {
+	t.Run("int8", func(t *testing.T) {
+		testValues := []int8{
+			math.MinInt8,
+			math.MinInt8 / 2,
+			0,
+			math.MaxInt8 / 2,
+			math.MaxInt8,
 		}
-		if val != testVal {
-			t.Errorf("%d != %d", val, testVal)
+		for _, testVal := range testValues {
+			testBytes := appendInt8Bytes([]byte{}, testVal)
+			val, _, err := readInt8Bytes(testBytes)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			if val != testVal {
+				t.Errorf("%d != %d", val, testVal)
+			}
 		}
-	}
-}
-
-func TestUint8Bytes(t *testing.T) {
-	testValues := []uint8{
-		0,
-		math.MaxUint8 / 2,
-		math.MaxUint8,
-	}
-	for _, testVal := range testValues {
-		testBytes := appendUint8Bytes([]byte{}, testVal)
-		val, _, err := readUint8Bytes(testBytes)
-		if err != nil {
-			t.Error(err)
-			continue
+	})
+	t.Run("uint8", func(t *testing.T) {
+		testValues := []uint8{
+			0,
+			math.MaxUint8 / 2,
+			math.MaxUint8,
 		}
-		if val != testVal {
-			t.Errorf("%d != %d", val, testVal)
+		for _, testVal := range testValues {
+			testBytes := appendUint8Bytes([]byte{}, testVal)
+			val, _, err := readUint8Bytes(testBytes)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			if val != testVal {
+				t.Errorf("%d != %d", val, testVal)
+			}
 		}
-	}
-}
-
-func TestUint16Bytes(t *testing.T) {
-	testValues := []uint16{
-		0,
-		1,
-		math.MaxUint16 / 2,
-		math.MaxUint16,
-	}
-	for _, testVal := range testValues {
-		testBytes := appendUint16Bytes([]byte{}, testVal)
-		val, _, err := readUint16Bytes(testBytes)
-		if err != nil {
-			t.Error(err)
-			continue
+	})
+	t.Run("int16", func(t *testing.T) {
+		testValues := []int16{
+			math.MinInt16,
+			math.MinInt16 / 2,
+			0,
+			math.MaxInt16 / 2,
+			math.MaxInt16,
 		}
-		if val != testVal {
-			t.Errorf("%d != %d", val, testVal)
+		for _, testVal := range testValues {
+			testBytes := appendInt16Bytes([]byte{}, testVal)
+			val, _, err := readInt16Bytes(testBytes)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			if val != testVal {
+				t.Errorf("%d != %d", val, testVal)
+			}
 		}
-	}
-}
-
-func TestUint32Bytes(t *testing.T) {
-	testValues := []uint32{
-		0,
-		1,
-		math.MaxUint32 / 2,
-		math.MaxUint32,
-	}
-	for _, testVal := range testValues {
-		testBytes := appendUint32Bytes([]byte{}, testVal)
-		val, _, err := readUint32Bytes(testBytes)
-		if err != nil {
-			t.Error(err)
-			continue
+	})
+	t.Run("uint16", func(t *testing.T) {
+		testValues := []uint16{
+			0,
+			1,
+			math.MaxUint16 / 2,
+			math.MaxUint16,
 		}
-		if val != testVal {
-			t.Errorf("%d != %d", val, testVal)
+		for _, testVal := range testValues {
+			testBytes := appendUint16Bytes([]byte{}, testVal)
+			val, _, err := readUint16Bytes(testBytes)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			if val != testVal {
+				t.Errorf("%d != %d", val, testVal)
+			}
 		}
-	}
-}
-
-func TestUint64Bytes(t *testing.T) {
-	testValues := []uint64{
-		0,
-		1,
-		math.MaxUint64 / 2,
-		math.MaxUint64,
-	}
-	for _, testVal := range testValues {
-		testBytes := appendUint64Bytes([]byte{}, testVal)
-		val, _, err := readUint64Bytes(testBytes)
-		if err != nil {
-			t.Error(err)
-			continue
+	})
+	t.Run("int32", func(t *testing.T) {
+	})
+	t.Run("uint32", func(t *testing.T) {
+		testValues := []uint32{
+			0,
+			1,
+			math.MaxUint32 / 2,
+			math.MaxUint32,
 		}
-		if val != testVal {
-			t.Errorf("%d != %d", val, testVal)
+		for _, testVal := range testValues {
+			testBytes := appendUint32Bytes([]byte{}, testVal)
+			val, _, err := readUint32Bytes(testBytes)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			if val != testVal {
+				t.Errorf("%d != %d", val, testVal)
+			}
 		}
-	}
+	})
+	t.Run("int64", func(t *testing.T) {
+	})
+	t.Run("uint64", func(t *testing.T) {
+		testValues := []uint64{
+			0,
+			1,
+			math.MaxUint64 / 2,
+			math.MaxUint64,
+		}
+		for _, testVal := range testValues {
+			testBytes := appendUint64Bytes([]byte{}, testVal)
+			val, _, err := readUint64Bytes(testBytes)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			if val != testVal {
+				t.Errorf("%d != %d", val, testVal)
+			}
+		}
+	})
 }
