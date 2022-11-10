@@ -33,9 +33,19 @@ func NewEncoder(w io.Writer) *Encoder {
 
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) Encode(item any) error {
+	// 3. Specification of the CBOR Encoding.
 	switch v := item.(type) {
 	case uint8:
-		return nil
+		header := byte(Uint)
+		if v < 24 {
+			header |= v
+			return writeByte(enc.writer, header)
+		}
+		header |= byte(uIntOneByte)
+		if err := writeByte(enc.writer, header); err != nil {
+			return err
+		}
+		return writeByte(enc.writer, v)
 	case int:
 		return nil
 	case string:

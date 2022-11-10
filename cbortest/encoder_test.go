@@ -17,6 +17,7 @@ package cbortest
 import (
 	"bytes"
 	"encoding/hex"
+	"fmt"
 	"testing"
 
 	"github.com/cybergarage/go-cbor/cbor"
@@ -31,19 +32,27 @@ func TestEncoder(t *testing.T) {
 					expected string
 				}{
 					{value: uint8(0), expected: "00"},
+					{value: uint8(1), expected: "01"},
+					{value: uint8(10), expected: "0a"},
+					{value: uint8(23), expected: "17"},
+					{value: uint8(24), expected: "1818"},
+					{value: uint8(25), expected: "1819"},
+					{value: uint8(100), expected: "1864"},
 				}
 				for _, test := range tests {
-					var writer bytes.Buffer
-					encoder := cbor.NewEncoder(&writer)
-					err := encoder.Encode(test.value)
-					if err != nil {
-						t.Errorf("%v (%s)", test.value, err.Error())
-						continue
-					}
-					encoded := hex.EncodeToString(writer.Bytes())
-					if encoded != test.expected {
-						t.Errorf("%s != %s", encoded, test.expected)
-					}
+					t.Run(fmt.Sprintf("%v:%s", test.value, test.expected), func(t *testing.T) {
+						var writer bytes.Buffer
+						encoder := cbor.NewEncoder(&writer)
+						err := encoder.Encode(test.value)
+						if err != nil {
+							t.Errorf("%v (%s)", test.value, err.Error())
+							return
+						}
+						encoded := hex.EncodeToString(writer.Bytes())
+						if encoded != test.expected {
+							t.Errorf("%s != %s", encoded, test.expected)
+						}
+					})
 				}
 			})
 		})
