@@ -40,6 +40,9 @@ func TestDecoder(t *testing.T) {
 					{encoded: "1819", expected: uint8(25)},
 					{encoded: "1864", expected: uint8(100)},
 					{encoded: "1903e8", expected: uint16(1000)},
+					{encoded: "1a000f4240", expected: uint32(1000000)},
+					{encoded: "1b000000e8d4a51000", expected: uint64(1000000000000)},
+					{encoded: "1bffffffffffffffff", expected: uint64(18446744073709551615)},
 				}
 				for _, test := range tests {
 					t.Run(fmt.Sprintf("%s=>%v", test.encoded, test.expected), func(t *testing.T) {
