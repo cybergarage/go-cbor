@@ -109,21 +109,21 @@ func writeUint16Bytes(w io.Writer, v uint16) error {
 // int32
 ////////////////////////////////////////////////////////////
 
-func readInt32Bytes(src []byte) (int32, []byte, error) {
-	srcLen := len(src)
-	if srcLen < 4 {
-		return 0, nil, fmt.Errorf(errorInvalidIntegerBytes, src)
+func readInt32Bytes(r io.Reader) (int32, error) {
+	buf := []byte{0, 0, 0, 0}
+	if _, err := r.Read(buf); err != nil {
+		return 0, err
 	}
-	return (int32(src[0])<<24 | int32(src[1])<<16 | int32(src[2])<<8 | int32(src[3])), src[4:], nil
+	return (int32(buf[0])<<24 | int32(buf[1])<<16 | int32(buf[2])<<8 | int32(buf[3])), nil
 }
 
-func appendInt32Bytes(buf []byte, val int32) []byte {
-	return append(buf,
-		byte(val>>24),
-		byte(val>>16),
-		byte(val>>8),
-		byte(val),
-	)
+func writeInt32Bytes(w io.Writer, v int32) error {
+	_, err := w.Write([]byte{
+		byte(v >> 24),
+		byte(v >> 16),
+		byte(v >> 8),
+		byte(v)})
+	return err
 }
 
 ////////////////////////////////////////////////////////////
