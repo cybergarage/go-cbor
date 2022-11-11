@@ -80,8 +80,14 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxInt16,
 		}
 		for _, testVal := range testValues {
-			testBytes := appendInt16Bytes([]byte{}, testVal)
-			val, _, err := readInt16Bytes(testBytes)
+			var w bytes.Buffer
+			err := writeInt16Bytes(&w, testVal)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			reader := bytes.NewReader(w.Bytes())
+			val, err := readInt16Bytes(reader)
 			if err != nil {
 				t.Error(err)
 				continue
