@@ -15,7 +15,6 @@
 package cbor
 
 import (
-	"fmt"
 	"io"
 )
 
@@ -151,23 +150,23 @@ func writeUint32Bytes(w io.Writer, v uint32) error {
 // uint64
 ////////////////////////////////////////////////////////////
 
-func readUint64Bytes(src []byte) (uint64, []byte, error) {
-	srcLen := len(src)
-	if srcLen < 8 {
-		return 0, nil, fmt.Errorf(errorInvalidIntegerBytes, src)
+func readUint64Bytes(r io.Reader) (uint64, error) {
+	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0}
+	if _, err := r.Read(buf); err != nil {
+		return 0, err
 	}
-	return (uint64(src[0])<<56 | uint64(src[1])<<48 | uint64(src[2])<<40 | uint64(src[3])<<32 | uint64(src[4])<<24 | uint64(src[5])<<16 | uint64(src[6])<<8 | uint64(src[7])), src[8:], nil
+	return (uint64(buf[0])<<56 | uint64(buf[1])<<48 | uint64(buf[2])<<40 | uint64(buf[3])<<32 | uint64(buf[4])<<24 | uint64(buf[5])<<16 | uint64(buf[6])<<8 | uint64(buf[7])), nil
 }
 
-func appendUint64Bytes(buf []byte, val uint64) []byte {
-	return append(buf,
-		byte(val>>56),
-		byte(val>>48),
-		byte(val>>40),
-		byte(val>>32),
-		byte(val>>24),
-		byte(val>>16),
-		byte(val>>8),
-		byte(val),
-	)
+func writeUint64Bytes(w io.Writer, v uint64) error {
+	_, err := w.Write([]byte{
+		byte(v >> 56),
+		byte(v >> 48),
+		byte(v >> 40),
+		byte(v >> 32),
+		byte(v >> 24),
+		byte(v >> 16),
+		byte(v >> 8),
+		byte(v)})
+	return err
 }
