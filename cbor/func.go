@@ -90,19 +90,19 @@ func writeInt16Bytes(w io.Writer, v int16) error {
 // uint16
 ////////////////////////////////////////////////////////////
 
-func readUint16Bytes(src []byte) (uint16, []byte, error) {
-	srcLen := len(src)
-	if srcLen < 2 {
-		return 0, nil, fmt.Errorf(errorInvalidIntegerBytes, src)
+func readUint16Bytes(r io.Reader) (uint16, error) {
+	buf := []byte{0, 0}
+	if _, err := r.Read(buf); err != nil {
+		return 0, err
 	}
-	return (uint16(src[0])<<8 | uint16(src[1])), src[2:], nil
+	return (uint16(buf[0])<<8 | uint16(buf[1])), nil
 }
 
-func appendUint16Bytes(buf []byte, val uint16) []byte {
-	return append(buf,
-		byte(val>>8),
-		byte(val),
-	)
+func writeUint16Bytes(w io.Writer, v uint16) error {
+	_, err := w.Write([]byte{
+		byte(v >> 8),
+		byte(v)})
+	return err
 }
 
 ////////////////////////////////////////////////////////////
