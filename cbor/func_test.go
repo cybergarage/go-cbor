@@ -20,6 +20,7 @@ import (
 	"testing"
 )
 
+// nolint: gocyclo, maintidx
 func TestEncodeDecodeFunc(t *testing.T) {
 	t.Run("int8", func(t *testing.T) {
 		testValues := []int8{
@@ -174,6 +175,30 @@ func TestEncodeDecodeFunc(t *testing.T) {
 		}
 	})
 	t.Run("int64", func(t *testing.T) {
+		testValues := []int64{
+			math.MinInt64,
+			math.MinInt64 / 2,
+			0,
+			math.MaxInt64 / 2,
+			math.MaxInt64,
+		}
+		for _, testVal := range testValues {
+			var w bytes.Buffer
+			err := writeInt64Bytes(&w, testVal)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			reader := bytes.NewReader(w.Bytes())
+			val, err := readInt64Bytes(reader)
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			if val != testVal {
+				t.Errorf("%d != %d", val, testVal)
+			}
+		}
 	})
 	t.Run("uint64", func(t *testing.T) {
 		testValues := []uint64{
