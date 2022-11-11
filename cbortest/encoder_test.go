@@ -38,9 +38,15 @@ func TestEncoder(t *testing.T) {
 					{value: uint8(24), expected: "1818"},
 					{value: uint8(25), expected: "1819"},
 					{value: uint8(100), expected: "1864"},
+					{value: uint16(1000), expected: "1903e8"},
+					{value: uint32(1000000), expected: "1a000f4240"},
+					{value: uint64(1000000000000), expected: "1b000000e8d4a51000"},
+					{value: uint64(18446744073709551615), expected: "1bffffffffffffffff"},
+					{value: uint(1000000000000), expected: "1b000000e8d4a51000"},
+					{value: uint(18446744073709551615), expected: "1bffffffffffffffff"},
 				}
 				for _, test := range tests {
-					t.Run(fmt.Sprintf("%v:%s", test.value, test.expected), func(t *testing.T) {
+					t.Run(fmt.Sprintf("%v=>%s", test.value, test.expected), func(t *testing.T) {
 						var writer bytes.Buffer
 						encoder := cbor.NewEncoder(&writer)
 						err := encoder.Encode(test.value)
