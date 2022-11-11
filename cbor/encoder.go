@@ -46,6 +46,34 @@ func (enc *Encoder) Encode(item any) error {
 			return err
 		}
 		return writeByte(enc.writer, v)
+	case uint16:
+		header := byte(Uint)
+		header |= byte(uIntTwoByte)
+		if err := writeByte(enc.writer, header); err != nil {
+			return err
+		}
+		return writeUint16Bytes(enc.writer, v)
+	case uint32:
+		header := byte(Uint)
+		header |= byte(uIntFourByte)
+		if err := writeByte(enc.writer, header); err != nil {
+			return err
+		}
+		return writeUint32Bytes(enc.writer, v)
+	case uint64:
+		header := byte(Uint)
+		header |= byte(uIntEightByte)
+		if err := writeByte(enc.writer, header); err != nil {
+			return err
+		}
+		return writeUint64Bytes(enc.writer, v)
+	case uint:
+		header := byte(Uint)
+		header |= byte(uIntEightByte)
+		if err := writeByte(enc.writer, header); err != nil {
+			return err
+		}
+		return writeUint64Bytes(enc.writer, uint64(v))
 	case int:
 		return nil
 	case string:
