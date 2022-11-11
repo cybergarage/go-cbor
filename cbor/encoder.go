@@ -54,5 +54,5 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return nil
 	}
-	return fmt.Errorf(errorNotSupportedDataType, item)
+	return fmt.Errorf(errorUnkonwnMajorType, item)
 }
