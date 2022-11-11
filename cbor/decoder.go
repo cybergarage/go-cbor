@@ -15,6 +15,7 @@
 package cbor
 
 import (
+	"fmt"
 	"io"
 )
 
@@ -53,9 +54,12 @@ func (dec *Decoder) Decode() (any, error) {
 			return readUint8Bytes(dec.reader)
 		case uIntTwoByte:
 			return readUint16Bytes(dec.reader)
-		case uIntFourByte, uIntEightByte:
+		case uIntFourByte:
+			return readUint32Bytes(dec.reader)
+		case uIntEightByte:
+			return readUint64Bytes(dec.reader)
 		}
-		return nil, nil
+		return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, Uint, addInfo)
 	case NInt:
 		return 1, nil
 	case Bytes:
