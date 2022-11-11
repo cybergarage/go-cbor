@@ -17,6 +17,7 @@ package cbortest
 import (
 	"bytes"
 	"encoding/hex"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -38,21 +39,24 @@ func TestDecoder(t *testing.T) {
 					{encoded: "1818", expected: uint8(24)},
 					{encoded: "1819", expected: uint8(25)},
 					{encoded: "1864", expected: uint8(100)},
+					{encoded: "1903e8", expected: uint16(1000)},
 				}
 				for _, test := range tests {
-					testBytes, err := hex.DecodeString(test.encoded)
-					if err != nil {
-						t.Errorf("%s => (%s)", test.encoded, err.Error())
-						continue
-					}
-					decoder := cbor.NewDecoder(bytes.NewReader(testBytes))
-					v, err := decoder.Decode()
-					if err != nil {
-						t.Errorf("%s => %v", test.encoded, test.expected)
-					}
-					if !reflect.DeepEqual(v, test.expected) {
-						t.Errorf("%v != %v", v, test.expected)
-					}
+					t.Run(fmt.Sprintf("%s=>%v", test.encoded, test.expected), func(t *testing.T) {
+						testBytes, err := hex.DecodeString(test.encoded)
+						if err != nil {
+							t.Errorf("%s => (%s)", test.encoded, err.Error())
+							return
+						}
+						decoder := cbor.NewDecoder(bytes.NewReader(testBytes))
+						v, err := decoder.Decode()
+						if err != nil {
+							t.Errorf("%s => %v", test.encoded, test.expected)
+						}
+						if !reflect.DeepEqual(v, test.expected) {
+							t.Errorf("%v != %v", v, test.expected)
+						}
+					})
 				}
 			})
 		})
