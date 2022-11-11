@@ -147,6 +147,31 @@ func writeUint32Bytes(w io.Writer, v uint32) error {
 }
 
 ////////////////////////////////////////////////////////////
+// int64
+////////////////////////////////////////////////////////////
+
+func readInt64Bytes(r io.Reader) (int64, error) {
+	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0}
+	if _, err := r.Read(buf); err != nil {
+		return 0, err
+	}
+	return (int64(buf[0])<<56 | int64(buf[1])<<48 | int64(buf[2])<<40 | int64(buf[3])<<32 | int64(buf[4])<<24 | int64(buf[5])<<16 | int64(buf[6])<<8 | int64(buf[7])), nil
+}
+
+func writeInt64Bytes(w io.Writer, v int64) error {
+	_, err := w.Write([]byte{
+		byte(v >> 56),
+		byte(v >> 48),
+		byte(v >> 40),
+		byte(v >> 32),
+		byte(v >> 24),
+		byte(v >> 16),
+		byte(v >> 8),
+		byte(v)})
+	return err
+}
+
+////////////////////////////////////////////////////////////
 // uint64
 ////////////////////////////////////////////////////////////
 
