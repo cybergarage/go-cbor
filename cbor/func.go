@@ -231,3 +231,15 @@ func writeUint64Bytes(w io.Writer, v uint64) error {
 		byte(v)})
 	return err
 }
+
+////////////////////////////////////////////////////////////
+// nint32 (CBOR)
+////////////////////////////////////////////////////////////
+
+func readNint64Bytes(r io.Reader) (int64, error) {
+	v, err := readUint64Bytes(r)
+	if err != nil {
+		return 0, err
+	}
+	return -int64(v + 1), nil
+}
