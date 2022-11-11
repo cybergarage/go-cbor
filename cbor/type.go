@@ -21,8 +21,8 @@ const (
 	NInt  MajorType = 0x20
 	Bytes MajorType = 0x40
 	Text  MajorType = 0x60
-	Array MajorType = 0x80
-	Map   MajorType = 0xA0
-	Tag   MajorType = 0xC0
+	Array MajorType = 0xB0
+	Map   MajorType = 0x80
+	Tag   MajorType = 0xA0
 	Float MajorType = 0xE0
 )
