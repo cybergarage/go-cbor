@@ -16,6 +16,7 @@ package cbor
 
 import (
 	"bytes"
+	"fmt"
 	"math"
 	"testing"
 )
@@ -31,21 +32,23 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxInt8,
 		}
 		for _, testVal := range testValues {
-			var w bytes.Buffer
-			err := writeInt8Bytes(&w, testVal)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			reader := bytes.NewReader(w.Bytes())
-			val, err := readInt8Bytes(reader)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			if val != testVal {
-				t.Errorf("%d != %d", val, testVal)
-			}
+			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
+				var w bytes.Buffer
+				err := writeInt8Bytes(&w, testVal)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				reader := bytes.NewReader(w.Bytes())
+				val, err := readInt8Bytes(reader)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if val != testVal {
+					t.Errorf("%d != %d", val, testVal)
+				}
+			})
 		}
 	})
 	t.Run("uint8", func(t *testing.T) {
@@ -55,21 +58,23 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxUint8,
 		}
 		for _, testVal := range testValues {
-			var w bytes.Buffer
-			err := writeUint8Bytes(&w, testVal)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			reader := bytes.NewReader(w.Bytes())
-			val, err := readUint8Bytes(reader)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			if val != testVal {
-				t.Errorf("%d != %d", val, testVal)
-			}
+			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
+				var w bytes.Buffer
+				err := writeUint8Bytes(&w, testVal)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				reader := bytes.NewReader(w.Bytes())
+				val, err := readUint8Bytes(reader)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if val != testVal {
+					t.Errorf("%d != %d", val, testVal)
+				}
+			})
 		}
 	})
 	t.Run("int16", func(t *testing.T) {
@@ -81,21 +86,23 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxInt16,
 		}
 		for _, testVal := range testValues {
-			var w bytes.Buffer
-			err := writeInt16Bytes(&w, testVal)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			reader := bytes.NewReader(w.Bytes())
-			val, err := readInt16Bytes(reader)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			if val != testVal {
-				t.Errorf("%d != %d", val, testVal)
-			}
+			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
+				var w bytes.Buffer
+				err := writeInt16Bytes(&w, testVal)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				reader := bytes.NewReader(w.Bytes())
+				val, err := readInt16Bytes(reader)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if val != testVal {
+					t.Errorf("%d != %d", val, testVal)
+				}
+			})
 		}
 	})
 	t.Run("uint16", func(t *testing.T) {
@@ -106,21 +113,23 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxUint16,
 		}
 		for _, testVal := range testValues {
-			var w bytes.Buffer
-			err := writeUint16Bytes(&w, testVal)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			reader := bytes.NewReader(w.Bytes())
-			val, err := readUint16Bytes(reader)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			if val != testVal {
-				t.Errorf("%d != %d", val, testVal)
-			}
+			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
+				var w bytes.Buffer
+				err := writeUint16Bytes(&w, testVal)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				reader := bytes.NewReader(w.Bytes())
+				val, err := readUint16Bytes(reader)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if val != testVal {
+					t.Errorf("%d != %d", val, testVal)
+				}
+			})
 		}
 	})
 	t.Run("int32", func(t *testing.T) {
@@ -132,21 +141,23 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxInt32,
 		}
 		for _, testVal := range testValues {
-			var w bytes.Buffer
-			err := writeInt32Bytes(&w, testVal)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			reader := bytes.NewReader(w.Bytes())
-			val, err := readInt32Bytes(reader)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			if val != testVal {
-				t.Errorf("%d != %d", val, testVal)
-			}
+			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
+				var w bytes.Buffer
+				err := writeInt32Bytes(&w, testVal)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				reader := bytes.NewReader(w.Bytes())
+				val, err := readInt32Bytes(reader)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if val != testVal {
+					t.Errorf("%d != %d", val, testVal)
+				}
+			})
 		}
 	})
 	t.Run("uint32", func(t *testing.T) {
@@ -157,21 +168,23 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxUint32,
 		}
 		for _, testVal := range testValues {
-			var w bytes.Buffer
-			err := writeUint32Bytes(&w, testVal)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			reader := bytes.NewReader(w.Bytes())
-			val, err := readUint32Bytes(reader)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			if val != testVal {
-				t.Errorf("%d != %d", val, testVal)
-			}
+			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
+				var w bytes.Buffer
+				err := writeUint32Bytes(&w, testVal)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				reader := bytes.NewReader(w.Bytes())
+				val, err := readUint32Bytes(reader)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if val != testVal {
+					t.Errorf("%d != %d", val, testVal)
+				}
+			})
 		}
 	})
 	t.Run("int64", func(t *testing.T) {
@@ -183,21 +196,23 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxInt64,
 		}
 		for _, testVal := range testValues {
-			var w bytes.Buffer
-			err := writeInt64Bytes(&w, testVal)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			reader := bytes.NewReader(w.Bytes())
-			val, err := readInt64Bytes(reader)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			if val != testVal {
-				t.Errorf("%d != %d", val, testVal)
-			}
+			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
+				var w bytes.Buffer
+				err := writeInt64Bytes(&w, testVal)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				reader := bytes.NewReader(w.Bytes())
+				val, err := readInt64Bytes(reader)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if val != testVal {
+					t.Errorf("%d != %d", val, testVal)
+				}
+			})
 		}
 	})
 	t.Run("uint64", func(t *testing.T) {
@@ -208,21 +223,23 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			math.MaxUint64,
 		}
 		for _, testVal := range testValues {
-			var w bytes.Buffer
-			err := writeUint64Bytes(&w, testVal)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			reader := bytes.NewReader(w.Bytes())
-			val, err := readUint64Bytes(reader)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			if val != testVal {
-				t.Errorf("%d != %d", val, testVal)
-			}
+			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
+				var w bytes.Buffer
+				err := writeUint64Bytes(&w, testVal)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				reader := bytes.NewReader(w.Bytes())
+				val, err := readUint64Bytes(reader)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if val != testVal {
+					t.Errorf("%d != %d", val, testVal)
+				}
+			})
 		}
 	})
 }
