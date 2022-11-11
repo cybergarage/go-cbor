@@ -51,7 +51,9 @@ func (dec *Decoder) Decode() (any, error) {
 		switch addInfo {
 		case uIntOneByte:
 			return readUint8Bytes(dec.reader)
-		case uIntTwoByte, uIntFourByte, uIntEightByte:
+		case uIntTwoByte:
+			return readUint16Bytes(dec.reader)
+		case uIntFourByte, uIntEightByte:
 		}
 		return nil, nil
 	case NInt:
