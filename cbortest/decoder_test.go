@@ -63,7 +63,7 @@ func TestDecoder(t *testing.T) {
 						t.Errorf("%v (%s)", test.encoded, err.Error())
 					}
 					if !reflect.DeepEqual(v, test.expected) {
-						t.Errorf("%v (%T) != %v (%T)", v, v, test.expected, test.expected)
+						t.Errorf("%v != %v", v, test.expected)
 					}
 				})
 			}
