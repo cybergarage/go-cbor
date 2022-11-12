@@ -14,20 +14,20 @@
 
 package cbor
 
-type AddInfo byte
+type addInfo byte
 
 const (
 	// 3. Specification of the CBOR Encoding.
-	uIntOneByte   AddInfo = 24
-	uIntTwoByte   AddInfo = 25
-	uIntFourByte  AddInfo = 26
-	uIntEightByte AddInfo = 27
+	uIntOneByte   addInfo = 24
+	uIntTwoByte   addInfo = 25
+	uIntFourByte  addInfo = 26
+	uIntEightByte addInfo = 27
 	// 3.3. Floating-Point Numbers and Values with No Content.
-	Float16   AddInfo = 25
-	Float32   AddInfo = 26
-	Float64   AddInfo = 27
-	False     AddInfo = 20
-	True      AddInfo = 21
-	Null      AddInfo = 22
-	Undefined AddInfo = 23
+	Float16   addInfo = 25
+	Float32   addInfo = 26
+	Float64   addInfo = 27
+	False     addInfo = 20
+	True      addInfo = 21
+	Null      addInfo = 22
+	Undefined addInfo = 23
 )

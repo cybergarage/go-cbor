@@ -37,7 +37,7 @@ func writeBytes(w io.Writer, val []byte) error {
 // header
 ////////////////////////////////////////////////////////////
 
-func writeHeader(w io.Writer, m majorType, i AddInfo) error {
+func writeHeader(w io.Writer, m majorType, i addInfo) error {
 	header := byte(m)
 	header |= byte(i)
 	return writeByte(w, header)
