@@ -61,7 +61,20 @@ func (dec *Decoder) Decode() (any, error) {
 		}
 		return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, Uint, addInfo)
 	case NInt:
-		return 1, nil
+		if addInfo < uIntOneByte {
+			return -int8(addInfo + 1), nil
+		}
+		switch addInfo {
+		case uIntOneByte:
+			return readNint8Bytes(dec.reader)
+		case uIntTwoByte:
+			return readNint16Bytes(dec.reader)
+		case uIntFourByte:
+			return readNint32Bytes(dec.reader)
+		case uIntEightByte:
+			return readNint64Bytes(dec.reader)
+		}
+		return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, NInt, addInfo)
 	case Bytes:
 		return 1, nil
 	case Text:
