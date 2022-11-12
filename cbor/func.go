@@ -276,3 +276,19 @@ func readFloat32Bytes(r io.Reader) (float32, error) {
 func writeFloat32Bytes(w io.Writer, v float32) error {
 	return writeUint32Bytes(w, math.Float32bits(v))
 }
+
+////////////////////////////////////////////////////////////
+// float64
+////////////////////////////////////////////////////////////
+
+func readFloat64Bytes(r io.Reader) (float64, error) {
+	v, err := readUint64Bytes(r)
+	if err != nil {
+		return 0, err
+	}
+	return math.Float64frombits(v), nil
+}
+
+func writeFloat64Bytes(w io.Writer, v float64) error {
+	return writeUint64Bytes(w, math.Float64bits(v))
+}
