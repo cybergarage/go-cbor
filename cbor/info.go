@@ -23,8 +23,11 @@ const (
 	uIntFourByte  AddInfo = 26
 	uIntEightByte AddInfo = 27
 	// 3.3. Floating-Point Numbers and Values with No Content.
-	FloatSimple AddInfo = 24
-	Float16     AddInfo = 25
-	Float32     AddInfo = 26
-	Float64     AddInfo = 27
+	Float16   AddInfo = 25
+	Float32   AddInfo = 26
+	Float64   AddInfo = 27
+	False     AddInfo = 20
+	True      AddInfo = 21
+	Null      AddInfo = 22
+	Undefined AddInfo = 23
 )
