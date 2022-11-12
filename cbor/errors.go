@@ -34,7 +34,7 @@ const (
 	errorInvalidIntegerBytes   = "invalid integer bytes : %v"
 )
 
-func newErrorNotSupportedAddInfo(m MajorType, a AddInfo) error {
+func newErrorNotSupportedAddInfo(m majorType, a AddInfo) error {
 	return fmt.Errorf(errorUnkonwnAdditionalInfo, (m >> 5), a, ErrNotSupported)
 }
 
