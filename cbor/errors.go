@@ -14,9 +14,16 @@
 
 package cbor
 
+import (
+	"errors"
+	"fmt"
+)
+
+var errNotSupported error = errors.New("not supported")
+
 const (
-	errorUnkonwnMajorType      = "major type (%d) is not supported"
-	errorUnkonwnAdditionalInfo = "major type (%d:%d) is not supported"
+	errorUnkonwnMajorType      = "major type (%d) is %w"
+	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
 	errorInvalidArray          = "invalid array : %v"
 	errorInvalidDictionary     = "invalid dictionary : %v"
 	errorInvalidBooleanBytes   = "invalid boolean bytes : %v"
@@ -25,3 +32,7 @@ const (
 	errorInvalidBinaryBytes    = "invalid binary bytes : %d < %d %v"
 	errorInvalidIntegerBytes   = "invalid integer bytes : %v"
 )
+
+func newErrorNotSupportedAddInfo(m MajorType, a AddInfo) error {
+	return fmt.Errorf(errorUnkonwnAdditionalInfo, (m >> 5), a, errNotSupported)
+}
