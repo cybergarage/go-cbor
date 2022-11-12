@@ -19,7 +19,7 @@ import (
 	"fmt"
 )
 
-var errNotSupported = errors.New("not supported")
+var ErrNotSupported = errors.New("not supported")
 
 const (
 	errorUnkonwnNativeType     = "%T (%v) is %w"
@@ -35,9 +35,9 @@ const (
 )
 
 func newErrorNotSupportedAddInfo(m MajorType, a AddInfo) error {
-	return fmt.Errorf(errorUnkonwnAdditionalInfo, (m >> 5), a, errNotSupported)
+	return fmt.Errorf(errorUnkonwnAdditionalInfo, (m >> 5), a, ErrNotSupported)
 }
 
 func newErrorNotSupportedNativeType(item any) error {
-	return fmt.Errorf(errorUnkonwnNativeType, item, item, errNotSupported)
+	return fmt.Errorf(errorUnkonwnNativeType, item, item, ErrNotSupported)
 }

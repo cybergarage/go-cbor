@@ -17,6 +17,7 @@ package cbortest
 import (
 	"bytes"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"reflect"
 	"testing"
@@ -82,7 +83,12 @@ func TestDecoder(t *testing.T) {
 					decoder := cbor.NewDecoder(bytes.NewReader(testBytes))
 					v, err := decoder.Decode()
 					if err != nil {
-						t.Errorf("%v (%s)", test.encoded, err.Error())
+						if errors.Is(err, cbor.ErrNotSupported) {
+							t.Skipf("%v (%s)", test.encoded, err.Error())
+						} else {
+							t.Errorf("%v (%s)", test.encoded, err.Error())
+						}
+						return
 					}
 					if !reflect.DeepEqual(v, test.expected) {
 						t.Errorf("%v != %v", v, test.expected)
