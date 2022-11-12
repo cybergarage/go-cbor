@@ -15,7 +15,6 @@
 package cbor
 
 import (
-	"fmt"
 	"io"
 )
 
@@ -59,7 +58,7 @@ func (dec *Decoder) Decode() (any, error) {
 		case uIntEightByte:
 			return readUint64Bytes(dec.reader)
 		}
-		return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, Uint, addInfo)
+		return nil, newErrorNotSupportedAddInfo(Uint, addInfo)
 	case NInt:
 		if addInfo < uIntOneByte {
 			return -int8(addInfo + 1), nil
@@ -74,7 +73,7 @@ func (dec *Decoder) Decode() (any, error) {
 		case uIntEightByte:
 			return readNint64Bytes(dec.reader)
 		}
-		return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, NInt, addInfo)
+		return nil, newErrorNotSupportedAddInfo(NInt, addInfo)
 	case Bytes:
 		return 1, nil
 	case Text:
@@ -88,15 +87,15 @@ func (dec *Decoder) Decode() (any, error) {
 	case Float:
 		switch addInfo {
 		case FloatSimple:
-			return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, Float, addInfo)
+			return nil, newErrorNotSupportedAddInfo(Float, addInfo)
 		case Float16:
-			return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, Float, addInfo)
+			return nil, newErrorNotSupportedAddInfo(Float, addInfo)
 		case Float32:
 			return readFloat32Bytes(dec.reader)
 		case Float64:
 			return readFloat64Bytes(dec.reader)
 		}
-		return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, Float, addInfo)
+		return nil, newErrorNotSupportedAddInfo(Float, addInfo)
 	}
 
 	return nil, io.EOF
