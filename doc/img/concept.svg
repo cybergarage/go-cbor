@@ -843,7 +843,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.25"
-     inkscape:cx="213.88235"
+     inkscape:cx="423.52941"
      inkscape:cy="88.117647"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
@@ -1253,20 +1253,15 @@
        style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect1954);display:inline;fill:#000000;fill-opacity:1;stroke:none" />
     <text
        id="text2186"
-       y="305.06812"
-       x="287.76471"
+       y="310.2446"
+       x="286.58823"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
        xml:space="preserve"><tspan
-         id="tspan2182"
-         y="305.06812"
-         x="287.76471"
-         sodipodi:role="line"
-         style="font-size:10px;line-height:1.25">Tagged</tspan><tspan
-         y="317.56812"
-         x="287.76471"
+         y="310.2446"
+         x="286.58823"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
-         id="tspan2184">Data Item</tspan></text>
+         id="tspan2184">Tag</tspan></text>
     <text
        id="text2194"
        y="344.83282"
