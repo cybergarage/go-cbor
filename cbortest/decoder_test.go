@@ -72,6 +72,9 @@ func TestDecoder(t *testing.T) {
 				// {encoded: "fb7ff0000000000000", expected: math.Inf},
 				// {encoded: "fb7ff8000000000000", expected: math.NaN},
 				// {encoded: "fbfff0000000000000", expected: -math.Inf},
+				{encoded: "f4", expected: false},
+				{encoded: "f5", expected: true},
+				{encoded: "f6", expected: nil},
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%s=>%v", test.expected, test.encoded, test.expected), func(t *testing.T) {
