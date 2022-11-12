@@ -72,6 +72,9 @@ func TestEncoder(t *testing.T) {
 				// {value: float64(math.Inf), expected: "fb7ff0000000000000"},
 				// {value: float64(math.NaN), expected: "fb7ff8000000000000"},
 				// {value: float64(-math.Inf), expected: "fbfff0000000000000"},
+				{value: false, expected: "f4"},
+				{value: true, expected: "f5"},
+				{value: nil, expected: "f6"},
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%v=>%s", test.value, test.value, test.expected), func(t *testing.T) {

@@ -33,6 +33,20 @@ func NewEncoder(w io.Writer) *Encoder {
 // nolint: gocyclo, maintidx
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) Encode(item any) error {
+	encodeNull := func() error {
+		return writeByte(enc.writer, byte(Float)|byte(Null))
+	}
+
+	encodeBool := func(v bool) error {
+		header := byte(Float)
+		if v {
+			header |= byte(True)
+		} else {
+			header |= byte(False)
+		}
+		return writeByte(enc.writer, header)
+	}
+
 	encodeUint8 := func(v uint8) error {
 		header := byte(Uint)
 		if v < 24 {
@@ -134,6 +148,10 @@ func (enc *Encoder) Encode(item any) error {
 			return err
 		}
 		return writeFloat64Bytes(enc.writer, v)
+	case bool:
+		return encodeBool(v)
+	case nil:
+		return encodeNull()
 	case string:
 		if _, err := io.WriteString(enc.writer, v); err != nil {
 			return err

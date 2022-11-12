@@ -42,7 +42,7 @@ func (dec *Decoder) Decode() (any, error) {
 
 	// 3. Specification of the CBOR Encoding.
 
-	majorType := MajorType(dec.header[0] & majorTypeMask)
+	majorType := majorType(dec.header[0] & majorTypeMask)
 	addInfo := AddInfo(dec.header[0] & addInfoMask)
 
 	returnDecordedUint8 := func(v uint8) any {
