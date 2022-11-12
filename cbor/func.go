@@ -79,7 +79,7 @@ func readNint8Bytes(r io.Reader) (int8, error) {
 }
 
 func writeNint8Bytes(w io.Writer, v int8) error {
-	return writeUint8Bytes(w, uint8(-(v - 1)))
+	return writeUint8Bytes(w, uint8(-(v + 1)))
 }
 
 ////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ func readNint16Bytes(r io.Reader) (int16, error) {
 }
 
 func writeNint16Bytes(w io.Writer, v int16) error {
-	return writeUint16Bytes(w, uint16(-(v - 1)))
+	return writeUint16Bytes(w, uint16(-(v + 1)))
 }
 
 ////////////////////////////////////////////////////////////
@@ -191,7 +191,7 @@ func readNint32Bytes(r io.Reader) (int32, error) {
 }
 
 func writeNint32Bytes(w io.Writer, v int32) error {
-	return writeUint32Bytes(w, uint32(-(v - 1)))
+	return writeUint32Bytes(w, uint32(-(v + 1)))
 }
 
 ////////////////////////////////////////////////////////////
@@ -257,5 +257,5 @@ func readNint64Bytes(r io.Reader) (int64, error) {
 }
 
 func writeNint64Bytes(w io.Writer, v int64) error {
-	return writeUint64Bytes(w, uint64(-(v - 1)))
+	return writeUint64Bytes(w, uint64(-(v + 1)))
 }
