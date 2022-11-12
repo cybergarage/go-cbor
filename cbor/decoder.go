@@ -33,7 +33,7 @@ func NewDecoder(r io.Reader) *Decoder {
 	}
 }
 
-// nolint: gocyclo, maintidx
+// nolint: gocyclo, maintidx, exhaustive
 // Decode returns the next item if available, otherwise returns EOF or error.
 func (dec *Decoder) Decode() (any, error) {
 	if _, err := io.ReadFull(dec.reader, dec.header); err != nil {
@@ -132,8 +132,12 @@ func (dec *Decoder) Decode() (any, error) {
 		return 1, nil
 	case Float:
 		switch addInfo {
-		case FloatSimple:
-			return nil, newErrorNotSupportedAddInfo(Float, addInfo)
+		case False:
+			return false, nil
+		case True:
+			return true, nil
+		case Null:
+			return nil, nil
 		case Float16:
 			return nil, newErrorNotSupportedAddInfo(Float, addInfo)
 		case Float32:
