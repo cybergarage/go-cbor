@@ -43,7 +43,7 @@ func (dec *Decoder) Decode() (any, error) {
 	// 3. Specification of the CBOR Encoding.
 
 	majorType := majorType(dec.header[0] & majorTypeMask)
-	addInfo := AddInfo(dec.header[0] & addInfoMask)
+	addInfo := addInfo(dec.header[0] & addInfoMask)
 
 	returnDecordedUint8 := func(v uint8) any {
 		if math.MaxInt8 < v {
