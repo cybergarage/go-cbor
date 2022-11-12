@@ -32,16 +32,16 @@ func TestDecoder(t *testing.T) {
 				encoded  string
 				expected any
 			}{
-				{encoded: "00", expected: uint8(0)},
-				{encoded: "01", expected: uint8(1)},
-				{encoded: "0a", expected: uint8(10)},
-				{encoded: "17", expected: uint8(23)},
-				{encoded: "1818", expected: uint8(24)},
-				{encoded: "1819", expected: uint8(25)},
-				{encoded: "1864", expected: uint8(100)},
-				{encoded: "1903e8", expected: uint16(1000)},
-				{encoded: "1a000f4240", expected: uint32(1000000)},
-				{encoded: "1b000000e8d4a51000", expected: uint64(1000000000000)},
+				{encoded: "00", expected: int8(0)},
+				{encoded: "01", expected: int8(1)},
+				{encoded: "0a", expected: int8(10)},
+				{encoded: "17", expected: int8(23)},
+				{encoded: "1818", expected: int8(24)},
+				{encoded: "1819", expected: int8(25)},
+				{encoded: "1864", expected: int8(100)},
+				{encoded: "1903e8", expected: int16(1000)},
+				{encoded: "1a000f4240", expected: int32(1000000)},
+				{encoded: "1b000000e8d4a51000", expected: int64(1000000000000)},
 				{encoded: "1bffffffffffffffff", expected: uint64(18446744073709551615)},
 				// {encoded: "c249010000000000000000", expected: uint64(18446744073709551616)},
 				// {encoded: "3bffffffffffffffff", expected: int64(-18446744073709551616)},
@@ -91,7 +91,7 @@ func TestDecoder(t *testing.T) {
 						return
 					}
 					if !reflect.DeepEqual(v, test.expected) {
-						t.Errorf("%v != %v", v, test.expected)
+						t.Errorf("%v (%T) != %v (%T)", v, v, test.expected, test.expected)
 					}
 				})
 			}
