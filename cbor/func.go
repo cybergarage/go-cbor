@@ -78,6 +78,10 @@ func readNint8Bytes(r io.Reader) (int8, error) {
 	return -int8(v + 1), nil
 }
 
+func writeNint8Bytes(w io.Writer, v int8) error {
+	return writeUint8Bytes(w, uint8(-(v - 1)))
+}
+
 ////////////////////////////////////////////////////////////
 // int16
 ////////////////////////////////////////////////////////////
@@ -126,6 +130,10 @@ func readNint16Bytes(r io.Reader) (int16, error) {
 		return 0, err
 	}
 	return -int16(v + 1), nil
+}
+
+func writeNint16Bytes(w io.Writer, v int16) error {
+	return writeUint16Bytes(w, uint16(-(v - 1)))
 }
 
 ////////////////////////////////////////////////////////////
@@ -182,6 +190,10 @@ func readNint32Bytes(r io.Reader) (int32, error) {
 	return -int32(v + 1), nil
 }
 
+func writeNint32Bytes(w io.Writer, v int32) error {
+	return writeUint32Bytes(w, uint32(-(v - 1)))
+}
+
 ////////////////////////////////////////////////////////////
 // int64
 ////////////////////////////////////////////////////////////
@@ -233,7 +245,7 @@ func writeUint64Bytes(w io.Writer, v uint64) error {
 }
 
 ////////////////////////////////////////////////////////////
-// nint32 (CBOR)
+// nint64 (CBOR)
 ////////////////////////////////////////////////////////////
 
 func readNint64Bytes(r io.Reader) (int64, error) {
@@ -242,4 +254,8 @@ func readNint64Bytes(r io.Reader) (int64, error) {
 		return 0, err
 	}
 	return -int64(v + 1), nil
+}
+
+func writeNint64Bytes(w io.Writer, v int64) error {
+	return writeUint64Bytes(w, uint64(-(v - 1)))
 }
