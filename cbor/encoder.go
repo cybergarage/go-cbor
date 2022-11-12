@@ -79,7 +79,7 @@ func (enc *Encoder) Encode(item any) error {
 	case uint:
 		return encodeUint64(uint64(v))
 	case int8:
-		if 0 < v {
+		if 0 <= v {
 			return encodeUint8(uint8(v))
 		}
 		header := byte(NInt)
@@ -93,7 +93,7 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return writeNint8Bytes(enc.writer, v)
 	case int16:
-		if 0 < v {
+		if 0 <= v {
 			return encodeUint16(uint16(v))
 		}
 		if err := writeHeader(enc.writer, NInt, uIntTwoByte); err != nil {
@@ -101,7 +101,7 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return writeNint16Bytes(enc.writer, v)
 	case int32:
-		if 0 < v {
+		if 0 <= v {
 			return encodeUint32(uint32(v))
 		}
 		if err := writeHeader(enc.writer, NInt, uIntFourByte); err != nil {
@@ -109,7 +109,7 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return writeNint32Bytes(enc.writer, v)
 	case int64:
-		if 0 < v {
+		if 0 <= v {
 			return encodeUint64(uint64(v))
 		}
 		if err := writeHeader(enc.writer, NInt, uIntEightByte); err != nil {
@@ -117,7 +117,7 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return writeNint64Bytes(enc.writer, v)
 	case int:
-		if 0 < v {
+		if 0 <= v {
 			return encodeUint64(uint64(v))
 		}
 		if err := writeHeader(enc.writer, NInt, uIntEightByte); err != nil {
