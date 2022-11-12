@@ -242,4 +242,31 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			})
 		}
 	})
+	t.Run("float32", func(t *testing.T) {
+		testValues := []float32{
+			-1,
+			0,
+			1,
+			math.MaxFloat32,
+		}
+		for _, testVal := range testValues {
+			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
+				var w bytes.Buffer
+				err := writeFloat32Bytes(&w, testVal)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				reader := bytes.NewReader(w.Bytes())
+				val, err := readFloat32Bytes(reader)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if val != testVal {
+					t.Errorf("%f != %f", val, testVal)
+				}
+			})
+		}
+	})
 }

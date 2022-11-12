@@ -16,6 +16,7 @@ package cbor
 
 import (
 	"io"
+	"math"
 )
 
 ////////////////////////////////////////////////////////////
@@ -258,4 +259,20 @@ func readNint64Bytes(r io.Reader) (int64, error) {
 
 func writeNint64Bytes(w io.Writer, v int64) error {
 	return writeUint64Bytes(w, uint64(-(v + 1)))
+}
+
+////////////////////////////////////////////////////////////
+// float32
+////////////////////////////////////////////////////////////
+
+func readFloat32Bytes(r io.Reader) (float32, error) {
+	v, err := readUint32Bytes(r)
+	if err != nil {
+		return 0, err
+	}
+	return math.Float32frombits(v), nil
+}
+
+func writeFloat32Bytes(w io.Writer, v float32) error {
+	return writeUint32Bytes(w, math.Float32bits(v))
 }
