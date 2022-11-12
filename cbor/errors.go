@@ -34,6 +34,10 @@ const (
 	errorInvalidIntegerBytes   = "invalid integer bytes : %v"
 )
 
+func newErrorNotSupportedMajorType(m majorType) error {
+	return fmt.Errorf(errorUnkonwnMajorType, (m >> 5), ErrNotSupported)
+}
+
 func newErrorNotSupportedAddInfo(m majorType, a addInfo) error {
 	return fmt.Errorf(errorUnkonwnAdditionalInfo, (m >> 5), a, ErrNotSupported)
 }
