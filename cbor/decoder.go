@@ -16,6 +16,7 @@ package cbor
 
 import (
 	"io"
+	"math"
 )
 
 // An Decoder reads CBOR values from an output stream.
@@ -32,6 +33,7 @@ func NewDecoder(r io.Reader) *Decoder {
 	}
 }
 
+// nolint: gocyclo, maintidx
 // Decode returns the next item if available, otherwise returns EOF or error.
 func (dec *Decoder) Decode() (any, error) {
 	if _, err := io.ReadFull(dec.reader, dec.header); err != nil {
@@ -43,20 +45,64 @@ func (dec *Decoder) Decode() (any, error) {
 	majorType := MajorType(dec.header[0] & majorTypeMask)
 	addInfo := AddInfo(dec.header[0] & addInfoMask)
 
+	returnDecordedUint8 := func(v uint8) any {
+		if math.MaxInt8 < v {
+			return v
+		}
+		return int8(v)
+	}
+
+	returnDecordedUint16 := func(v uint16) any {
+		if math.MaxInt16 < v {
+			return v
+		}
+		return int16(v)
+	}
+
+	returnDecordedUint32 := func(v uint32) any {
+		if math.MaxInt32 < v {
+			return v
+		}
+		return int32(v)
+	}
+
+	returnDecordedUint64 := func(v uint64) any {
+		if math.MaxInt64 < v {
+			return v
+		}
+		return int64(v)
+	}
+
 	switch majorType {
 	case Uint:
 		if addInfo < uIntOneByte {
-			return uint8(addInfo), nil
+			return returnDecordedUint8(uint8(addInfo)), nil
 		}
 		switch addInfo {
 		case uIntOneByte:
-			return readUint8Bytes(dec.reader)
+			v, err := readUint8Bytes(dec.reader)
+			if err != nil {
+				return 0, err
+			}
+			return returnDecordedUint8(v), nil
 		case uIntTwoByte:
-			return readUint16Bytes(dec.reader)
+			v, err := readUint16Bytes(dec.reader)
+			if err != nil {
+				return 0, err
+			}
+			return returnDecordedUint16(v), nil
 		case uIntFourByte:
-			return readUint32Bytes(dec.reader)
+			v, err := readUint32Bytes(dec.reader)
+			if err != nil {
+				return 0, err
+			}
+			return returnDecordedUint32(v), nil
 		case uIntEightByte:
-			return readUint64Bytes(dec.reader)
+			v, err := readUint64Bytes(dec.reader)
+			if err != nil {
+				return 0, err
+			}
+			return returnDecordedUint64(v), nil
 		}
 		return nil, newErrorNotSupportedAddInfo(Uint, addInfo)
 	case NInt:
