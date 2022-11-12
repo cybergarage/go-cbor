@@ -15,7 +15,6 @@
 package cbor
 
 import (
-	"fmt"
 	"io"
 )
 
@@ -144,5 +143,5 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return nil
 	}
-	return fmt.Errorf(errorUnkonwnMajorType, item)
+	return newErrorNotSupportedNativeType(item)
 }
