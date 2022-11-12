@@ -86,7 +86,17 @@ func (dec *Decoder) Decode() (any, error) {
 	case Tag:
 		return 1, nil
 	case Float:
-		return 1, nil
+		switch addInfo {
+		case FloatSimple:
+			return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, Float, addInfo)
+		case Float16:
+			return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, Float, addInfo)
+		case Float32:
+			return readFloat32Bytes(dec.reader)
+		case Float64:
+			return readFloat64Bytes(dec.reader)
+		}
+		return nil, fmt.Errorf(errorUnkonwnAdditionalInfo, Float, addInfo)
 	}
 
 	return nil, io.EOF
