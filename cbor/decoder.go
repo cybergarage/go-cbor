@@ -75,29 +75,29 @@ func (dec *Decoder) Decode() (any, error) {
 
 	switch majorType {
 	case Uint:
-		if addInfo < uIntOneByte {
+		if addInfo < aiOneByte {
 			return returnDecordedUint8(uint8(addInfo)), nil
 		}
 		switch addInfo {
-		case uIntOneByte:
+		case aiOneByte:
 			v, err := readUint8Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
 			return returnDecordedUint8(v), nil
-		case uIntTwoByte:
+		case aiTwoByte:
 			v, err := readUint16Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
 			return returnDecordedUint16(v), nil
-		case uIntFourByte:
+		case aiFourByte:
 			v, err := readUint32Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
 			return returnDecordedUint32(v), nil
-		case uIntEightByte:
+		case aiEightByte:
 			v, err := readUint64Bytes(dec.reader)
 			if err != nil {
 				return 0, err
@@ -106,17 +106,17 @@ func (dec *Decoder) Decode() (any, error) {
 		}
 		return nil, newErrorNotSupportedAddInfo(Uint, addInfo)
 	case NInt:
-		if addInfo < uIntOneByte {
+		if addInfo < aiOneByte {
 			return -int8(addInfo + 1), nil
 		}
 		switch addInfo {
-		case uIntOneByte:
+		case aiOneByte:
 			return readNint8Bytes(dec.reader)
-		case uIntTwoByte:
+		case aiTwoByte:
 			return readNint16Bytes(dec.reader)
-		case uIntFourByte:
+		case aiFourByte:
 			return readNint32Bytes(dec.reader)
-		case uIntEightByte:
+		case aiEightByte:
 			return readNint64Bytes(dec.reader)
 		}
 		return nil, newErrorNotSupportedAddInfo(NInt, addInfo)
@@ -132,17 +132,17 @@ func (dec *Decoder) Decode() (any, error) {
 		return nil, newErrorNotSupportedMajorType(majorType)
 	case Float:
 		switch addInfo {
-		case False:
+		case simpFalse:
 			return false, nil
-		case True:
+		case simpTrue:
 			return true, nil
-		case Null:
+		case simpNull:
 			return nil, nil
-		case Float16:
+		case fpnFloat16:
 			return nil, newErrorNotSupportedAddInfo(Float, addInfo)
-		case Float32:
+		case fpnFloat32:
 			return readFloat32Bytes(dec.reader)
-		case Float64:
+		case fpnFloat64:
 			return readFloat64Bytes(dec.reader)
 		}
 		return nil, newErrorNotSupportedAddInfo(Float, addInfo)

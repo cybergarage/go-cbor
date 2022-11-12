@@ -34,15 +34,15 @@ func NewEncoder(w io.Writer) *Encoder {
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) Encode(item any) error {
 	encodeNull := func() error {
-		return writeByte(enc.writer, byte(Float)|byte(Null))
+		return writeByte(enc.writer, byte(Float)|byte(simpNull))
 	}
 
 	encodeBool := func(v bool) error {
 		header := byte(Float)
 		if v {
-			header |= byte(True)
+			header |= byte(simpTrue)
 		} else {
-			header |= byte(False)
+			header |= byte(simpFalse)
 		}
 		return writeByte(enc.writer, header)
 	}
@@ -53,7 +53,7 @@ func (enc *Encoder) Encode(item any) error {
 			header |= v
 			return writeByte(enc.writer, header)
 		}
-		header |= byte(uIntOneByte)
+		header |= byte(aiOneByte)
 		if err := writeByte(enc.writer, header); err != nil {
 			return err
 		}
@@ -61,21 +61,21 @@ func (enc *Encoder) Encode(item any) error {
 	}
 
 	encodeUint16 := func(v uint16) error {
-		if err := writeHeader(enc.writer, Uint, uIntTwoByte); err != nil {
+		if err := writeHeader(enc.writer, Uint, aiTwoByte); err != nil {
 			return err
 		}
 		return writeUint16Bytes(enc.writer, v)
 	}
 
 	encodeUint32 := func(v uint32) error {
-		if err := writeHeader(enc.writer, Uint, uIntFourByte); err != nil {
+		if err := writeHeader(enc.writer, Uint, aiFourByte); err != nil {
 			return err
 		}
 		return writeUint32Bytes(enc.writer, v)
 	}
 
 	encodeUint64 := func(v uint64) error {
-		if err := writeHeader(enc.writer, Uint, uIntEightByte); err != nil {
+		if err := writeHeader(enc.writer, Uint, aiEightByte); err != nil {
 			return err
 		}
 		return writeUint64Bytes(enc.writer, v)
@@ -101,7 +101,7 @@ func (enc *Encoder) Encode(item any) error {
 			header |= uint8(-v) - 1
 			return writeByte(enc.writer, header)
 		}
-		header |= byte(uIntOneByte)
+		header |= byte(aiOneByte)
 		if err := writeByte(enc.writer, header); err != nil {
 			return err
 		}
@@ -110,7 +110,7 @@ func (enc *Encoder) Encode(item any) error {
 		if 0 <= v {
 			return encodeUint16(uint16(v))
 		}
-		if err := writeHeader(enc.writer, NInt, uIntTwoByte); err != nil {
+		if err := writeHeader(enc.writer, NInt, aiTwoByte); err != nil {
 			return err
 		}
 		return writeNint16Bytes(enc.writer, v)
@@ -118,7 +118,7 @@ func (enc *Encoder) Encode(item any) error {
 		if 0 <= v {
 			return encodeUint32(uint32(v))
 		}
-		if err := writeHeader(enc.writer, NInt, uIntFourByte); err != nil {
+		if err := writeHeader(enc.writer, NInt, aiFourByte); err != nil {
 			return err
 		}
 		return writeNint32Bytes(enc.writer, v)
@@ -126,7 +126,7 @@ func (enc *Encoder) Encode(item any) error {
 		if 0 <= v {
 			return encodeUint64(uint64(v))
 		}
-		if err := writeHeader(enc.writer, NInt, uIntEightByte); err != nil {
+		if err := writeHeader(enc.writer, NInt, aiEightByte); err != nil {
 			return err
 		}
 		return writeNint64Bytes(enc.writer, v)
@@ -134,17 +134,17 @@ func (enc *Encoder) Encode(item any) error {
 		if 0 <= v {
 			return encodeUint64(uint64(v))
 		}
-		if err := writeHeader(enc.writer, NInt, uIntEightByte); err != nil {
+		if err := writeHeader(enc.writer, NInt, aiEightByte); err != nil {
 			return err
 		}
 		return writeNint64Bytes(enc.writer, int64(v))
 	case float32:
-		if err := writeHeader(enc.writer, Float, Float32); err != nil {
+		if err := writeHeader(enc.writer, Float, fpnFloat32); err != nil {
 			return err
 		}
 		return writeFloat32Bytes(enc.writer, v)
 	case float64:
-		if err := writeHeader(enc.writer, Float, Float64); err != nil {
+		if err := writeHeader(enc.writer, Float, fpnFloat64); err != nil {
 			return err
 		}
 		return writeFloat64Bytes(enc.writer, v)
