@@ -19,9 +19,10 @@ import (
 	"fmt"
 )
 
-var errNotSupported error = errors.New("not supported")
+var errNotSupported = errors.New("not supported")
 
 const (
+	errorUnkonwnNativeType     = "%T (%v) is %w"
 	errorUnkonwnMajorType      = "major type (%d) is %w"
 	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
 	errorInvalidArray          = "invalid array : %v"
@@ -35,4 +36,8 @@ const (
 
 func newErrorNotSupportedAddInfo(m MajorType, a AddInfo) error {
 	return fmt.Errorf(errorUnkonwnAdditionalInfo, (m >> 5), a, errNotSupported)
+}
+
+func newErrorNotSupportedNativeType(item any) error {
+	return fmt.Errorf(errorUnkonwnNativeType, item, item, errNotSupported)
 }
