@@ -121,15 +121,15 @@ func (dec *Decoder) Decode() (any, error) {
 		}
 		return nil, newErrorNotSupportedAddInfo(NInt, addInfo)
 	case Bytes:
-		return 1, nil
+		return nil, newErrorNotSupportedMajorType(majorType)
 	case Text:
-		return 1, nil
+		return nil, newErrorNotSupportedMajorType(majorType)
 	case Array:
-		return 1, nil
+		return nil, newErrorNotSupportedMajorType(majorType)
 	case Map:
-		return 1, nil
+		return nil, newErrorNotSupportedMajorType(majorType)
 	case Tag:
-		return 1, nil
+		return nil, newErrorNotSupportedMajorType(majorType)
 	case Float:
 		switch addInfo {
 		case False:
@@ -148,5 +148,5 @@ func (dec *Decoder) Decode() (any, error) {
 		return nil, newErrorNotSupportedAddInfo(Float, addInfo)
 	}
 
-	return nil, io.EOF
+	return nil, newErrorNotSupportedMajorType(majorType)
 }
