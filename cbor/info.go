@@ -18,16 +18,18 @@ type addInfo byte
 
 const (
 	// 3. Specification of the CBOR Encoding.
-	uIntOneByte   addInfo = 24
-	uIntTwoByte   addInfo = 25
-	uIntFourByte  addInfo = 26
-	uIntEightByte addInfo = 27
+	aiOneByte   addInfo = 24
+	aiTwoByte   addInfo = 25
+	aiFourByte  addInfo = 26
+	aiEightByte addInfo = 27
 	// 3.3. Floating-Point Numbers and Values with No Content.
-	Float16   addInfo = 25
-	Float32   addInfo = 26
-	Float64   addInfo = 27
-	False     addInfo = 20
-	True      addInfo = 21
-	Null      addInfo = 22
-	Undefined addInfo = 23
+	fpnFloat16 addInfo = 25
+	fpnFloat32 addInfo = 26
+	fpnFloat64 addInfo = 27
+	simpFalse  addInfo = 20
+	simpTrue   addInfo = 21
+	simpNull   addInfo = 22
+	// 3.4. Tagging of Items.
+	tagStdDateTime   = 0
+	tagEpochDateTime = 1
 )
