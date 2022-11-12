@@ -49,7 +49,7 @@ build:
 	go build -v ${PKGS}
 
 test: lint
-	go test -v -cover -timeout 60s ${PKGS} ${TEST_PKGS}
+	go test -v -coverpkg=${PKG_ID} -timeout 60s ${PKGS} ${TEST_PKGS}
 
 clean:
 	go clean -i ${PKGS}
