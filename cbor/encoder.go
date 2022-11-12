@@ -33,9 +33,7 @@ func NewEncoder(w io.Writer) *Encoder {
 
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) Encode(item any) error {
-	// 3. Specification of the CBOR Encoding.
-	switch v := item.(type) {
-	case uint8:
+	encodeUint8 := func(v uint8) error {
 		header := byte(Uint)
 		if v < 24 {
 			header |= v
@@ -46,38 +44,53 @@ func (enc *Encoder) Encode(item any) error {
 			return err
 		}
 		return writeUint8Bytes(enc.writer, v)
-	case uint16:
+	}
+
+	encodeUint16 := func(v uint16) error {
 		header := byte(Uint)
 		header |= byte(uIntTwoByte)
 		if err := writeByte(enc.writer, header); err != nil {
 			return err
 		}
 		return writeUint16Bytes(enc.writer, v)
-	case uint32:
+	}
+
+	encodeUint32 := func(v uint32) error {
 		header := byte(Uint)
 		header |= byte(uIntFourByte)
 		if err := writeByte(enc.writer, header); err != nil {
 			return err
 		}
 		return writeUint32Bytes(enc.writer, v)
-	case uint64:
+	}
+
+	encodeUint64 := func(v uint64) error {
 		header := byte(Uint)
 		header |= byte(uIntEightByte)
 		if err := writeByte(enc.writer, header); err != nil {
 			return err
 		}
 		return writeUint64Bytes(enc.writer, v)
+	}
+
+	switch v := item.(type) {
+	case uint8:
+		return encodeUint8(v)
+	case uint16:
+		return encodeUint16(v)
+	case uint32:
+		return encodeUint32(v)
+	case uint64:
+		return encodeUint64(v)
 	case uint:
-		header := byte(Uint)
-		header |= byte(uIntEightByte)
-		if err := writeByte(enc.writer, header); err != nil {
-			return err
-		}
-		return writeUint64Bytes(enc.writer, uint64(v))
+		return encodeUint64(uint64(v))
 	case int8:
+		if 0 < v {
+			return encodeUint8(uint8(v))
+		}
 		header := byte(NInt)
-		if v < 24 {
-			header |= uint8(v)
+		if (-v) < 24 {
+			header |= uint8(-v) - 1
 			return writeByte(enc.writer, header)
 		}
 		header |= byte(uIntOneByte)
@@ -86,6 +99,9 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return writeNint8Bytes(enc.writer, v)
 	case int16:
+		if 0 < v {
+			return encodeUint16(uint16(v))
+		}
 		header := byte(NInt)
 		header |= byte(uIntTwoByte)
 		if err := writeByte(enc.writer, header); err != nil {
@@ -93,6 +109,9 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return writeNint16Bytes(enc.writer, v)
 	case int32:
+		if 0 < v {
+			return encodeUint32(uint32(v))
+		}
 		header := byte(NInt)
 		header |= byte(uIntFourByte)
 		if err := writeByte(enc.writer, header); err != nil {
@@ -100,6 +119,9 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return writeNint32Bytes(enc.writer, v)
 	case int64:
+		if 0 < v {
+			return encodeUint64(uint64(v))
+		}
 		header := byte(NInt)
 		header |= byte(uIntEightByte)
 		if err := writeByte(enc.writer, header); err != nil {
@@ -107,6 +129,9 @@ func (enc *Encoder) Encode(item any) error {
 		}
 		return writeNint64Bytes(enc.writer, v)
 	case int:
+		if 0 < v {
+			return encodeUint64(uint64(v))
+		}
 		header := byte(NInt)
 		header |= byte(uIntEightByte)
 		if err := writeByte(enc.writer, header); err != nil {
