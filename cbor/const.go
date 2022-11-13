@@ -16,21 +16,21 @@ package cbor
 
 const (
 	majorTypeMask = 0xE0
-	addInfoMask   = 0x1F
+	majorInfoMask = 0x1F
 )
 
 type majorType byte
 
 const (
 	// 3.1. Major Types.
-	Uint  majorType = 0x00
-	NInt  majorType = 0x20
-	Bytes majorType = 0x40
-	Text  majorType = 0x60
-	Array majorType = 0x80
-	Map   majorType = 0xA0
-	Tag   majorType = 0xC0
-	Float majorType = 0xE0
+	mtUint  majorType = 0x00
+	mtNInt  majorType = 0x20
+	mtBytes majorType = 0x40
+	mtText  majorType = 0x60
+	mtArray majorType = 0x80
+	mtMap   majorType = 0xA0
+	mtTag   majorType = 0xC0
+	mtFloat majorType = 0xE0
 )
 
 type majorInfo byte

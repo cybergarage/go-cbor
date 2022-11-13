@@ -121,10 +121,10 @@ func (dec *Decoder) Decode() (any, error) {
 	}
 
 	majorType := majorType(dec.header[0] & majorTypeMask)
-	majorInfo := majorInfo(dec.header[0] & addInfoMask)
+	majorInfo := majorInfo(dec.header[0] & majorInfoMask)
 
 	switch majorType {
-	case Uint:
+	case mtUint:
 		if majorInfo < aiOneByte {
 			return returnDecordedUint8(uint8(majorInfo)), nil
 		}
@@ -154,8 +154,8 @@ func (dec *Decoder) Decode() (any, error) {
 			}
 			return returnDecordedUint64(v), nil
 		}
-		return nil, newErrorNotSupportedAddInfo(Uint, majorInfo)
-	case NInt:
+		return nil, newErrorNotSupportedAddInfo(mtUint, majorInfo)
+	case mtNInt:
 		if majorInfo < aiOneByte {
 			return -int8(majorInfo + 1), nil
 		}
@@ -169,13 +169,13 @@ func (dec *Decoder) Decode() (any, error) {
 		case aiEightByte:
 			return readNint64Bytes(dec.reader)
 		}
-		return nil, newErrorNotSupportedAddInfo(NInt, majorInfo)
-	case Bytes:
-		return readByteString(Bytes, majorInfo)
-	case Text:
-		return readTextString(Text, majorInfo)
-	case Array:
-		itemCount, err := readNumberOfItems(Array, majorInfo)
+		return nil, newErrorNotSupportedAddInfo(mtNInt, majorInfo)
+	case mtBytes:
+		return readByteString(mtBytes, majorInfo)
+	case mtText:
+		return readTextString(mtText, majorInfo)
+	case mtArray:
+		itemCount, err := readNumberOfItems(mtArray, majorInfo)
 		if err != nil {
 			return nil, err
 		}
@@ -188,8 +188,8 @@ func (dec *Decoder) Decode() (any, error) {
 			itemArray = append(itemArray, item)
 		}
 		return itemArray, nil
-	case Map:
-		itemArray, err := readNumberOfItems(Array, majorInfo)
+	case mtMap:
+		itemArray, err := readNumberOfItems(mtArray, majorInfo)
 		if err != nil {
 			return nil, err
 		}
@@ -206,7 +206,7 @@ func (dec *Decoder) Decode() (any, error) {
 			itemMap[key] = val
 		}
 		return itemMap, nil
-	case Tag:
+	case mtTag:
 		switch majorInfo {
 		case tagStdDateTime:
 			dateTime, err := dec.Decode()
@@ -215,13 +215,13 @@ func (dec *Decoder) Decode() (any, error) {
 			}
 			dateTimeStr, ok := dateTime.(string)
 			if !ok {
-				return nil, newErrorNotSupportedAddInfo(Tag, majorInfo)
+				return nil, newErrorNotSupportedAddInfo(mtTag, majorInfo)
 			}
 			return time.Parse(time.RFC3339, dateTimeStr)
 		case tagEpochDateTime:
 		}
 		return nil, newErrorNotSupportedMajorType(majorType)
-	case Float:
+	case mtFloat:
 		switch majorInfo {
 		case simpFalse:
 			return false, nil
@@ -230,13 +230,13 @@ func (dec *Decoder) Decode() (any, error) {
 		case simpNull:
 			return nil, nil
 		case fpnFloat16:
-			return nil, newErrorNotSupportedAddInfo(Float, majorInfo)
+			return nil, newErrorNotSupportedAddInfo(mtFloat, majorInfo)
 		case fpnFloat32:
 			return readFloat32Bytes(dec.reader)
 		case fpnFloat64:
 			return readFloat64Bytes(dec.reader)
 		}
-		return nil, newErrorNotSupportedAddInfo(Float, majorInfo)
+		return nil, newErrorNotSupportedAddInfo(mtFloat, majorInfo)
 	}
 
 	return nil, newErrorNotSupportedMajorType(majorType)
