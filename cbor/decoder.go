@@ -156,7 +156,11 @@ func (dec *Decoder) Decode() (any, error) {
 		}
 		return nil, newErrorNotSupportedAddInfo(NInt, addInfo)
 	case Bytes:
-		return nil, newErrorNotSupportedMajorType(majorType)
+		n, err := readNumberOfBytes(Text, addInfo)
+		if err != nil {
+			return nil, err
+		}
+		return readBytes(dec.reader, n)
 	case Text:
 		n, err := readNumberOfBytes(Text, addInfo)
 		if err != nil {
