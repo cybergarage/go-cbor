@@ -33,6 +33,10 @@ func writeBytes(w io.Writer, val []byte) error {
 	return err
 }
 
+func writeString(w io.Writer, val string) error {
+	return writeBytes(w, []byte(val))
+}
+
 func readBytes(r io.Reader, n uint) ([]byte, error) {
 	buf := make([]byte, n)
 	if _, err := io.ReadFull(r, buf); err != nil {
