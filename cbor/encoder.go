@@ -231,10 +231,36 @@ func (enc *Encoder) Encode(item any) error {
 	// Major type 4: An array of data items.
 
 	switch v := item.(type) {
+	case []any: // NOTE: Any items are not matched
+		return writeAnyArray(v)
 	case []int8:
 		return writeAnyArray(toAnyArray(v))
-	case []any:
-		return writeAnyArray(v)
+	case []int16:
+		return writeAnyArray(toAnyArray(v))
+	case []int32:
+		return writeAnyArray(toAnyArray(v))
+	case []int64:
+		return writeAnyArray(toAnyArray(v))
+	case []int:
+		return writeAnyArray(toAnyArray(v))
+	case []uint8:
+		return writeAnyArray(toAnyArray(v))
+	case []uint16:
+		return writeAnyArray(toAnyArray(v))
+	case []uint32:
+		return writeAnyArray(toAnyArray(v))
+	case []uint64:
+		return writeAnyArray(toAnyArray(v))
+	case []uint:
+		return writeAnyArray(toAnyArray(v))
+	case []float32:
+		return writeAnyArray(toAnyArray(v))
+	case []float64:
+		return writeAnyArray(toAnyArray(v))
+	case []bool:
+		return writeAnyArray(toAnyArray(v))
+	case []string:
+		return writeAnyArray(toAnyArray(v))
 	}
 
 	return newErrorNotSupportedNativeType(item)
