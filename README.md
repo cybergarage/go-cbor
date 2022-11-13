@@ -15,7 +15,8 @@ Although CBOR is designed for very small code size and fairly small message size
 ## Table of Contents
 
 - [Converting Data between Go and CBOR](doc/conversion.md)
-- [go-cbor module - github.com/cybergarage/go-cbor - Go Packages](https://pkg.go.dev/github.com/cybergarage/go-cbor)
+- Examples
+  - [go-cbor module - github.com/cybergarage/go-cbor - Go Packages](https://pkg.go.dev/github.com/cybergarage/go-cbor)
 
 ## References
 
