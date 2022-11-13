@@ -85,8 +85,8 @@ func TestDecoder(t *testing.T) {
 				{encoded: "6161", expected: "a"},
 				{encoded: "6449455446", expected: "IETF"},
 				{encoded: "62225c", expected: "\"\\"},
-				// {encoded: "62c3bc", expected: "\u00fc"},
-				// {encoded: "63e6b0b4", expected: "\u6c34"},
+				{encoded: "62c3bc", expected: "\u00fc"},
+				{encoded: "63e6b0b4", expected: "\u6c34"},
 				// {encoded: "64f0908591", expected: "\ud800\udd51"},
 			}
 			for _, test := range tests {
