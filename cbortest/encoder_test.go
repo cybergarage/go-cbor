@@ -19,6 +19,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/cybergarage/go-cbor/cbor"
 )
@@ -26,6 +27,11 @@ import (
 func TestEncoder(t *testing.T) {
 	t.Run("RFC-8949", func(t *testing.T) {
 		t.Run("AppendixA", func(t *testing.T) {
+			t20120321, err := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
+			if err != nil {
+				t.Error(err)
+				return
+			}
 			tests := []struct {
 				value    any
 				expected string
@@ -72,6 +78,10 @@ func TestEncoder(t *testing.T) {
 				// {value: float64(math.Inf), expected: "fb7ff0000000000000"},
 				// {value: float64(math.NaN), expected: "fb7ff8000000000000"},
 				// {value: float64(-math.Inf), expected: "fbfff0000000000000"},
+				{value: false, expected: "f4"},
+				{value: true, expected: "f5"},
+				{value: nil, expected: "f6"},
+				{value: t20120321, expected: "c074323031332d30332d32315432303a30343a30305a"},
 				{value: "", expected: "60"},
 				{value: "a", expected: "6161"},
 				{value: "IETF", expected: "6449455446"},

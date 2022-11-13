@@ -17,6 +17,7 @@ package cbor
 import (
 	"io"
 	"math"
+	"time"
 )
 
 // An Encoder writes CBOR values to an output stream.
@@ -99,6 +100,24 @@ func (enc *Encoder) Encode(item any) error {
 		return writeByte(enc.writer, header)
 	}
 
+	writeByteString := func(v []byte) error {
+		n := len(v)
+		if err := encodeNumberOfBytes(Bytes, n); err != nil {
+			return err
+		}
+		return writeBytes(enc.writer, v)
+	}
+
+	writeTextString := func(v string) error {
+		n := len(v)
+		if err := encodeNumberOfBytes(Text, n); err != nil {
+			return err
+		}
+		return writeString(enc.writer, v)
+	}
+
+	// 3. Specification of the CBOR Encoding.
+
 	switch v := item.(type) {
 	case uint8:
 		return encodeUint8(v)
@@ -171,17 +190,14 @@ func (enc *Encoder) Encode(item any) error {
 	case nil:
 		return encodeNull()
 	case []byte:
-		n := len(v)
-		if err := encodeNumberOfBytes(Bytes, n); err != nil {
-			return err
-		}
-		return writeBytes(enc.writer, v)
+		return writeByteString(v)
 	case string:
-		n := len(v)
-		if err := encodeNumberOfBytes(Text, n); err != nil {
+		return writeTextString(v)
+	case time.Time:
+		if err := writeHeader(enc.writer, Tag, tagStdDateTime); err != nil {
 			return err
 		}
-		return writeBytes(enc.writer, []byte(v))
+		return writeTextString(v.Format(time.RFC3339))
 	}
 	return newErrorNotSupportedNativeType(item)
 }
