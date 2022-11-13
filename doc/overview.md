@@ -1,0 +1,56 @@
+# Quick Start
+
+The section briefly describes how to converte data between Go and CBOR using `go-cbor`.
+
+## Encoding
+
+To convert data from Go to CBOR, `go-cbor` offers `Marshal()`. `Marshal()` converts from the specified data model of Go into the equivalent data model of CBOR as the following.
+
+```
+goObjs := []any{
+    uint(1000),
+    int(-1000),
+    float32(100000.0),
+    float64(-4.1),
+    false,
+    true,
+    nil,
+    []byte("IETF"),
+    "IETF",
+    []int{1, 2, 3},
+    map[any]any{"a": "A", "b": "B", "c": "C"},
+}
+for _, goObj := range goObjs {
+    cborBytes, _ := cbor.Marshal(goObj)
+    fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
+}
+```
+
+## Decoding
+
+To convert data from CBOR to Go, `go-cbor` offers `Unmarshal()`. `Unmarshal()` converts from the specified data model of CBOR into the equivalent data model of Go as the following.
+
+```
+cborObjs := []string{
+    "0a",
+    "1903e8",
+    "3903e7",
+    "fb3ff199999999999a",
+    "f90001",
+    "f4",
+    "f5",
+    "f6",
+    "c074323031332d30332d32315432303a30343a30305a",
+    "4449455446",
+    "6449455446",
+    "83010203",
+    "a201020304",
+}
+for _, cborObj := range cborObjs {
+    cborBytes, _ := hex.DecodeString(cborObj)
+    goObj, _ := cbor.Unmarshal(cborBytes)
+    fmt.Printf("%s => %v\n", cborObj, goObj)
+}
+```
+
+In addition to the basic CBOR measure types, `go-cbor` supports additional tag measure types such as datetime as the following.
