@@ -40,6 +40,7 @@ func ExampleEncoder_Encode() {
 		var w bytes.Buffer
 		encoder := cbor.NewEncoder(&w)
 		encoder.Encode(goObj)
-		fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(w.Bytes()))
+		cborBytes := w.Bytes()
+		fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
 	}
 }
