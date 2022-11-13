@@ -26,7 +26,7 @@ for _, goObj := range goObjs {
 }
 ```
 
-In addition to the basic Go data types, `go-cbor` supports additional tag measure types such as `time.Time` as the following.
+In addition to the basic Go data types, `go-cbor` supports additional tag major types such as `time.Time` as the following.
 
 ```
 goObj, _ := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
