@@ -36,14 +36,7 @@ func NewDecoder(r io.Reader) *Decoder {
 // nolint: gocyclo, maintidx, exhaustive
 // Decode returns the next item if available, otherwise returns EOF or error.
 func (dec *Decoder) Decode() (any, error) {
-	if _, err := io.ReadFull(dec.reader, dec.header); err != nil {
-		return nil, err
-	}
-
-	// 3. Specification of the CBOR Encoding.
-
-	majorType := majorType(dec.header[0] & majorTypeMask)
-	addInfo := addInfo(dec.header[0] & addInfoMask)
+	// Inner utility functions
 
 	returnDecordedUint8 := func(v uint8) any {
 		if math.MaxInt8 < v {
@@ -72,6 +65,48 @@ func (dec *Decoder) Decode() (any, error) {
 		}
 		return int64(v)
 	}
+
+	readNumberOfBytes := func(mt majorType, ai addInfo) (uint, error) {
+		if ai < aiOneByte {
+			return uint(ai), nil
+		}
+		switch ai {
+		case aiOneByte:
+			v, err := readUint8Bytes(dec.reader)
+			if err != nil {
+				return 0, err
+			}
+			return uint(v), nil
+		case aiTwoByte:
+			v, err := readUint16Bytes(dec.reader)
+			if err != nil {
+				return 0, err
+			}
+			return uint(v), nil
+		case aiFourByte:
+			v, err := readUint32Bytes(dec.reader)
+			if err != nil {
+				return 0, err
+			}
+			return uint(v), nil
+		case aiEightByte:
+			v, err := readUint64Bytes(dec.reader)
+			if err != nil {
+				return 0, err
+			}
+			return uint(v), nil
+		}
+		return 0, newErrorNotSupportedAddInfo(mt, ai)
+	}
+
+	// 3. Specification of the CBOR Encoding.
+
+	if _, err := io.ReadFull(dec.reader, dec.header); err != nil {
+		return nil, err
+	}
+
+	majorType := majorType(dec.header[0] & majorTypeMask)
+	addInfo := addInfo(dec.header[0] & addInfoMask)
 
 	switch majorType {
 	case Uint:
@@ -123,12 +158,23 @@ func (dec *Decoder) Decode() (any, error) {
 	case Bytes:
 		return nil, newErrorNotSupportedMajorType(majorType)
 	case Text:
-		return nil, newErrorNotSupportedMajorType(majorType)
+		n, err := readNumberOfBytes(Text, addInfo)
+		if err != nil {
+			return nil, err
+		}
+		bytes, err := readBytes(dec.reader, n)
+		if err != nil {
+			return nil, err
+		}
+		return string(bytes), nil
 	case Array:
 		return nil, newErrorNotSupportedMajorType(majorType)
 	case Map:
 		return nil, newErrorNotSupportedMajorType(majorType)
 	case Tag:
+		// switch addInfo {
+		// case tagStdDateTime:
+		// }
 		return nil, newErrorNotSupportedMajorType(majorType)
 	case Float:
 		switch addInfo {

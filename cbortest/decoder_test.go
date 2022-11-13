@@ -28,6 +28,11 @@ import (
 func TestDecoder(t *testing.T) {
 	t.Run("RFC-8949", func(t *testing.T) {
 		t.Run("AppendixA", func(t *testing.T) {
+			// t20120321, err := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
+			// if err != nil {
+			// 	t.Error(err)
+			// 	return
+			// }
 			tests := []struct {
 				encoded  string
 				expected any
@@ -75,6 +80,14 @@ func TestDecoder(t *testing.T) {
 				{encoded: "f4", expected: false},
 				{encoded: "f5", expected: true},
 				{encoded: "f6", expected: nil},
+				// {encoded: "c074323031332d30332d32315432303a", expected: t20120321},
+				{encoded: "60", expected: ""},
+				{encoded: "6161", expected: "a"},
+				{encoded: "6449455446", expected: "IETF"},
+				{encoded: "62225c", expected: "\"\\"},
+				// {encoded: "62c3bc", expected: "\u00fc"},
+				// {encoded: "63e6b0b4", expected: "\u6c34"},
+				// {encoded: "64f0908591", expected: "\ud800\udd51"},
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%s=>%v", test.expected, test.encoded, test.expected), func(t *testing.T) {
