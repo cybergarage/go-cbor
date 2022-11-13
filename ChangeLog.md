@@ -12,8 +12,9 @@
   - 5 (map)
   - 6 (tag)
     - 0 (Date/Time)
+  - 7 (Simple)
+    - 20 (false), 21 (true), 22 (null)
   - 7 (Floating-point)
-    - float32, 20 (false), 21 (true), 22 (null)
     - 26 (IEEE 754 Single-Precision)
     - 27 (IEEE 754 Double-Precision)
 - Go
