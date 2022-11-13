@@ -10,7 +10,7 @@
 
 ![](doc/img/concept.png)
 
-Although CBOR is designed with the goal of very small code size and fairly small message size, `go-cobor` encodes the specified data model without downgrading the data type for seamless data model compatibility during decoding.
+Although CBOR is designed with the goal of very small code size and fairly small message size, `go-cobor` encodes the specified data model without downgrading the data type for seamless data model compatibility when the encoded data is decoded.
 
 ## Table of Contents
 
