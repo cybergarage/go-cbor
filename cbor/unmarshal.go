@@ -19,7 +19,7 @@ import (
 )
 
 // Unmarshal parses the specified CBOR-encoded bytes and returns the data representation of Go.
-func Unmarshal(cborBytes []byte, v any) (any, error) {
+func Unmarshal(cborBytes []byte) (any, error) {
 	decoder := NewDecoder(bytes.NewReader(cborBytes))
 	return decoder.Decode()
 }
