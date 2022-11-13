@@ -22,7 +22,6 @@ import (
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
-// nolint: nosnakecase
 func ExampleDecoder_Decode() {
 	cborObjs := []string{
 		"0a",
