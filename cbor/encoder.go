@@ -144,6 +144,21 @@ func (enc *Encoder) Encode(item any) error {
 		return nil
 	}
 
+	writeAnyMap := func(m map[any]any) error {
+		if err := encodeNumberOfBytes(Map, len(m)); err != nil {
+			return err
+		}
+		for k, v := range m {
+			if err := enc.Encode(k); err != nil {
+				return err
+			}
+			if err := enc.Encode(v); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
 	// 3. Specification of the CBOR Encoding.
 
 	switch v := item.(type) {
@@ -231,8 +246,6 @@ func (enc *Encoder) Encode(item any) error {
 	// Major type 4: An array of data items.
 
 	switch v := item.(type) {
-	case []any: // NOTE: Any items are not matched
-		return writeAnyArray(v)
 	case []int8:
 		return writeAnyArray(toAnyArray(v))
 	case []int16:
@@ -261,6 +274,17 @@ func (enc *Encoder) Encode(item any) error {
 		return writeAnyArray(toAnyArray(v))
 	case []string:
 		return writeAnyArray(toAnyArray(v))
+	case []any:
+		return writeAnyArray(v)
+	}
+
+	// Major type 5: A map of pairs of data items.
+
+	switch v := item.(type) {
+	case map[string]any:
+		return writeAnyMap(toAnyMap(v))
+	case map[any]any:
+		return writeAnyMap(v)
 	}
 
 	return newErrorNotSupportedNativeType(item)
