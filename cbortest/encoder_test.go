@@ -36,7 +36,6 @@ func TestEncoder(t *testing.T) {
 				value    any
 				expected string
 			}{
-				// {value: []int8{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}, expected: "98190102030405060708090a0b0c0d0e0f101112131415161718181819"},
 				{value: uint8(0), expected: "00"},
 				{value: uint8(1), expected: "01"},
 				{value: uint8(10), expected: "0a"},
@@ -92,6 +91,10 @@ func TestEncoder(t *testing.T) {
 				// {value: "\ud800\udd51", expected: "64f0908591"},
 				{value: []int8{}, expected: "80"},
 				{value: []int8{1, 2, 3}, expected: "83010203"},
+				{value: []int8{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}, expected: "98190102030405060708090a0b0c0d0e0f101112131415161718181819"},
+				{value: map[any]any{}, expected: "a0"},
+				{value: map[any]any{uint8(1): uint8(2), uint8(3): uint8(4)}, expected: "a201020304"},
+				{value: map[any]any{"a": "A", "b": "B", "c": "C", "d": "D", "e": "E"}, expected: "a56161614161626142616361436164614461656145"},
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%v=>%s", test.value, test.value, test.expected), func(t *testing.T) {
