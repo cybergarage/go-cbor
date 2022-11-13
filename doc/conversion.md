@@ -8,7 +8,7 @@ This section describes how go-cobor` converts data model between Go and CBOR in 
 
 ## Converting from Go to CBOR
 
-`Decoder::Decode()` and `Marshal()` convert from the specified data model of Go  into the equivalent data model of CBOR as the following.
+`Decoder::Decode()` and `Marshal()` convert from the specified data model of Go into the equivalent data model of CBOR as the following.
 
 ![](img/conv_table_from.png)
 
