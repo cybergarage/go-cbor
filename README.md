@@ -10,6 +10,8 @@
 
 ![](doc/img/concept.png)
 
+Although CBOR is designed with the goal of very small code size and fairly small message size, `go-cobor` encodes the specified data model without downgrading the data type for seamless data model compatibility during decoding.
+
 ## Table of Contents
 
 - [Converting Data between Go and CBOR](doc/conversion.md)
