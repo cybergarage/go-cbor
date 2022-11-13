@@ -76,8 +76,8 @@ func TestEncoder(t *testing.T) {
 				{value: "a", expected: "6161"},
 				{value: "IETF", expected: "6449455446"},
 				{value: "\"\\", expected: "62225c"},
-				// {value: "\u00fc", expected: "62c3bc"},
-				// {value: "\u6c34", expected: "63e6b0b4"},
+				{value: "\u00fc", expected: "62c3bc"},
+				{value: "\u6c34", expected: "63e6b0b4"},
 				// {value: "\ud800\udd51", expected: "64f0908591"},
 			}
 			for _, test := range tests {
