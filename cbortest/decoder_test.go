@@ -92,6 +92,9 @@ func TestDecoder(t *testing.T) {
 				{encoded: "80", expected: []int8{}},
 				{encoded: "83010203", expected: []int8{1, 2, 3}},
 				{encoded: "98190102030405060708090a0b0c0d0e0f101112131415161718181819", expected: []int8{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}},
+				{encoded: "a0", expected: map[any]any{}},
+				{encoded: "a201020304", expected: map[any]any{1: 2, 3: 4}},
+				{encoded: "a56161614161626142616361436164614461656145", expected: map[any]any{"a": "A", "b": "B", "c": "C", "d": "D", "e": "E"}},
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%s=>%v", test.expected, test.encoded, test.expected), func(t *testing.T) {
@@ -112,6 +115,12 @@ func TestDecoder(t *testing.T) {
 					}
 					switch v := v.(type) {
 					case []any:
+						vStr := fmt.Sprintf("%v", v)
+						expectedStr := fmt.Sprintf("%v", test.expected)
+						if vStr != expectedStr {
+							t.Errorf("%v (%T) != %v (%T)", v, v, test.expected, test.expected)
+						}
+					case map[any]any:
 						vStr := fmt.Sprintf("%v", v)
 						expectedStr := fmt.Sprintf("%v", test.expected)
 						if vStr != expectedStr {
