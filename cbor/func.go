@@ -15,9 +15,25 @@
 package cbor
 
 import (
+	"bytes"
 	"io"
 	"math"
 )
+
+////////////////////////////////////////////////////////////
+// Marshal
+////////////////////////////////////////////////////////////
+
+// Marshal returns the CBOR encoding of the specified v.
+func Marshal(v any) ([]byte, error) {
+	var writer bytes.Buffer
+	encoder := NewEncoder(&writer)
+	err := encoder.Encode(v)
+	if err != nil {
+		return nil, err
+	}
+	return writer.Bytes(), nil
+}
 
 ////////////////////////////////////////////////////////////
 // byte
@@ -325,4 +341,16 @@ func toAnyArray[T comparable](v []T) []any {
 		a[n] = t
 	}
 	return a
+}
+
+////////////////////////////////////////////////////////////
+// Array
+////////////////////////////////////////////////////////////
+
+func toAnyMap[T comparable](v map[T]any) map[any]any {
+	m := map[any]any{}
+	for k, v := range v {
+		m[k] = v
+	}
+	return m
 }
