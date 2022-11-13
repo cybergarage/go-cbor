@@ -170,6 +170,12 @@ func (enc *Encoder) Encode(item any) error {
 		return encodeBool(v)
 	case nil:
 		return encodeNull()
+	case []byte:
+		n := len(v)
+		if err := encodeNumberOfBytes(Bytes, n); err != nil {
+			return err
+		}
+		return writeBytes(enc.writer, v)
 	case string:
 		n := len(v)
 		if err := encodeNumberOfBytes(Text, n); err != nil {
