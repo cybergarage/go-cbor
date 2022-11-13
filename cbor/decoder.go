@@ -175,21 +175,37 @@ func (dec *Decoder) Decode() (any, error) {
 	case Text:
 		return readTextString(Text, majorInfo)
 	case Array:
-		cnt, err := readNumberOfItems(Array, majorInfo)
+		itemCount, err := readNumberOfItems(Array, majorInfo)
 		if err != nil {
 			return nil, err
 		}
-		array := make([]any, 0)
-		for n := 0; n < cnt; n++ {
+		itemArray := make([]any, 0)
+		for n := 0; n < itemCount; n++ {
 			item, err := dec.Decode()
 			if err != nil {
 				return nil, err
 			}
-			array = append(array, item)
+			itemArray = append(itemArray, item)
 		}
-		return array, nil
+		return itemArray, nil
 	case Map:
-		return nil, newErrorNotSupportedMajorType(majorType)
+		itemArray, err := readNumberOfItems(Array, majorInfo)
+		if err != nil {
+			return nil, err
+		}
+		itemMap := map[any]any{}
+		for n := 0; n < itemArray; n++ {
+			key, err := dec.Decode()
+			if err != nil {
+				return nil, err
+			}
+			val, err := dec.Decode()
+			if err != nil {
+				return nil, err
+			}
+			itemMap[key] = val
+		}
+		return itemMap, nil
 	case Tag:
 		switch majorInfo {
 		case tagStdDateTime:
