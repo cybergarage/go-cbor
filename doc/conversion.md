@@ -12,13 +12,12 @@ This section describes how go-cobor` converts data model between Go and CBOR in 
 
 ![](img/conv_table_from.png)
 
-Although the CBOR design aims for very small code size and fairly small message size, `go-cobor` converts the specified data model without downgrading the data type and importants seamless data model compatibility.
-
-Although CBOR is designed with the goal of very small code size and fairly small message size, `go-cobor` encodes the specified data model without downgrading the data type for seamless data model compatibility during decoding.
+Although CBOR is designed for very small code size and fairly small message size, `go-cobor` encodes the specified data model without downgrading the data type to ensure seamless data model compatibility when decoding the encoded data.
 
 ## Converting from CBOR to Go
 
-`Decoder::Decode()` and `Unmarshal()` convert from the specified data model of CBOR  into the equivalent data model of Go as the following.
+`Decoder::Decode()` and `Unmarshal()` convert from the specified data model of CBOR into the equivalent data model of Go as the following.
 
 ![](img/conv_table_to.png)
 
+In addition to the basic CBOR measure types, `go-cbor` supports additional tag measure types such as datetime.
