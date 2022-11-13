@@ -89,6 +89,9 @@ func TestDecoder(t *testing.T) {
 				{encoded: "62c3bc", expected: "\u00fc"},
 				{encoded: "63e6b0b4", expected: "\u6c34"},
 				// {encoded: "64f0908591", expected: "\ud800\udd51"},
+				{encoded: "80", expected: []any{}},
+				{encoded: "83010203", expected: []uint8{1, 2, 3}},
+				{encoded: "98190102030405060708090a0b0c0d0e0f101112131415161718181819", expected: []uint8{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}},
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%s=>%v", test.expected, test.encoded, test.expected), func(t *testing.T) {
@@ -107,8 +110,17 @@ func TestDecoder(t *testing.T) {
 						}
 						return
 					}
-					if !reflect.DeepEqual(v, test.expected) {
-						t.Errorf("%v (%T) != %v (%T)", v, v, test.expected, test.expected)
+					switch v := v.(type) {
+					case []any:
+						vStr := fmt.Sprintf("%v", v)
+						expectedStr := fmt.Sprintf("%v", test.expected)
+						if vStr != expectedStr {
+							t.Errorf("%v (%T) != %v (%T)", v, v, test.expected, test.expected)
+						}
+					default:
+						if !reflect.DeepEqual(v, test.expected) {
+							t.Errorf("%v (%T) != %v (%T)", v, v, test.expected, test.expected)
+						}
 					}
 				})
 			}
