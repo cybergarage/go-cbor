@@ -38,7 +38,7 @@ func newErrorNotSupportedMajorType(m majorType) error {
 	return fmt.Errorf(errorUnkonwnMajorType, (m >> 5), ErrNotSupported)
 }
 
-func newErrorNotSupportedAddInfo(m majorType, a addInfo) error {
+func newErrorNotSupportedAddInfo(m majorType, a majorInfo) error {
 	return fmt.Errorf(errorUnkonwnAdditionalInfo, (m >> 5), a, ErrNotSupported)
 }
 

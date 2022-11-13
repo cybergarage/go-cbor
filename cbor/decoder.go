@@ -36,7 +36,7 @@ func NewDecoder(r io.Reader) *Decoder {
 // nolint: gocyclo, maintidx, exhaustive
 // Decode returns the next item if available, otherwise returns EOF or error.
 func (dec *Decoder) Decode() (any, error) {
-	// Inner utility functions
+	// Inner utility functions.
 
 	returnDecordedUint8 := func(v uint8) any {
 		if math.MaxInt8 < v {
@@ -66,7 +66,7 @@ func (dec *Decoder) Decode() (any, error) {
 		return int64(v)
 	}
 
-	readNumberOfBytes := func(mt majorType, ai addInfo) (uint, error) {
+	readNumberOfBytes := func(mt majorType, ai majorInfo) (uint, error) {
 		if ai < aiOneByte {
 			return uint(ai), nil
 		}
@@ -106,7 +106,7 @@ func (dec *Decoder) Decode() (any, error) {
 	}
 
 	majorType := majorType(dec.header[0] & majorTypeMask)
-	addInfo := addInfo(dec.header[0] & addInfoMask)
+	addInfo := majorInfo(dec.header[0] & addInfoMask)
 
 	switch majorType {
 	case Uint:

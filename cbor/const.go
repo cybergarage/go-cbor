@@ -18,3 +18,37 @@ const (
 	majorTypeMask = 0xE0
 	addInfoMask   = 0x1F
 )
+
+type majorType byte
+
+const (
+	// 3.1. Major Types.
+	Uint  majorType = 0x00
+	NInt  majorType = 0x20
+	Bytes majorType = 0x40
+	Text  majorType = 0x60
+	Array majorType = 0xB0
+	Map   majorType = 0x80
+	Tag   majorType = 0xA0
+	Float majorType = 0xE0
+)
+
+type majorInfo byte
+
+const (
+	// 3. Specification of the CBOR Encoding.
+	aiOneByte   majorInfo = 24
+	aiTwoByte   majorInfo = 25
+	aiFourByte  majorInfo = 26
+	aiEightByte majorInfo = 27
+	// 3.3. Floating-Point Numbers and Values with No Content.
+	fpnFloat16 majorInfo = 25
+	fpnFloat32 majorInfo = 26
+	fpnFloat64 majorInfo = 27
+	simpFalse  majorInfo = 20
+	simpTrue   majorInfo = 21
+	simpNull   majorInfo = 22
+	// 3.4. Tagging of Items.
+	tagStdDateTime   majorInfo = 0
+	tagEpochDateTime majorInfo = 1
+)
