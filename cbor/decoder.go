@@ -17,6 +17,7 @@ package cbor
 import (
 	"io"
 	"math"
+	"time"
 )
 
 // An Decoder reads CBOR values from an output stream.
@@ -36,8 +37,6 @@ func NewDecoder(r io.Reader) *Decoder {
 // nolint: gocyclo, maintidx, exhaustive
 // Decode returns the next item if available, otherwise returns EOF or error.
 func (dec *Decoder) Decode() (any, error) {
-	// Inner utility functions.
-
 	returnDecordedUint8 := func(v uint8) any {
 		if math.MaxInt8 < v {
 			return v
@@ -99,6 +98,22 @@ func (dec *Decoder) Decode() (any, error) {
 		return 0, newErrorNotSupportedAddInfo(mt, ai)
 	}
 
+	readByteString := func(m majorType, i majorInfo) ([]byte, error) {
+		n, err := readNumberOfBytes(m, i)
+		if err != nil {
+			return nil, err
+		}
+		return readBytes(dec.reader, n)
+	}
+
+	readTextString := func(m majorType, i majorInfo) (string, error) {
+		bytes, err := readByteString(m, i)
+		if err != nil {
+			return "", err
+		}
+		return string(bytes), nil
+	}
+
 	// 3. Specification of the CBOR Encoding.
 
 	if _, err := io.ReadFull(dec.reader, dec.header); err != nil {
@@ -106,14 +121,14 @@ func (dec *Decoder) Decode() (any, error) {
 	}
 
 	majorType := majorType(dec.header[0] & majorTypeMask)
-	addInfo := majorInfo(dec.header[0] & addInfoMask)
+	majorInfo := majorInfo(dec.header[0] & addInfoMask)
 
 	switch majorType {
 	case Uint:
-		if addInfo < aiOneByte {
-			return returnDecordedUint8(uint8(addInfo)), nil
+		if majorInfo < aiOneByte {
+			return returnDecordedUint8(uint8(majorInfo)), nil
 		}
-		switch addInfo {
+		switch majorInfo {
 		case aiOneByte:
 			v, err := readUint8Bytes(dec.reader)
 			if err != nil {
@@ -139,12 +154,12 @@ func (dec *Decoder) Decode() (any, error) {
 			}
 			return returnDecordedUint64(v), nil
 		}
-		return nil, newErrorNotSupportedAddInfo(Uint, addInfo)
+		return nil, newErrorNotSupportedAddInfo(Uint, majorInfo)
 	case NInt:
-		if addInfo < aiOneByte {
-			return -int8(addInfo + 1), nil
+		if majorInfo < aiOneByte {
+			return -int8(majorInfo + 1), nil
 		}
-		switch addInfo {
+		switch majorInfo {
 		case aiOneByte:
 			return readNint8Bytes(dec.reader)
 		case aiTwoByte:
@@ -154,34 +169,32 @@ func (dec *Decoder) Decode() (any, error) {
 		case aiEightByte:
 			return readNint64Bytes(dec.reader)
 		}
-		return nil, newErrorNotSupportedAddInfo(NInt, addInfo)
+		return nil, newErrorNotSupportedAddInfo(NInt, majorInfo)
 	case Bytes:
-		n, err := readNumberOfBytes(Text, addInfo)
-		if err != nil {
-			return nil, err
-		}
-		return readBytes(dec.reader, n)
+		return readByteString(Bytes, majorInfo)
 	case Text:
-		n, err := readNumberOfBytes(Text, addInfo)
-		if err != nil {
-			return nil, err
-		}
-		bytes, err := readBytes(dec.reader, n)
-		if err != nil {
-			return nil, err
-		}
-		return string(bytes), nil
+		return readTextString(Text, majorInfo)
 	case Array:
 		return nil, newErrorNotSupportedMajorType(majorType)
 	case Map:
 		return nil, newErrorNotSupportedMajorType(majorType)
 	case Tag:
-		// switch addInfo {
-		// case tagStdDateTime:
-		// }
+		switch majorInfo {
+		case tagStdDateTime:
+			dateTime, err := dec.Decode()
+			if err != nil {
+				return nil, err
+			}
+			dateTimeStr, ok := dateTime.(string)
+			if !ok {
+				return nil, newErrorNotSupportedAddInfo(Tag, majorInfo)
+			}
+			return time.Parse(time.RFC3339, dateTimeStr)
+		case tagEpochDateTime:
+		}
 		return nil, newErrorNotSupportedMajorType(majorType)
 	case Float:
-		switch addInfo {
+		switch majorInfo {
 		case simpFalse:
 			return false, nil
 		case simpTrue:
@@ -189,13 +202,13 @@ func (dec *Decoder) Decode() (any, error) {
 		case simpNull:
 			return nil, nil
 		case fpnFloat16:
-			return nil, newErrorNotSupportedAddInfo(Float, addInfo)
+			return nil, newErrorNotSupportedAddInfo(Float, majorInfo)
 		case fpnFloat32:
 			return readFloat32Bytes(dec.reader)
 		case fpnFloat64:
 			return readFloat64Bytes(dec.reader)
 		}
-		return nil, newErrorNotSupportedAddInfo(Float, addInfo)
+		return nil, newErrorNotSupportedAddInfo(Float, majorInfo)
 	}
 
 	return nil, newErrorNotSupportedMajorType(majorType)
