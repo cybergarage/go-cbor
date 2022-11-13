@@ -21,7 +21,6 @@ import (
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
-// nolint: nosnakecase
 func ExampleMarshal() {
 	goObjs := []any{
 		uint(1000),
@@ -38,6 +37,6 @@ func ExampleMarshal() {
 	}
 	for _, goObj := range goObjs {
 		cborBytes, _ := cbor.Marshal(goObj)
-		fmt.Printf("%v => %s", goObj, hex.EncodeToString(cborBytes))
+		fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
 	}
 }
