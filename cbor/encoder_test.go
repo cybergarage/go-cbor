@@ -22,7 +22,6 @@ import (
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
-// nolint: nosnakecase
 func ExampleEncoder_Encode() {
 	goObjs := []any{
 		uint(1000),
@@ -41,6 +40,6 @@ func ExampleEncoder_Encode() {
 		var w bytes.Buffer
 		encoder := cbor.NewEncoder(&w)
 		encoder.Encode(goObj)
-		fmt.Printf("%v => %s", goObj, hex.EncodeToString(w.Bytes()))
+		fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(w.Bytes()))
 	}
 }

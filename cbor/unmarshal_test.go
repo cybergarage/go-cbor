@@ -40,6 +40,6 @@ func ExampleUnmarshal() {
 	for _, cborObj := range cborObjs {
 		cborBytes, _ := hex.DecodeString(cborObj)
 		v, _ := cbor.Unmarshal(cborBytes)
-		fmt.Printf("%s => %v", cborObj, v)
+		fmt.Printf("%s => %v\n", cborObj, v)
 	}
 }
