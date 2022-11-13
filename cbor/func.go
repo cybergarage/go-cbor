@@ -314,3 +314,15 @@ func readFloat64Bytes(r io.Reader) (float64, error) {
 func writeFloat64Bytes(w io.Writer, v float64) error {
 	return writeUint64Bytes(w, math.Float64bits(v))
 }
+
+////////////////////////////////////////////////////////////
+// Array
+////////////////////////////////////////////////////////////
+
+func toAnyArray[T comparable](v []T) []any {
+	a := make([]any, len(v))
+	for n, t := range v {
+		a[n] = t
+	}
+	return a
+}
