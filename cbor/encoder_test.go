@@ -18,11 +18,13 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
 func ExampleEncoder_Encode() {
+	goTimeObj, _ := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
 	goObjs := []any{
 		uint(1000),
 		int(-1000),
@@ -31,6 +33,7 @@ func ExampleEncoder_Encode() {
 		false,
 		true,
 		nil,
+		goTimeObj,
 		[]byte("IETF"),
 		"IETF",
 		[]int{1, 2, 3},
