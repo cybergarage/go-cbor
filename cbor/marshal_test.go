@@ -17,11 +17,13 @@ package cbor_test
 import (
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
 func ExampleMarshal() {
+	goTimeObj, _ := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
 	goObjs := []any{
 		uint(1000),
 		int(-1000),
@@ -32,6 +34,7 @@ func ExampleMarshal() {
 		nil,
 		[]byte("IETF"),
 		"IETF",
+		goTimeObj,
 		[]int{1, 2, 3},
 		map[any]any{"a": "A", "b": "B", "c": "C"},
 	}
