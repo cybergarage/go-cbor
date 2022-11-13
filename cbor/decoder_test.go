@@ -42,6 +42,6 @@ func ExampleDecoder_Decode() {
 		cborBytes, _ := hex.DecodeString(cborObj)
 		decoder := cbor.NewDecoder(bytes.NewReader(cborBytes))
 		goObj, _ := decoder.Decode()
-		fmt.Printf("%s => %v", cborObj, goObj)
+		fmt.Printf("%s => %v\n", cborObj, goObj)
 	}
 }
