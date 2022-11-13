@@ -96,5 +96,31 @@ func TestEncoder(t *testing.T) {
 				})
 			}
 		})
+		t.Run("Extra", func(t *testing.T) {
+			tests := []struct {
+				value    any
+				expected string
+			}{
+				{value: []byte(""), expected: "40"},
+				{value: []byte("a"), expected: "4161"},
+				{value: []byte("IETF"), expected: "4449455446"},
+				{value: []byte("\"\\"), expected: "42225c"},
+			}
+			for _, test := range tests {
+				t.Run(fmt.Sprintf("%T/%v=>%s", test.value, test.value, test.expected), func(t *testing.T) {
+					var writer bytes.Buffer
+					encoder := cbor.NewEncoder(&writer)
+					err := encoder.Encode(test.value)
+					if err != nil {
+						t.Errorf("%v (%s)", test.value, err.Error())
+						return
+					}
+					encoded := hex.EncodeToString(writer.Bytes())
+					if encoded != test.expected {
+						t.Errorf("%v (%T) != %v (%T)", encoded, encoded, test.expected, test.expected)
+					}
+				})
+			}
+		})
 	})
 }
