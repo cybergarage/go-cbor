@@ -16,6 +16,7 @@ package cbor
 
 import (
 	"io"
+	"math"
 )
 
 // An Encoder writes CBOR values to an output stream.
@@ -79,6 +80,23 @@ func (enc *Encoder) Encode(item any) error {
 			return err
 		}
 		return writeUint64Bytes(enc.writer, v)
+	}
+
+	encodeNumberOfBytes := func(mt majorType, n int) error {
+		header := byte(mt)
+		switch {
+		case n < 24:
+			header |= uint8(n)
+		case n < math.MaxUint8:
+			header |= byte(aiOneByte)
+		case n < math.MaxUint16:
+			header |= byte(aiTwoByte)
+		case n < math.MaxUint32:
+			header |= byte(aiFourByte)
+		default:
+			header |= byte(aiEightByte)
+		}
+		return writeByte(enc.writer, header)
 	}
 
 	switch v := item.(type) {
@@ -153,10 +171,11 @@ func (enc *Encoder) Encode(item any) error {
 	case nil:
 		return encodeNull()
 	case string:
-		if _, err := io.WriteString(enc.writer, v); err != nil {
+		n := len(v)
+		if err := encodeNumberOfBytes(Text, n); err != nil {
 			return err
 		}
-		return nil
+		return writeBytes(enc.writer, []byte(v))
 	}
 	return newErrorNotSupportedNativeType(item)
 }
