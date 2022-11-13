@@ -25,13 +25,6 @@ const (
 	errorUnkonwnNativeType     = "%T (%v) is %w"
 	errorUnkonwnMajorType      = "major type (%d) is %w"
 	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
-	errorInvalidArray          = "invalid array : %v"
-	errorInvalidDictionary     = "invalid dictionary : %v"
-	errorInvalidBooleanBytes   = "invalid boolean bytes : %v"
-	errorInvalidNullBytes      = "invalid null bytes : %v"
-	errorInvalidStringBytes    = "invalid string bytes : %d < %d %v"
-	errorInvalidBinaryBytes    = "invalid binary bytes : %d < %d %v"
-	errorInvalidIntegerBytes   = "invalid integer bytes : %v"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
