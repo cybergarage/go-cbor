@@ -31,3 +31,4 @@ linters:
     - exhaustruct
     - nilerr
     - ifshort
+    - nosnakecase
