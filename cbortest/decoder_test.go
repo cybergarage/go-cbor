@@ -112,5 +112,38 @@ func TestDecoder(t *testing.T) {
 				})
 			}
 		})
+		t.Run("Extra", func(t *testing.T) {
+			tests := []struct {
+				encoded  string
+				expected any
+			}{
+				{encoded: "40", expected: []byte("")},
+				{encoded: "4161", expected: []byte("a")},
+				{encoded: "4449455446", expected: []byte("IETF")},
+				{encoded: "42225c", expected: []byte("\"\\")},
+			}
+			for _, test := range tests {
+				t.Run(fmt.Sprintf("%T/%s=>%v", test.expected, test.encoded, test.expected), func(t *testing.T) {
+					testBytes, err := hex.DecodeString(test.encoded)
+					if err != nil {
+						t.Errorf("%v (%s)", test.encoded, err.Error())
+						return
+					}
+					decoder := cbor.NewDecoder(bytes.NewReader(testBytes))
+					v, err := decoder.Decode()
+					if err != nil {
+						if errors.Is(err, cbor.ErrNotSupported) {
+							t.Skipf("%v (%s)", test.encoded, err.Error())
+						} else {
+							t.Errorf("%v (%s)", test.encoded, err.Error())
+						}
+						return
+					}
+					if !reflect.DeepEqual(v, test.expected) {
+						t.Errorf("%v (%T) != %v (%T)", v, v, test.expected, test.expected)
+					}
+				})
+			}
+		})
 	})
 }
