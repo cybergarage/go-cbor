@@ -45,7 +45,7 @@ func readBytes(r io.Reader, n uint) ([]byte, error) {
 // header
 ////////////////////////////////////////////////////////////
 
-func writeHeader(w io.Writer, m majorType, i addInfo) error {
+func writeHeader(w io.Writer, m majorType, i majorInfo) error {
 	header := byte(m)
 	header |= byte(i)
 	return writeByte(w, header)
