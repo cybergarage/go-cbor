@@ -86,7 +86,7 @@ func (enc *Encoder) Encode(item any) error {
 	encodeNumberOfBytes := func(mt majorType, n int) error {
 		header := byte(mt)
 		switch {
-		case n < 24:
+		case n < int(aiOneByte):
 			header |= uint8(n)
 		case n < math.MaxUint8:
 			header |= byte(aiOneByte)
@@ -97,7 +97,22 @@ func (enc *Encoder) Encode(item any) error {
 		default:
 			header |= byte(aiEightByte)
 		}
-		return writeByte(enc.writer, header)
+		if err := writeByte(enc.writer, header); err != nil {
+			return err
+		}
+
+		switch {
+		case n < int(aiOneByte):
+			return nil
+		case n < math.MaxUint8:
+			return writeUint8Bytes(enc.writer, uint8(n))
+		case n < math.MaxUint16:
+			return writeUint16Bytes(enc.writer, uint16(n))
+		case n < math.MaxUint32:
+			return writeUint32Bytes(enc.writer, uint32(n))
+		default:
+			return writeUint64Bytes(enc.writer, uint64(n))
+		}
 	}
 
 	writeByteString := func(v []byte) error {
@@ -219,10 +234,16 @@ func (enc *Encoder) Encode(item any) error {
 			return err
 		}
 		return writeTextString(v.Format(time.RFC3339))
+	}
+
+	// Major type 4: An array of data items.
+
+	switch v := item.(type) {
 	case []int8:
 		return writeAnyArray(toAnyArray(v))
 	case []any:
 		return writeAnyArray(v)
 	}
+
 	return newErrorNotSupportedNativeType(item)
 }
