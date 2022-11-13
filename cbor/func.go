@@ -20,11 +20,7 @@ import (
 	"math"
 )
 
-////////////////////////////////////////////////////////////
-// Marshal
-////////////////////////////////////////////////////////////
-
-// Marshal returns the CBOR encoding of the specified v.
+// Marshal returns the CBOR-encoded bytes of the specified v.
 func Marshal(v any) ([]byte, error) {
 	var writer bytes.Buffer
 	encoder := NewEncoder(&writer)
@@ -33,6 +29,12 @@ func Marshal(v any) ([]byte, error) {
 		return nil, err
 	}
 	return writer.Bytes(), nil
+}
+
+// Unmarshal parses the specified CBOR-encoded bytes and returns the data representation of Go.
+func Unmarshal(cborBytes []byte, v any) (any, error) {
+	decoder := NewDecoder(bytes.NewReader(cborBytes))
+	return decoder.Decode()
 }
 
 ////////////////////////////////////////////////////////////
