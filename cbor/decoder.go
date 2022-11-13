@@ -65,9 +65,9 @@ func (dec *Decoder) Decode() (any, error) {
 		return int64(v)
 	}
 
-	readNumberOfBytes := func(mt majorType, ai majorInfo) (uint, error) {
+	readNumberOfItems := func(mt majorType, ai majorInfo) (int, error) {
 		if ai < aiOneByte {
-			return uint(ai), nil
+			return int(ai), nil
 		}
 		switch ai {
 		case aiOneByte:
@@ -75,31 +75,31 @@ func (dec *Decoder) Decode() (any, error) {
 			if err != nil {
 				return 0, err
 			}
-			return uint(v), nil
+			return int(v), nil
 		case aiTwoByte:
 			v, err := readUint16Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
-			return uint(v), nil
+			return int(v), nil
 		case aiFourByte:
 			v, err := readUint32Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
-			return uint(v), nil
+			return int(v), nil
 		case aiEightByte:
 			v, err := readUint64Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
-			return uint(v), nil
+			return int(v), nil
 		}
 		return 0, newErrorNotSupportedAddInfo(mt, ai)
 	}
 
 	readByteString := func(m majorType, i majorInfo) ([]byte, error) {
-		n, err := readNumberOfBytes(m, i)
+		n, err := readNumberOfItems(m, i)
 		if err != nil {
 			return nil, err
 		}
@@ -175,7 +175,19 @@ func (dec *Decoder) Decode() (any, error) {
 	case Text:
 		return readTextString(Text, majorInfo)
 	case Array:
-		return nil, newErrorNotSupportedMajorType(majorType)
+		cnt, err := readNumberOfItems(Array, majorInfo)
+		if err != nil {
+			return nil, err
+		}
+		array := make([]any, 0)
+		for n := 0; n < cnt; n++ {
+			item, err := dec.Decode()
+			if err != nil {
+				return nil, err
+			}
+			array = append(array, item)
+		}
+		return array, nil
 	case Map:
 		return nil, newErrorNotSupportedMajorType(majorType)
 	case Tag:
