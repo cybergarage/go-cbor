@@ -144,14 +144,6 @@ func (enc *Encoder) Encode(item any) error {
 		return nil
 	}
 
-	toAnyArray := func(v []int8) []any {
-		a := make([]any, len(v))
-		for n, t := range v {
-			a[n] = t
-		}
-		return a
-	}
-
 	// 3. Specification of the CBOR Encoding.
 
 	switch v := item.(type) {
