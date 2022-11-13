@@ -116,6 +116,27 @@ func (enc *Encoder) Encode(item any) error {
 		return writeString(enc.writer, v)
 	}
 
+	writeAnyArray := func(v []any) error {
+		cnt := len(v)
+		if err := encodeNumberOfBytes(Array, cnt); err != nil {
+			return err
+		}
+		for n := 0; n < cnt; n++ {
+			if err := enc.Encode(v[n]); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	toAnyArray := func(v []int8) []any {
+		a := make([]any, len(v))
+		for n, t := range v {
+			a[n] = t
+		}
+		return a
+	}
+
 	// 3. Specification of the CBOR Encoding.
 
 	switch v := item.(type) {
@@ -198,6 +219,10 @@ func (enc *Encoder) Encode(item any) error {
 			return err
 		}
 		return writeTextString(v.Format(time.RFC3339))
+	case []int8:
+		return writeAnyArray(toAnyArray(v))
+	case []any:
+		return writeAnyArray(v)
 	}
 	return newErrorNotSupportedNativeType(item)
 }
