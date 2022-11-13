@@ -20,4 +20,4 @@ Although CBOR is designed for very small code size and fairly small message size
 
 ![](img/conv_table_to.png)
 
-In addition to the basic CBOR measure types, `go-cbor` supports additional tag measure types such as datetime.
+In addition to the basic CBOR measure types, `go-cbor` supports additional tag major types such as datetime.
