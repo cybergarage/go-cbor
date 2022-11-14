@@ -18,6 +18,7 @@ import (
 	"errors"
 	"io"
 	"math"
+	"reflect"
 	"time"
 )
 
@@ -51,6 +52,13 @@ func (enc *Encoder) Encode(item any) error {
 	// Major type 5: A map of pairs of data items.
 
 	err = enc.encodeMap(item)
+	if err == nil || !errors.Is(err, ErrNotSupported) {
+		return err
+	}
+
+	// Major type 5: A struct of data items.
+
+	err = enc.encodeStruct(item)
 	if err == nil || !errors.Is(err, ErrNotSupported) {
 		return err
 	}
@@ -352,4 +360,14 @@ func (enc *Encoder) encodeMap(item any) error {
 	}
 
 	return newErrorNotSupportedNativeType(item)
+}
+
+func (enc *Encoder) encodeStruct(item any) error {
+	structMap := map[string]any{}
+	elem := reflect.ValueOf(item).Elem()
+	for n := 0; n < elem.NumField(); n++ {
+		typeField := elem.Type().Field(n)
+		structMap[typeField.Name] = elem.Field(n).Interface()
+	}
+	return enc.encodeMap(structMap)
 }
