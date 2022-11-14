@@ -21,7 +21,7 @@ import (
 
 func TestStruct(t *testing.T) {
 	testStructs := []any{
-		struct {
+		&struct {
 			Name  string
 			Value string
 		}{

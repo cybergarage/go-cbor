@@ -363,7 +363,7 @@ func (enc *Encoder) encodeMap(item any) error {
 }
 
 func (enc *Encoder) encodeStruct(item any) error {
-	structMap := map[string]any{}
+	structMap := map[any]any{}
 	elem := reflect.ValueOf(item).Elem()
 	for n := 0; n < elem.NumField(); n++ {
 		typeField := elem.Type().Field(n)
