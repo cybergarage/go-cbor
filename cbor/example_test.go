@@ -37,14 +37,28 @@ func ExampleDecoder_Decode() {
 		"4449455446",
 		"6449455446",
 		"83010203",
-		"a201020304",
+		"a161616141",
 	}
 	for _, cborObj := range cborObjs {
 		cborBytes, _ := hex.DecodeString(cborObj)
 		decoder := cbor.NewDecoder(bytes.NewReader(cborBytes))
 		goObj, _ := decoder.Decode()
-		fmt.Printf("%s => %v\n", cborObj, goObj)
+		fmt.Printf("%v\n", goObj)
 	}
+	// Output:
+	// 10
+	// 1000
+	// -1000
+	// 1.1
+	// <nil>
+	// false
+	// true
+	// <nil>
+	// 2013-03-21 20:04:00 +0000 UTC
+	// [73 69 84 70]
+	// IETF
+	// [1 2 3]
+	// map[a:A]
 }
 
 func ExampleUnmarshal() {
@@ -61,13 +75,27 @@ func ExampleUnmarshal() {
 		"4449455446",
 		"6449455446",
 		"83010203",
-		"a201020304",
+		"a161616141",
 	}
 	for _, cborObj := range cborObjs {
 		cborBytes, _ := hex.DecodeString(cborObj)
 		goObj, _ := cbor.Unmarshal(cborBytes)
-		fmt.Printf("%s => %v\n", cborObj, goObj)
+		fmt.Printf("%v\n", goObj)
 	}
+	// Output:
+	// 10
+	// 1000
+	// -1000
+	// 1.1
+	// <nil>
+	// false
+	// true
+	// <nil>
+	// 2013-03-21 20:04:00 +0000 UTC
+	// [73 69 84 70]
+	// IETF
+	// [1 2 3]
+	// map[a:A]
 }
 
 func ExampleEncoder_Encode() {
@@ -84,15 +112,28 @@ func ExampleEncoder_Encode() {
 		[]byte("IETF"),
 		"IETF",
 		[]int{1, 2, 3},
-		map[any]any{"a": "A", "b": "B", "c": "C"},
+		map[any]any{"a": "A"},
 	}
 	for _, goObj := range goObjs {
 		var w bytes.Buffer
 		encoder := cbor.NewEncoder(&w)
 		encoder.Encode(goObj)
 		cborBytes := w.Bytes()
-		fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
+		fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
 	}
+	// Output:
+	// 1b00000000000003e8
+	// 3b00000000000003e7
+	// fa47c35000
+	// fbc010666666666666
+	// f4
+	// f5
+	// f6
+	// c074323031332d30332d32315432303a30343a30305a
+	// 4449455446
+	// 6449455446
+	// 831b00000000000000011b00000000000000021b0000000000000003
+	// a161616141
 }
 
 func ExampleMarshal() {
@@ -109,10 +150,23 @@ func ExampleMarshal() {
 		"IETF",
 		goTimeObj,
 		[]int{1, 2, 3},
-		map[any]any{"a": "A", "b": "B", "c": "C"},
+		map[any]any{"a": "A"},
 	}
 	for _, goObj := range goObjs {
 		cborBytes, _ := cbor.Marshal(goObj)
-		fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
+		fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
 	}
+	// Output:
+	// 1b00000000000003e8
+	// 3b00000000000003e7
+	// fa47c35000
+	// fbc010666666666666
+	// f4
+	// f5
+	// f6
+	// 4449455446
+	// 6449455446
+	// c074323031332d30332d32315432303a30343a30305a
+	// 831b00000000000000011b00000000000000021b0000000000000003
+	// a161616141
 }
