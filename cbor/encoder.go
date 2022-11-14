@@ -274,16 +274,14 @@ func (enc *Encoder) Encode(item any) error {
 		return writeAnyArray(toAnyArray(v))
 	case []string:
 		return writeAnyArray(toAnyArray(v))
-	case []any:
+	case []any: // NOTE: Any array is not match.
 		return writeAnyArray(v)
 	}
 
 	// Major type 5: A map of pairs of data items.
 
-	switch v := item.(type) {
-	case map[string]any:
-		return writeAnyMap(toAnyMap(v))
-	case map[any]any:
+	v, ok := item.(map[any]any)
+	if ok {
 		return writeAnyMap(v)
 	}
 
