@@ -20,7 +20,14 @@ import (
 )
 
 func TestStruct(t *testing.T) {
-	testStructs := []any{}
+	testStructs := []any{
+		struct {
+			Name  string
+			Value string
+		}{
+			Name: "hello", Value: "world",
+		},
+	}
 
 	for _, testStruct := range testStructs {
 		t.Run(fmt.Sprintf("%v", testStruct), func(t *testing.T) {
