@@ -15,6 +15,7 @@
 package cbor
 
 import (
+	"errors"
 	"io"
 	"math"
 	"time"
@@ -32,9 +33,34 @@ func NewEncoder(w io.Writer) *Encoder {
 	}
 }
 
-// nolint: gocyclo, maintidx
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) Encode(item any) error {
+	// 3. Specification of the CBOR Encoding.
+
+	err := enc.encodeDataTypes(item)
+	if err == nil || !errors.Is(err, ErrNotSupported) {
+		return err
+	}
+	// Major type 4: An array of data items.
+
+	err = enc.encodeArray(item)
+	if err == nil || !errors.Is(err, ErrNotSupported) {
+		return err
+	}
+
+	// Major type 5: A map of pairs of data items.
+
+	err = enc.encodeMap(item)
+	if err == nil || !errors.Is(err, ErrNotSupported) {
+		return err
+	}
+
+	return newErrorNotSupportedNativeType(item)
+}
+
+// nolint: gocyclo, maintidx
+// Encode writes the specified object to the specified writer.
+func (enc *Encoder) encodeDataTypes(item any) error {
 	encodeNull := func() error {
 		return writeByte(enc.writer, byte(mtFloat)|byte(simpNull))
 	}
@@ -131,34 +157,6 @@ func (enc *Encoder) Encode(item any) error {
 		return writeString(enc.writer, v)
 	}
 
-	writeAnyArray := func(v []any) error {
-		cnt := len(v)
-		if err := encodeNumberOfBytes(mtArray, cnt); err != nil {
-			return err
-		}
-		for n := 0; n < cnt; n++ {
-			if err := enc.Encode(v[n]); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-
-	writeAnyMap := func(m map[any]any) error {
-		if err := encodeNumberOfBytes(mtMap, len(m)); err != nil {
-			return err
-		}
-		for k, v := range m {
-			if err := enc.Encode(k); err != nil {
-				return err
-			}
-			if err := enc.Encode(v); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-
 	// 3. Specification of the CBOR Encoding.
 
 	switch v := item.(type) {
@@ -243,6 +241,55 @@ func (enc *Encoder) Encode(item any) error {
 		return writeTextString(v.Format(time.RFC3339))
 	}
 
+	return newErrorNotSupportedNativeType(item)
+}
+
+func (enc *Encoder) encodeNumberOfBytes(mt majorType, n int) error {
+	header := byte(mt)
+	switch {
+	case n < int(aiOneByte):
+		header |= uint8(n)
+	case n < math.MaxUint8:
+		header |= byte(aiOneByte)
+	case n < math.MaxUint16:
+		header |= byte(aiTwoByte)
+	case n < math.MaxUint32:
+		header |= byte(aiFourByte)
+	default:
+		header |= byte(aiEightByte)
+	}
+	if err := writeByte(enc.writer, header); err != nil {
+		return err
+	}
+
+	switch {
+	case n < int(aiOneByte):
+		return nil
+	case n < math.MaxUint8:
+		return writeUint8Bytes(enc.writer, uint8(n))
+	case n < math.MaxUint16:
+		return writeUint16Bytes(enc.writer, uint16(n))
+	case n < math.MaxUint32:
+		return writeUint32Bytes(enc.writer, uint32(n))
+	default:
+		return writeUint64Bytes(enc.writer, uint64(n))
+	}
+}
+
+func (enc *Encoder) encodeArray(item any) error {
+	writeAnyArray := func(v []any) error {
+		cnt := len(v)
+		if err := enc.encodeNumberOfBytes(mtArray, cnt); err != nil {
+			return err
+		}
+		for n := 0; n < cnt; n++ {
+			if err := enc.Encode(v[n]); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
 	// Major type 4: An array of data items.
 
 	switch v := item.(type) {
@@ -276,6 +323,25 @@ func (enc *Encoder) Encode(item any) error {
 		return writeAnyArray(toAnyArray(v))
 	case []any: // NOTE: Any array is not match.
 		return writeAnyArray(v)
+	}
+
+	return newErrorNotSupportedNativeType(item)
+}
+
+func (enc *Encoder) encodeMap(item any) error {
+	writeAnyMap := func(m map[any]any) error {
+		if err := enc.encodeNumberOfBytes(mtMap, len(m)); err != nil {
+			return err
+		}
+		for k, v := range m {
+			if err := enc.Encode(k); err != nil {
+				return err
+			}
+			if err := enc.Encode(v); err != nil {
+				return err
+			}
+		}
+		return nil
 	}
 
 	// Major type 5: A map of pairs of data items.
