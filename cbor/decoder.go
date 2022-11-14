@@ -241,3 +241,8 @@ func (dec *Decoder) Decode() (any, error) {
 
 	return nil, newErrorNotSupportedMajorType(majorType)
 }
+
+// Unmarshal returns the next item to the specified data type if available, otherwise returns EOF or error.
+func (dec *Decoder) Unmarshal(s any) error {
+	return nil
+}
