@@ -40,7 +40,7 @@ func (enc *Encoder) Encode(item any) error {
 	case []byte: // Recognize as a byte array instead of a uint8 array。
 		return enc.encodeDataTypes(item)
 	case time.Time:
-		return enc.encodeDataTypes(item)
+		return enc.encodeStdStruct(item)
 	case nil:
 		return enc.encodeDataTypes(item)
 	}
@@ -261,11 +261,6 @@ func (enc *Encoder) encodeDataTypes(item any) error {
 		return enc.encodeByteString(v)
 	case string:
 		return enc.encodeTextString(v)
-	case time.Time:
-		if err := writeHeader(enc.writer, mtTag, tagStdDateTime); err != nil {
-			return err
-		}
-		return enc.encodeTextString(v.Format(time.RFC3339))
 	}
 
 	return newErrorNotSupportedNativeType(item)
@@ -357,4 +352,16 @@ func (enc *Encoder) encodeStruct(item any) error {
 		structMap[typeField.Name] = elem.Field(n).Interface()
 	}
 	return enc.encodeMap(structMap)
+}
+
+func (enc *Encoder) encodeStdStruct(item any) error {
+	switch v := item.(type) {
+	case time.Time:
+		if err := writeHeader(enc.writer, mtTag, tagStdDateTime); err != nil {
+			return err
+		}
+		return enc.encodeTextString(v.Format(time.RFC3339))
+	default:
+		return newErrorNotSupportedNativeType(item)
+	}
 }
