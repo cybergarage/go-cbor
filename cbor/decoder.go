@@ -17,6 +17,7 @@ package cbor
 import (
 	"io"
 	"math"
+	"reflect"
 	"time"
 )
 
@@ -242,6 +243,7 @@ func (dec *Decoder) Decode() (any, error) {
 	return nil, newErrorNotSupportedMajorType(majorType)
 }
 
+// nolint: exhaustive
 // Unmarshal returns the next item to the specified data type if available, otherwise returns EOF or error.
 func (dec *Decoder) Unmarshal(toObj any) error {
 	fromObj, err := dec.Decode()
@@ -251,7 +253,11 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 
 	switch v := fromObj.(type) {
 	case map[any]any:
-		return dec.unmarshalMapToStrct(v, toObj)
+		switch reflect.ValueOf(toObj).Type().Kind() {
+		case reflect.Struct:
+			return dec.unmarshalMapToStrct(v, toObj)
+		case reflect.Map:
+		}
 	case []any:
 	}
 
@@ -260,7 +266,17 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 
 func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toObj any) error {
 	for fk, kv := range fromObj {
-
+		key, ok := fk.(string)
+		if !ok {
+			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+		}
+		tv, ok := reflect.TypeOf(fromObj).FieldByName(key)
+		if !ok {
+			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+		}
+		if reflect.ValueOf(kv).Type().Kind() != reflect.ValueOf(tv).Type().Kind() {
+			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+		}
 	}
 	return nil
 }
