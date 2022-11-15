@@ -45,7 +45,10 @@ func (enc *Encoder) Encode(item any) error {
 		return enc.encodePrimitiveTypes(item)
 	}
 
-	switch reflect.ValueOf(item).Type().Kind() {
+	rv := reflect.ValueOf(item)
+	rt := rv.Type()
+	rk := rt.Kind()
+	switch rk {
 	// Major type 5: A map of pairs of data items.
 	case reflect.Map:
 		return enc.encodeMap(item)
@@ -68,7 +71,8 @@ func (enc *Encoder) Encode(item any) error {
 		reflect.Uint64,
 		reflect.Float32,
 		reflect.Float64,
-		reflect.String:
+		reflect.String,
+		reflect.Pointer:
 		return enc.encodePrimitiveTypes(item)
 	case reflect.Complex64,
 		reflect.Complex128:
@@ -76,7 +80,6 @@ func (enc *Encoder) Encode(item any) error {
 		reflect.Chan,
 		reflect.Func,
 		reflect.Interface,
-		reflect.Pointer,
 		reflect.Uintptr,
 		reflect.UnsafePointer:
 		return newErrorNotSupportedNativeType(item)
@@ -345,10 +348,10 @@ func (enc *Encoder) encodeMap(item any) error {
 
 func (enc *Encoder) encodeStruct(item any) error {
 	structMap := map[any]any{}
-	elem := reflect.ValueOf(item).Elem()
-	for n := 0; n < elem.NumField(); n++ {
-		typeField := elem.Type().Field(n)
-		structMap[typeField.Name] = elem.Field(n).Interface()
+	itemStruct := reflect.ValueOf(item)
+	for n := 0; n < itemStruct.NumField(); n++ {
+		typeField := itemStruct.Type().Field(n)
+		structMap[typeField.Name] = itemStruct.Field(n).Interface()
 	}
 	return enc.encodeMap(structMap)
 }
