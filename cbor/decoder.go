@@ -243,6 +243,24 @@ func (dec *Decoder) Decode() (any, error) {
 }
 
 // Unmarshal returns the next item to the specified data type if available, otherwise returns EOF or error.
-func (dec *Decoder) Unmarshal(s any) error {
+func (dec *Decoder) Unmarshal(toObj any) error {
+	fromObj, err := dec.Decode()
+	if err != nil {
+		return err
+	}
+
+	switch v := fromObj.(type) {
+	case map[any]any:
+		return dec.unmarshalMapToStrct(v, toObj)
+	case []any:
+	}
+
+	return newErrorNotSupportedNativeType(toObj)
+}
+
+func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toObj any) error {
+	for fk, kv := range fromObj {
+
+	}
 	return nil
 }

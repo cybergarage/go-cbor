@@ -19,7 +19,7 @@ import (
 	"testing"
 )
 
-func TestStruct(t *testing.T) {
+func TestUnmarshalTo(t *testing.T) {
 	testStructs := []any{
 		&struct {
 			Name  string
