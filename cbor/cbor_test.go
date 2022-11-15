@@ -16,11 +16,12 @@ package cbor
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
 func TestUnmarshalTo(t *testing.T) {
-	testStructs := []any{
+	fromStructs := []any{
 		&struct {
 			Name  string
 			Value string
@@ -29,17 +30,27 @@ func TestUnmarshalTo(t *testing.T) {
 		},
 	}
 
-	for _, testStruct := range testStructs {
-		t.Run(fmt.Sprintf("%v", testStruct), func(t *testing.T) {
-			encBytes, err := Marshal(testStruct)
+	toStructs := []any{
+		&struct {
+			Name  string
+			Value string
+		}{},
+	}
+
+	for n, fromStruct := range fromStructs {
+		t.Run(fmt.Sprintf("%v", fromStruct), func(t *testing.T) {
+			encBytes, err := Marshal(fromStruct)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-			err = UnmarshalTo(encBytes, testStruct)
+			err = UnmarshalTo(encBytes, toStructs[n])
 			if err != nil {
 				t.Skip(err)
 				return
+			}
+			if !reflect.DeepEqual(fromStruct, toStructs[n]) {
+				t.Errorf("%v != %v", fromStruct, toStructs[n])
 			}
 		})
 	}
