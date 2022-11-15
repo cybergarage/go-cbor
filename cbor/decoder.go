@@ -265,6 +265,7 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 	return newErrorNotSupportedNativeType(toObj)
 }
 
+// nolint: exhaustive
 func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toObj any) error {
 	var toStruct reflect.Value
 	switch reflect.TypeOf(toObj).Kind() {
@@ -272,6 +273,9 @@ func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toObj any) error {
 		toStruct = reflect.ValueOf(toObj)
 	case reflect.Pointer:
 		toStruct = reflect.ValueOf(toObj).Elem()
+		if toStruct.Type().Kind() != reflect.Struct {
+			return newErrorNotSupportedNativeType(toObj)
+		}
 	default:
 		return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
 	}
