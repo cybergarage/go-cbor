@@ -266,18 +266,27 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 }
 
 func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toObj any) error {
-	toStruct := reflect.TypeOf(toObj)
+	var toStruct reflect.Value
+	switch reflect.TypeOf(toObj).Kind() {
+	case reflect.Struct:
+		toStruct = reflect.ValueOf(toObj)
+	case reflect.Pointer:
+		toStruct = reflect.ValueOf(toObj).Elem()
+	default:
+		return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+	}
+
 	for fromMapKey, fromMapValue := range fromObj {
 		key, ok := fromMapKey.(string)
 		if !ok {
 			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
 		}
-		toStructField, ok := toStruct.FieldByName(key)
+		toStructField := toStruct.FieldByName(key)
 		if !ok {
 			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
 		}
 		fromMapValueStruct := reflect.ValueOf(fromMapValue)
-		if fromMapValueStruct.Type().Kind() != toStructField.Type.Kind() {
+		if fromMapValueStruct.Type().Kind() != toStructField.Type().Kind() {
 			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
 		}
 	}
