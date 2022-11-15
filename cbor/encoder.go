@@ -125,6 +125,14 @@ func (enc *Encoder) encodeTextString(v string) error {
 	return writeString(enc.writer, v)
 }
 
+func (enc *Encoder) encodeByteString(v []byte) error {
+	n := len(v)
+	if err := enc.encodeNumberOfBytes(mtBytes, n); err != nil {
+		return err
+	}
+	return writeBytes(enc.writer, v)
+}
+
 // nolint: gocyclo, maintidx
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) encodeDataTypes(item any) error {
@@ -174,46 +182,6 @@ func (enc *Encoder) encodeDataTypes(item any) error {
 			return err
 		}
 		return writeUint64Bytes(enc.writer, v)
-	}
-
-	encodeNumberOfBytes := func(mt majorType, n int) error {
-		header := byte(mt)
-		switch {
-		case n < int(aiOneByte):
-			header |= uint8(n)
-		case n < math.MaxUint8:
-			header |= byte(aiOneByte)
-		case n < math.MaxUint16:
-			header |= byte(aiTwoByte)
-		case n < math.MaxUint32:
-			header |= byte(aiFourByte)
-		default:
-			header |= byte(aiEightByte)
-		}
-		if err := writeByte(enc.writer, header); err != nil {
-			return err
-		}
-
-		switch {
-		case n < int(aiOneByte):
-			return nil
-		case n < math.MaxUint8:
-			return writeUint8Bytes(enc.writer, uint8(n))
-		case n < math.MaxUint16:
-			return writeUint16Bytes(enc.writer, uint16(n))
-		case n < math.MaxUint32:
-			return writeUint32Bytes(enc.writer, uint32(n))
-		default:
-			return writeUint64Bytes(enc.writer, uint64(n))
-		}
-	}
-
-	writeByteString := func(v []byte) error {
-		n := len(v)
-		if err := encodeNumberOfBytes(mtBytes, n); err != nil {
-			return err
-		}
-		return writeBytes(enc.writer, v)
 	}
 
 	// 3. Specification of the CBOR Encoding.
@@ -290,7 +258,7 @@ func (enc *Encoder) encodeDataTypes(item any) error {
 	case nil:
 		return encodeNull()
 	case []byte:
-		return writeByteString(v)
+		return enc.encodeByteString(v)
 	case string:
 		return enc.encodeTextString(v)
 	case time.Time:
