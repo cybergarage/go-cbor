@@ -45,10 +45,7 @@ func (enc *Encoder) Encode(item any) error {
 		return enc.encodePrimitiveTypes(item)
 	}
 
-	rv := reflect.ValueOf(item)
-	rt := rv.Type()
-	rk := rt.Kind()
-	switch rk {
+	switch reflect.TypeOf(item).Kind() {
 	// Major type 5: A map of pairs of data items.
 	case reflect.Map:
 		return enc.encodeMap(item)
