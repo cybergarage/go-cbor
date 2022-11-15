@@ -36,7 +36,7 @@ fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
 
 ## Decoding
 
-To convert data from CBOR to Go, `go-cbor` offers `Unmarshal()`. `Unmarshal()` converts from the specified data model of CBOR into the equivalent data model of Go as the following.
+To convert data from CBOR to Go, `go-cbor` offers `Unmarshal()`. `Unmarshal()` converts from an encoded bytes of CBOR into the equivalent data model of Go as the following.
 
 ```
 cborObjs := []string{
@@ -59,4 +59,19 @@ for _, cborObj := range cborObjs {
     goObj, _ := cbor.Unmarshal(cborBytes)
     fmt.Printf("%s => %v\n", cborObj, goObj)
 }
+```
+
+To unmarshal to a user-defined struct, `go-cbor` offers `UnmarshalTo()`. `Unmarshal()To` tries to convert from  an encoded bytes of CBOR into the specified user-defined struct as the following.
+
+```
+type Record struct {
+    Key   string
+    Value string
+}
+
+from := Record{Key: "hello", Value: "world"}
+cborBytes, _ := cbor.Marshal(&from)
+
+to := Record{Key: "", Value: ""}
+cbor.UnmarshalTo(cborBytes, &to)
 ```
