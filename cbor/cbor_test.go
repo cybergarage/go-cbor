@@ -31,7 +31,12 @@ func TestStruct(t *testing.T) {
 
 	for _, testStruct := range testStructs {
 		t.Run(fmt.Sprintf("%v", testStruct), func(t *testing.T) {
-			_, err := Marshal(testStruct)
+			encBytes, err := Marshal(testStruct)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			err = UnmarshalTo(encBytes, testStruct)
 			if err != nil {
 				t.Error(err)
 				return
