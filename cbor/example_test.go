@@ -100,22 +100,45 @@ func ExampleUnmarshal() {
 	// map[a:A]
 }
 
-func ExampleUnmarshalTo() {
+func ExampleDecoder_Unmarshal() {
 	type Record struct {
-		Name  string
+		Key   string
 		Value string
 	}
 
-	from := Record{Name: "hello", Value: "world"}
+	from := Record{Key: "hello", Value: "world"}
+	var w bytes.Buffer
+	encoder := cbor.NewEncoder(&w)
+	encoder.Encode(from)
+	cborBytes := w.Bytes()
+	fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
+
+	to := Record{Key: "", Value: ""}
+	decoder := cbor.NewDecoder(bytes.NewReader(cborBytes))
+	decoder.Unmarshal(&to)
+	fmt.Printf("%v\n", to)
+
+	// Output:
+	// a2634b65796568656c6c6f6556616c756565776f726c64
+	// {hello world}
+}
+
+func ExampleUnmarshalTo() {
+	type Record struct {
+		Key   string
+		Value string
+	}
+
+	from := Record{Key: "hello", Value: "world"}
 	cborBytes, _ := cbor.Marshal(&from)
 	fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
 
-	to := Record{Name: "", Value: ""}
+	to := Record{Key: "", Value: ""}
 	cbor.UnmarshalTo(cborBytes, &to)
 	fmt.Printf("%v\n", to)
 
 	// Output:
-	// a2644e616d656568656c6c6f6556616c756565776f726c64
+	// a2634b65796568656c6c6f6556616c756565776f726c64
 	// {hello world}
 }
 
