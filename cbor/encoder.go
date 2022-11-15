@@ -354,6 +354,7 @@ func (enc *Encoder) encodeStdStruct(item any) error {
 	}
 }
 
+// nolint: exhaustive
 func (enc *Encoder) encodeStruct(item any) error {
 	var itemStruct reflect.Value
 	switch reflect.TypeOf(item).Kind() {
@@ -361,6 +362,9 @@ func (enc *Encoder) encodeStruct(item any) error {
 		itemStruct = reflect.ValueOf(item)
 	case reflect.Pointer:
 		itemStruct = reflect.ValueOf(item).Elem()
+		if itemStruct.Type().Kind() != reflect.Struct {
+			return newErrorNotSupportedNativeType(item)
+		}
 	default:
 		return newErrorNotSupportedNativeType(item)
 	}
