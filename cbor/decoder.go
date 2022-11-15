@@ -293,6 +293,7 @@ func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toObj any) error {
 		if fromMapValueStruct.Type().Kind() != toStructField.Type().Kind() {
 			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
 		}
+		toStructField.Set(fromMapValueStruct)
 	}
 	return nil
 }
