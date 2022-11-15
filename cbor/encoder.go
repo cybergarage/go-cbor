@@ -367,6 +367,9 @@ func (enc *Encoder) encodeStruct(item any) error {
 	elem := reflect.ValueOf(item).Elem()
 	for n := 0; n < elem.NumField(); n++ {
 		typeField := elem.Type().Field(n)
+		if typeField.Type.Kind() != reflect.Struct {
+			return newErrorNotSupportedNativeType(item)
+		}
 		structMap[typeField.Name] = elem.Field(n).Interface()
 	}
 	return enc.encodeMap(structMap)
