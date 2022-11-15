@@ -45,6 +45,7 @@ func ExampleDecoder_Decode() {
 		goObj, _ := decoder.Decode()
 		fmt.Printf("%v\n", goObj)
 	}
+
 	// Output:
 	// 10
 	// 1000
@@ -82,6 +83,7 @@ func ExampleUnmarshal() {
 		goObj, _ := cbor.Unmarshal(cborBytes)
 		fmt.Printf("%v\n", goObj)
 	}
+
 	// Output:
 	// 10
 	// 1000
@@ -96,6 +98,25 @@ func ExampleUnmarshal() {
 	// IETF
 	// [1 2 3]
 	// map[a:A]
+}
+
+func ExampleUnmarshalTo() {
+	type Record struct {
+		Name  string
+		Value string
+	}
+
+	from := Record{Name: "hello", Value: "world"}
+	cborBytes, _ := cbor.Marshal(&from)
+	fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
+
+	to := Record{Name: "", Value: ""}
+	cbor.UnmarshalTo(cborBytes, &to)
+	fmt.Printf("%v\n", to)
+
+	// Output:
+	// a2644e616d656568656c6c6f6556616c756565776f726c64
+	// {hello world}
 }
 
 func ExampleEncoder_Encode() {
@@ -121,6 +142,7 @@ func ExampleEncoder_Encode() {
 		cborBytes := w.Bytes()
 		fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
 	}
+
 	// Output:
 	// 1b00000000000003e8
 	// 3b00000000000003e7
@@ -156,6 +178,7 @@ func ExampleMarshal() {
 		cborBytes, _ := cbor.Marshal(goObj)
 		fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
 	}
+
 	// Output:
 	// 1b00000000000003e8
 	// 3b00000000000003e7
