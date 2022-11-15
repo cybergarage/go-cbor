@@ -85,6 +85,46 @@ func (enc *Encoder) Encode(item any) error {
 	return newErrorNotSupportedNativeType(item)
 }
 
+func (enc *Encoder) encodeNumberOfBytes(mt majorType, n int) error {
+	header := byte(mt)
+	switch {
+	case n < int(aiOneByte):
+		header |= uint8(n)
+	case n < math.MaxUint8:
+		header |= byte(aiOneByte)
+	case n < math.MaxUint16:
+		header |= byte(aiTwoByte)
+	case n < math.MaxUint32:
+		header |= byte(aiFourByte)
+	default:
+		header |= byte(aiEightByte)
+	}
+	if err := writeByte(enc.writer, header); err != nil {
+		return err
+	}
+
+	switch {
+	case n < int(aiOneByte):
+		return nil
+	case n < math.MaxUint8:
+		return writeUint8Bytes(enc.writer, uint8(n))
+	case n < math.MaxUint16:
+		return writeUint16Bytes(enc.writer, uint16(n))
+	case n < math.MaxUint32:
+		return writeUint32Bytes(enc.writer, uint32(n))
+	default:
+		return writeUint64Bytes(enc.writer, uint64(n))
+	}
+}
+
+func (enc *Encoder) encodeTextString(v string) error {
+	n := len(v)
+	if err := enc.encodeNumberOfBytes(mtText, n); err != nil {
+		return err
+	}
+	return writeString(enc.writer, v)
+}
+
 // nolint: gocyclo, maintidx
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) encodeDataTypes(item any) error {
@@ -176,14 +216,6 @@ func (enc *Encoder) encodeDataTypes(item any) error {
 		return writeBytes(enc.writer, v)
 	}
 
-	writeTextString := func(v string) error {
-		n := len(v)
-		if err := encodeNumberOfBytes(mtText, n); err != nil {
-			return err
-		}
-		return writeString(enc.writer, v)
-	}
-
 	// 3. Specification of the CBOR Encoding.
 
 	switch v := item.(type) {
@@ -260,55 +292,15 @@ func (enc *Encoder) encodeDataTypes(item any) error {
 	case []byte:
 		return writeByteString(v)
 	case string:
-		return writeTextString(v)
+		return enc.encodeTextString(v)
 	case time.Time:
 		if err := writeHeader(enc.writer, mtTag, tagStdDateTime); err != nil {
 			return err
 		}
-		return writeTextString(v.Format(time.RFC3339))
+		return enc.encodeTextString(v.Format(time.RFC3339))
 	}
 
 	return newErrorNotSupportedNativeType(item)
-}
-
-func (enc *Encoder) encodeNumberOfBytes(mt majorType, n int) error {
-	header := byte(mt)
-	switch {
-	case n < int(aiOneByte):
-		header |= uint8(n)
-	case n < math.MaxUint8:
-		header |= byte(aiOneByte)
-	case n < math.MaxUint16:
-		header |= byte(aiTwoByte)
-	case n < math.MaxUint32:
-		header |= byte(aiFourByte)
-	default:
-		header |= byte(aiEightByte)
-	}
-	if err := writeByte(enc.writer, header); err != nil {
-		return err
-	}
-
-	switch {
-	case n < int(aiOneByte):
-		return nil
-	case n < math.MaxUint8:
-		return writeUint8Bytes(enc.writer, uint8(n))
-	case n < math.MaxUint16:
-		return writeUint16Bytes(enc.writer, uint16(n))
-	case n < math.MaxUint32:
-		return writeUint32Bytes(enc.writer, uint32(n))
-	default:
-		return writeUint64Bytes(enc.writer, uint64(n))
-	}
-}
-
-func (enc *Encoder) encodeTextString(v string) error {
-	n := len(v)
-	if err := enc.encodeNumberOfBytes(mtText, n); err != nil {
-		return err
-	}
-	return writeString(enc.writer, v)
 }
 
 func (enc *Encoder) encodeArray(item any) error {
