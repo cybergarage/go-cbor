@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.1.0 (2022-11-xx)
+- Add Decode::Unmarshal() and UnmarshalTo() for unmarshaling to user-defined structures
+
 ## v1.0.0 (2022-11-13)
 - Initial release  
 ###  Supported
