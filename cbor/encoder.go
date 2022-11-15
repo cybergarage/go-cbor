@@ -15,7 +15,6 @@
 package cbor
 
 import (
-	"errors"
 	"io"
 	"math"
 	"reflect"
@@ -36,31 +35,51 @@ func NewEncoder(w io.Writer) *Encoder {
 
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) Encode(item any) error {
-	// 3. Specification of the CBOR Encoding.
-
-	err := enc.encodeDataTypes(item)
-	if err == nil || !errors.Is(err, ErrNotSupported) {
-		return err
-	}
-	// Major type 4: An array of data items.
-
-	err = enc.encodeArray(item)
-	if err == nil || !errors.Is(err, ErrNotSupported) {
-		return err
+	// Special data types that cannot be determined by reflect package
+	switch item.(type) {
+	case []byte: // Recognize as a byte array instead of a uint8 array。
+		return enc.encodeDataTypes(item)
+	case time.Time:
+		return enc.encodeDataTypes(item)
+	case nil:
+		return enc.encodeDataTypes(item)
 	}
 
+	switch reflect.ValueOf(item).Type().Kind() {
 	// Major type 5: A map of pairs of data items.
-
-	err = enc.encodeMap(item)
-	if err == nil || !errors.Is(err, ErrNotSupported) {
-		return err
-	}
-
-	// Major type 5: A struct of data items.
-
-	err = enc.encodeStruct(item)
-	if err == nil || !errors.Is(err, ErrNotSupported) {
-		return err
+	case reflect.Map:
+		return enc.encodeMap(item)
+	// Major type 4: An array of data items.
+	case reflect.Array, reflect.Slice:
+		return enc.encodeArray(item)
+	case reflect.Struct:
+		return enc.encodeStruct(item)
+	// 3. Specification of the CBOR Encoding.
+	case reflect.Bool,
+		reflect.Int,
+		reflect.Int8,
+		reflect.Int16,
+		reflect.Int32,
+		reflect.Int64,
+		reflect.Uint,
+		reflect.Uint8,
+		reflect.Uint16,
+		reflect.Uint32,
+		reflect.Uint64,
+		reflect.Float32,
+		reflect.Float64,
+		reflect.String:
+		return enc.encodeDataTypes(item)
+	case reflect.Complex64,
+		reflect.Complex128:
+	case reflect.Invalid,
+		reflect.Chan,
+		reflect.Func,
+		reflect.Interface,
+		reflect.Pointer,
+		reflect.Uintptr,
+		reflect.UnsafePointer:
+		return newErrorNotSupportedNativeType(item)
 	}
 
 	return newErrorNotSupportedNativeType(item)
@@ -284,6 +303,14 @@ func (enc *Encoder) encodeNumberOfBytes(mt majorType, n int) error {
 	}
 }
 
+func (enc *Encoder) encodeTextString(v string) error {
+	n := len(v)
+	if err := enc.encodeNumberOfBytes(mtText, n); err != nil {
+		return err
+	}
+	return writeString(enc.writer, v)
+}
+
 func (enc *Encoder) encodeArray(item any) error {
 	writeAnyArray := func(v []any) error {
 		cnt := len(v)
@@ -367,9 +394,6 @@ func (enc *Encoder) encodeStruct(item any) error {
 	elem := reflect.ValueOf(item).Elem()
 	for n := 0; n < elem.NumField(); n++ {
 		typeField := elem.Type().Field(n)
-		if typeField.Type.Kind() != reflect.Struct {
-			return newErrorNotSupportedNativeType(item)
-		}
 		structMap[typeField.Name] = elem.Field(n).Interface()
 	}
 	return enc.encodeMap(structMap)
