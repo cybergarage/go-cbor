@@ -38,11 +38,11 @@ func (enc *Encoder) Encode(item any) error {
 	// Special data types that cannot be determined by reflect package
 	switch item.(type) {
 	case []byte: // Recognize as a byte array instead of a uint8 array。
-		return enc.encodeDataTypes(item)
+		return enc.encodePrimitiveTypes(item)
 	case time.Time:
 		return enc.encodeStdStruct(item)
 	case nil:
-		return enc.encodeDataTypes(item)
+		return enc.encodePrimitiveTypes(item)
 	}
 
 	switch reflect.ValueOf(item).Type().Kind() {
@@ -69,7 +69,7 @@ func (enc *Encoder) Encode(item any) error {
 		reflect.Float32,
 		reflect.Float64,
 		reflect.String:
-		return enc.encodeDataTypes(item)
+		return enc.encodePrimitiveTypes(item)
 	case reflect.Complex64,
 		reflect.Complex128:
 	case reflect.Invalid,
@@ -134,8 +134,7 @@ func (enc *Encoder) encodeByteString(v []byte) error {
 }
 
 // nolint: gocyclo, maintidx
-// Encode writes the specified object to the specified writer.
-func (enc *Encoder) encodeDataTypes(item any) error {
+func (enc *Encoder) encodePrimitiveTypes(item any) error {
 	encodeNull := func() error {
 		return writeByte(enc.writer, byte(mtFloat)|byte(simpNull))
 	}
