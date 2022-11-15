@@ -21,7 +21,7 @@ import (
 
 func TestUnmarshalTo(t *testing.T) {
 	testStructs := []any{
-		struct {
+		&struct {
 			Name  string
 			Value string
 		}{
@@ -33,7 +33,7 @@ func TestUnmarshalTo(t *testing.T) {
 		t.Run(fmt.Sprintf("%v", testStruct), func(t *testing.T) {
 			encBytes, err := Marshal(testStruct)
 			if err != nil {
-				t.Skip(err)
+				t.Error(err)
 				return
 			}
 			err = UnmarshalTo(encBytes, testStruct)
