@@ -23,16 +23,16 @@ import (
 func TestUnmarshalTo(t *testing.T) {
 	fromStructs := []any{
 		&struct {
-			Name  string
+			Key   string
 			Value string
 		}{
-			Name: "hello", Value: "world",
+			Key: "hello", Value: "world",
 		},
 	}
 
 	toStructs := []any{
 		&struct {
-			Name  string
+			Key   string
 			Value string
 		}{},
 	}
