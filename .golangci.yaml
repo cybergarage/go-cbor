@@ -32,4 +32,3 @@ linters:
     - nilerr
     - ifshort
     - nosnakecase
-    - testableexamples
