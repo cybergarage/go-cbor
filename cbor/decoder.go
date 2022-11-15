@@ -254,7 +254,7 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 	switch v := fromObj.(type) {
 	case map[any]any:
 		switch reflect.ValueOf(toObj).Type().Kind() {
-		case reflect.Struct:
+		case reflect.Struct, reflect.Pointer:
 			return dec.unmarshalMapToStrct(v, toObj)
 		default:
 			return newErrorNotSupportedNativeType(toObj)
