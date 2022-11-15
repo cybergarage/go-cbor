@@ -52,7 +52,7 @@ func (enc *Encoder) Encode(item any) error {
 	// Major type 4: An array of data items.
 	case reflect.Array, reflect.Slice:
 		return enc.encodeArray(item)
-	case reflect.Struct:
+	case reflect.Struct, reflect.Pointer:
 		return enc.encodeStruct(item)
 	// 3. Specification of the CBOR Encoding.
 	case reflect.Bool,
@@ -68,8 +68,7 @@ func (enc *Encoder) Encode(item any) error {
 		reflect.Uint64,
 		reflect.Float32,
 		reflect.Float64,
-		reflect.String,
-		reflect.Pointer:
+		reflect.String:
 		return enc.encodePrimitiveTypes(item)
 	case reflect.Complex64,
 		reflect.Complex128:
@@ -343,16 +342,6 @@ func (enc *Encoder) encodeMap(item any) error {
 	return newErrorNotSupportedNativeType(item)
 }
 
-func (enc *Encoder) encodeStruct(item any) error {
-	structMap := map[any]any{}
-	itemStruct := reflect.ValueOf(item)
-	for n := 0; n < itemStruct.NumField(); n++ {
-		typeField := itemStruct.Type().Field(n)
-		structMap[typeField.Name] = itemStruct.Field(n).Interface()
-	}
-	return enc.encodeMap(structMap)
-}
-
 func (enc *Encoder) encodeStdStruct(item any) error {
 	switch v := item.(type) {
 	case time.Time:
@@ -363,4 +352,23 @@ func (enc *Encoder) encodeStdStruct(item any) error {
 	default:
 		return newErrorNotSupportedNativeType(item)
 	}
+}
+
+func (enc *Encoder) encodeStruct(item any) error {
+	var itemStruct reflect.Value
+	switch reflect.TypeOf(item).Kind() {
+	case reflect.Struct:
+		itemStruct = reflect.ValueOf(item)
+	case reflect.Pointer:
+		itemStruct = reflect.ValueOf(item).Elem()
+	default:
+		return newErrorNotSupportedNativeType(item)
+	}
+
+	structMap := map[any]any{}
+	for n := 0; n < itemStruct.NumField(); n++ {
+		typeField := itemStruct.Type().Field(n)
+		structMap[typeField.Name] = itemStruct.Field(n).Interface()
+	}
+	return enc.encodeMap(structMap)
 }
