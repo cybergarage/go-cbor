@@ -17,6 +17,7 @@ package cbor
 import (
 	"io"
 	"math"
+	"reflect"
 )
 
 ////////////////////////////////////////////////////////////
@@ -331,10 +332,29 @@ func toAnyArray[T comparable](v []T) []any {
 // Array
 ////////////////////////////////////////////////////////////
 
-func toAnyMap[T comparable](v map[T]any) map[any]any {
-	m := map[any]any{}
-	for k, v := range v {
-		m[k] = v
+func toAnyMap(fromMap any) (map[any]any, error) {
+	toMap := map[any]any{}
+
+	fromMapVal := reflect.ValueOf(fromMap)
+	fromMapType := fromMapVal.Type()
+	if fromMapType.Kind() != reflect.Map {
+		return nil, newErrorCastTypes(fromMap, toMap)
 	}
-	return m
+
+	toMapVal := reflect.ValueOf(toMap)
+	toMapType := toMapVal.Type()
+	toMapKeyType := toMapType.Key()
+	toMapElemType := toMapType.Elem()
+
+	for _, fromMapKeyVal := range fromMapVal.MapKeys() {
+		if !fromMapKeyVal.CanConvert(toMapKeyType) {
+			return nil, newErrorCastTypes(fromMap, toMap)
+		}
+		fromMapElemVal := fromMapVal.MapIndex(fromMapKeyVal)
+		if !fromMapElemVal.CanConvert(toMapElemType) {
+			return nil, newErrorCastTypes(fromMap, toMap)
+		}
+		toMapVal.SetMapIndex(fromMapKeyVal.Convert(toMapKeyType), fromMapElemVal.Convert(toMapElemType))
+	}
+	return toMap, nil
 }
