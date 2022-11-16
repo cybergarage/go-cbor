@@ -257,7 +257,7 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 		case reflect.Struct:
 			return dec.unmarshalMapToStrct(v, reflect.ValueOf(toObj))
 		case reflect.Map:
-			return dec.unmarshalMapToMap(v, reflect.ValueOf(toObj))
+			return dec.unmarshalMapToMap(v, toObj)
 		case reflect.Pointer:
 			elem := reflect.ValueOf(toObj).Elem()
 			if elem.Type().Kind() != reflect.Struct {
@@ -326,20 +326,24 @@ func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStruct reflect.Va
 	return nil
 }
 
-func (dec *Decoder) unmarshalMapToMap(fromMap map[any]any, toMap reflect.Value) error {
-	toMapType := toMap.Type()
+func (dec *Decoder) unmarshalMapToMap(fromMap map[any]any, toMap any) error {
+	toMapVal := reflect.ValueOf(toMap)
+	toMapType := toMapVal.Type()
+	if toMapType.Kind() != reflect.Map {
+		return newErrorUnmarshalDataTypes(fromMap, toMap)
+	}
 	toMapKeyType := toMapType.Key()
 	toMapElemType := toMapType.Elem()
 	for fromMapKey, fromMapValue := range fromMap {
 		fromMapKeyVal := reflect.ValueOf(fromMapKey)
 		if !fromMapKeyVal.CanConvert(toMapKeyType) {
-			return newErrorUnmarshalDataTypes(fromMapKey, toMap)
+			return newErrorUnmarshalDataTypes(fromMapKey, toMapVal)
 		}
 		fromMapElemVal := reflect.ValueOf(fromMapValue)
 		if !fromMapElemVal.CanConvert(toMapElemType) {
-			return newErrorUnmarshalDataTypes(fromMapKey, toMap)
+			return newErrorUnmarshalDataTypes(fromMapKey, toMapVal)
 		}
-		toMap.SetMapIndex(fromMapKeyVal.Convert(toMapKeyType), fromMapElemVal.Convert(toMapElemType))
+		toMapVal.SetMapIndex(fromMapKeyVal.Convert(toMapKeyType), fromMapElemVal.Convert(toMapElemType))
 	}
 	return nil
 }
