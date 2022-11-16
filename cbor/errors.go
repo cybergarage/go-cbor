@@ -17,15 +17,18 @@ package cbor
 import (
 	"errors"
 	"fmt"
+	"reflect"
 )
 
 var ErrNotSupported = errors.New("not supported")
+var ErrUnmarshal = errors.New("unmarshal error")
 
 const (
 	errorUnkonwnNativeType     = "%T (%v) is %w"
 	errorUnkonwnMajorType      = "major type (%d) is %w"
 	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
-	errorUnmarshalDataTypes    = " %w unmarshaling from %T to %T"
+	errorUnmarshalDataTypes    = " %w cound not convert from %T to %T"
+	errorUnmarshalShortArray   = " %w short array size %T(%d) < %T(%d)"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -40,6 +43,10 @@ func newErrorNotSupportedNativeType(item any) error {
 	return fmt.Errorf(errorUnkonwnNativeType, item, item, ErrNotSupported)
 }
 
-func newErrorNotSupportedUnmarshalingDataTypes(fromItem any, toItem any) error {
-	return fmt.Errorf(errorUnmarshalDataTypes, ErrNotSupported, fromItem, toItem)
+func newErrorUnmarshalDataTypes(fromItem any, toItem any) error {
+	return fmt.Errorf(errorUnmarshalDataTypes, ErrUnmarshal, fromItem, toItem)
+}
+
+func newErrorUnmarshalArraySize(fromArray []any, toArrayVal reflect.Value) error {
+	return fmt.Errorf(errorUnmarshalShortArray, ErrUnmarshal, fromArray, len(fromArray), toArrayVal, toArrayVal.Cap())
 }
