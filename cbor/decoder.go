@@ -274,20 +274,32 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 	return newErrorNotSupportedNativeType(toObj)
 }
 
+// nolint: exhaustive
 func (dec *Decoder) unmarshalArrayTo(fromArray []any, toArrayVal reflect.Value) error {
-	fromArrayType := reflect.TypeOf(fromArray)
+	fromArrayLen := len(fromArray)
 	toArrayType := toArrayVal.Type()
-	if fromArrayType.Kind() != toArrayType.Kind() {
-		return newErrorNotSupportedUnmarshalingDataTypes(fromArray, toArrayVal)
+	switch toArrayType.Kind() {
+	case reflect.Array:
+		if toArrayVal.Cap() < fromArrayLen {
+			return newErrorUnmarshalArraySize(fromArray, toArrayVal)
+		}
+	case reflect.Slice:
+		if toArrayVal.Cap() < fromArrayLen {
+			return newErrorUnmarshalArraySize(fromArray, toArrayVal)
+		}
+		toArrayVal.SetLen(fromArrayLen)
+		toArrayVal.SetCap(fromArrayLen)
 	}
 
 	toObjType := toArrayType.Elem().Kind()
-	for _, fromObj := range fromArray {
+	for n, fromObj := range fromArray {
 		fromObjType := reflect.TypeOf(fromObj).Kind()
 		if fromObjType != toObjType {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toArrayVal)
+			return newErrorUnmarshalDataTypes(fromObj, toArrayVal)
 		}
-		toArrayVal = reflect.Append(toArrayVal, reflect.ValueOf(fromObj))
+		toArrayField := toArrayVal.Field(n)
+		toArrayField.Set(reflect.ValueOf(fromObj))
+		// toArrayVal = reflect.Append(toArrayVal, reflect.ValueOf(fromObj))
 	}
 
 	return nil
@@ -297,15 +309,15 @@ func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStruct reflect.Va
 	for fromMapKey, fromMapElem := range fromMap {
 		key, ok := fromMapKey.(string)
 		if !ok {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toStruct)
+			return newErrorUnmarshalDataTypes(fromMap, toStruct)
 		}
 		toStructField := toStruct.FieldByName(key)
 		if !ok {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toStruct)
+			return newErrorUnmarshalDataTypes(fromMap, toStruct)
 		}
 		fromMapElemVal := reflect.ValueOf(fromMapElem)
 		if fromMapElemVal.Type().Kind() != toStructField.Type().Kind() {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toStruct)
+			return newErrorUnmarshalDataTypes(fromMap, toStruct)
 		}
 		toStructField.Set(fromMapElemVal)
 	}
@@ -319,11 +331,11 @@ func (dec *Decoder) unmarshalMapToMap(fromMap map[any]any, toMap reflect.Value) 
 	for fromMapKey, fromMapValue := range fromMap {
 		fromMapKeyVal := reflect.ValueOf(fromMapKey)
 		if !fromMapKeyVal.CanConvert(toMapKeyType) {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromMapKey, toMap)
+			return newErrorUnmarshalDataTypes(fromMapKey, toMap)
 		}
 		fromMapElemVal := reflect.ValueOf(fromMapValue)
 		if !fromMapElemVal.CanConvert(toMapElemType) {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromMapKey, toMap)
+			return newErrorUnmarshalDataTypes(fromMapKey, toMap)
 		}
 		toMap.SetMapIndex(fromMapKeyVal.Convert(toMapKeyType), fromMapElemVal.Convert(toMapElemType))
 	}
