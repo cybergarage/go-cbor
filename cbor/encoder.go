@@ -280,40 +280,16 @@ func (enc *Encoder) encodeArray(item any) error {
 
 	// Major type 4: An array of data items.
 
-	switch v := item.(type) {
-	case []int8:
-		return writeAnyArray(toAnyArray(v))
-	case []int16:
-		return writeAnyArray(toAnyArray(v))
-	case []int32:
-		return writeAnyArray(toAnyArray(v))
-	case []int64:
-		return writeAnyArray(toAnyArray(v))
-	case []int:
-		return writeAnyArray(toAnyArray(v))
-	case []uint8:
-		return writeAnyArray(toAnyArray(v))
-	case []uint16:
-		return writeAnyArray(toAnyArray(v))
-	case []uint32:
-		return writeAnyArray(toAnyArray(v))
-	case []uint64:
-		return writeAnyArray(toAnyArray(v))
-	case []uint:
-		return writeAnyArray(toAnyArray(v))
-	case []float32:
-		return writeAnyArray(toAnyArray(v))
-	case []float64:
-		return writeAnyArray(toAnyArray(v))
-	case []bool:
-		return writeAnyArray(toAnyArray(v))
-	case []string:
-		return writeAnyArray(toAnyArray(v))
-	case []any: // NOTE: Any array is not match.
+	v, ok := item.([]any)
+	if ok {
 		return writeAnyArray(v)
 	}
 
-	return newErrorNotSupportedNativeType(item)
+	v, err := toAnyArray(item)
+	if err != nil {
+		return err
+	}
+	return writeAnyArray(v)
 }
 
 func (enc *Encoder) encodeMap(item any) error {
@@ -337,13 +313,13 @@ func (enc *Encoder) encodeMap(item any) error {
 	v, ok := item.(map[any]any)
 	if ok {
 		return writeAnyMap(v)
-	} else {
-		v, err := toAnyMap(item)
-		if err != nil {
-			return err
-		}
-		return writeAnyMap(v)
 	}
+
+	v, err := toAnyMap(item)
+	if err != nil {
+		return err
+	}
+	return writeAnyMap(v)
 }
 
 func (enc *Encoder) encodeStdStruct(item any) error {
