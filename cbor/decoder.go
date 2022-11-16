@@ -255,7 +255,7 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 	case map[any]any:
 		switch reflect.ValueOf(toObj).Type().Kind() {
 		case reflect.Struct, reflect.Pointer:
-			return dec.unmarshalMapToStrct(v, toObj)
+			return dec.unmarshalMapTo(v, toObj)
 		default:
 			return newErrorNotSupportedNativeType(toObj)
 		}
@@ -266,32 +266,35 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 }
 
 // nolint: exhaustive
-func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toObj any) error {
-	var toStruct reflect.Value
+func (dec *Decoder) unmarshalMapTo(fromObj map[any]any, toObj any) error {
 	switch reflect.TypeOf(toObj).Kind() {
 	case reflect.Struct:
-		toStruct = reflect.ValueOf(toObj)
+		dec.unmarshalMapToStrct(fromObj, reflect.ValueOf(toObj))
 	case reflect.Pointer:
-		toStruct = reflect.ValueOf(toObj).Elem()
-		if toStruct.Type().Kind() != reflect.Struct {
+		elem := reflect.ValueOf(toObj).Elem()
+		if elem.Type().Kind() != reflect.Struct {
 			return newErrorNotSupportedNativeType(toObj)
 		}
-	default:
-		return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+		dec.unmarshalMapToStrct(fromObj, elem)
 	}
 
+	return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+}
+
+// nolint: exhaustive
+func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toStruct reflect.Value) error {
 	for fromMapKey, fromMapValue := range fromObj {
 		key, ok := fromMapKey.(string)
 		if !ok {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toStruct)
 		}
 		toStructField := toStruct.FieldByName(key)
 		if !ok {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toStruct)
 		}
 		fromMapValueStruct := reflect.ValueOf(fromMapValue)
 		if fromMapValueStruct.Type().Kind() != toStructField.Type().Kind() {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toStruct)
 		}
 		toStructField.Set(fromMapValueStruct)
 	}
