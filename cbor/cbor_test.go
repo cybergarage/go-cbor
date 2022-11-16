@@ -28,7 +28,7 @@ func TestUnmarshalTo(t *testing.T) {
 		}{
 			Key: "hello", Value: "world",
 		},
-		[]string{"one", "two"},
+		// []string{"one", "two"},
 		[]string{"one", "two"},
 		map[any]any{1: "one", 2: "two"},
 	}
@@ -38,7 +38,7 @@ func TestUnmarshalTo(t *testing.T) {
 			Key   string
 			Value string
 		}{},
-		&[]string{},
+		// &[]string{},
 		make([]string, 2),
 		map[int]string{},
 	}
