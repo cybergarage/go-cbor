@@ -268,24 +268,25 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 			return newErrorNotSupportedNativeType(toObj)
 		}
 	case []any:
-		return dec.unmarshalArrayTo(v, reflect.ValueOf(toObj))
+		return dec.unmarshalArrayTo(v, toObj)
 	}
 
 	return newErrorNotSupportedNativeType(toObj)
 }
 
 // nolint: exhaustive
-func (dec *Decoder) unmarshalArrayTo(fromArray []any, toArrayVal reflect.Value) error {
+func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
+	toArrayVal := reflect.ValueOf(toObj)
 	fromArrayLen := len(fromArray)
 	toArrayType := toArrayVal.Type()
 	switch toArrayType.Kind() {
 	case reflect.Array:
 		if toArrayVal.Cap() < fromArrayLen {
-			return newErrorUnmarshalArraySize(fromArray, toArrayVal)
+			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
 		}
 	case reflect.Slice:
 		if toArrayVal.Cap() < fromArrayLen {
-			return newErrorUnmarshalArraySize(fromArray, toArrayVal)
+			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
 		}
 		toArrayVal.SetLen(fromArrayLen)
 		toArrayVal.SetCap(fromArrayLen)
