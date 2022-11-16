@@ -294,6 +294,22 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 		}
 		// toArrayVal.SetLen(fromArrayLen)
 		// toArrayVal.SetCap(fromArrayLen)
+	// case reflect.Pointer:
+	// 	elem := reflect.ValueOf(toObj).Elem()
+	// 	switch elem.Type().Kind() {
+	// 	case reflect.Array:
+	// 		if elem.Len() < fromArrayLen {
+	// 			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+	// 		}
+	// 	case reflect.Slice:
+	// 		if elem.Len() < fromArrayLen {
+	// 			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+	// 		}
+	// 		// toArrayVal.SetLen(fromArrayLen)
+	// 		// toArrayVal.SetCap(fromArrayLen)
+	// 	default:
+	// 		return newErrorUnmarshalDataTypes(fromArray, toObj)
+	// 	}
 	default:
 		return newErrorUnmarshalDataTypes(fromArray, toObj)
 	}
