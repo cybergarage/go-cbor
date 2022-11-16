@@ -260,9 +260,15 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 			return newErrorNotSupportedNativeType(toObj)
 		}
 	case []any:
+		return dec.unmarshalArrayTo(v, toObj)
 	}
 
 	return newErrorNotSupportedNativeType(toObj)
+}
+
+// nolint: exhaustive
+func (dec *Decoder) unmarshalArrayTo(fromObj []any, toObj any) error {
+	return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
 }
 
 // nolint: exhaustive
