@@ -30,6 +30,9 @@ func TestUnmarshalTo(t *testing.T) {
 		},
 		// []string{"one", "two"},
 		[]string{"one", "two"},
+		map[string]int{"one": 1, "two": 2},
+		map[any]any{"one": 1, "two": 2},
+		map[string]int{"one": 1, "two": 2},
 		map[int]string{1: "one", 2: "two"},
 		map[any]any{1: "one", 2: "two"},
 		map[int]string{1: "one", 2: "two"},
@@ -42,26 +45,30 @@ func TestUnmarshalTo(t *testing.T) {
 		}{},
 		// &[]string{},
 		make([]string, 2),
+		map[string]int{},
+		map[string]int{},
+		map[any]any{},
 		map[int]string{},
 		map[int]string{},
 		map[any]any{},
 	}
 
 	for n, fromObj := range fromObjs {
-		t.Run(fmt.Sprintf("%v", fromObj), func(t *testing.T) {
+		toObj := toObjs[n]
+		t.Run(fmt.Sprintf("%T=>%T", fromObj, toObj), func(t *testing.T) {
 			encBytes, err := Marshal(fromObj)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-			err = UnmarshalTo(encBytes, toObjs[n])
+			err = UnmarshalTo(encBytes, toObj)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-			if !reflect.DeepEqual(fromObj, toObjs[n]) {
-				if fmt.Sprintf("%v", fromObj) != fmt.Sprintf("%v", toObjs[n]) {
-					t.Errorf("%v != %v", fromObj, toObjs[n])
+			if !reflect.DeepEqual(fromObj, toObj) {
+				if fmt.Sprintf("%v", fromObj) != fmt.Sprintf("%v", toObj) {
+					t.Errorf("%v != %v", fromObj, toObj)
 				}
 			}
 		})
