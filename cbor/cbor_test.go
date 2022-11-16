@@ -21,36 +21,38 @@ import (
 )
 
 func TestUnmarshalTo(t *testing.T) {
-	fromStructs := []any{
+	fromObjs := []any{
 		&struct {
 			Key   string
 			Value string
 		}{
 			Key: "hello", Value: "world",
 		},
+		[]string{"one", "two"},
 	}
 
-	toStructs := []any{
+	toObjs := []any{
 		&struct {
 			Key   string
 			Value string
 		}{},
+		[]string{},
 	}
 
-	for n, fromStruct := range fromStructs {
-		t.Run(fmt.Sprintf("%v", fromStruct), func(t *testing.T) {
-			encBytes, err := Marshal(fromStruct)
+	for n, fromObj := range fromObjs {
+		t.Run(fmt.Sprintf("%v", fromObj), func(t *testing.T) {
+			encBytes, err := Marshal(fromObj)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-			err = UnmarshalTo(encBytes, toStructs[n])
+			err = UnmarshalTo(encBytes, toObjs[n])
 			if err != nil {
-				t.Skip(err)
+				t.Error(err)
 				return
 			}
-			if !reflect.DeepEqual(fromStruct, toStructs[n]) {
-				t.Errorf("%v != %v", fromStruct, toStructs[n])
+			if !reflect.DeepEqual(fromObj, toObjs[n]) {
+				t.Errorf("%v != %v", fromObj, toObjs[n])
 			}
 		})
 	}

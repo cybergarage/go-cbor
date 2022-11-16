@@ -267,42 +267,58 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 }
 
 // nolint: exhaustive
-func (dec *Decoder) unmarshalArrayTo(fromObj []any, toObj any) error {
-	return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+func (dec *Decoder) unmarshalArrayTo(fromArray []any, toArray any) error {
+	fromArrayType := reflect.TypeOf(fromArray).Kind()
+	toArrayType := reflect.TypeOf(toArray).Kind()
+	if fromArrayType != toArrayType {
+		return newErrorNotSupportedUnmarshalingDataTypes(fromArray, toArray)
+	}
+
+	toArrayVal := reflect.ValueOf(toArray)
+	toObjType := reflect.TypeOf(toArray).Elem().Kind()
+	for _, fromObj := range fromArray {
+		fromObjType := reflect.TypeOf(fromObj).Kind()
+		if fromObjType != toObjType {
+			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toArray)
+		}
+		toArrayVal = reflect.Append(toArrayVal, reflect.ValueOf(fromObj))
+	}
+
+	return nil
 }
 
 // nolint: exhaustive
-func (dec *Decoder) unmarshalMapTo(fromObj map[any]any, toObj any) error {
+func (dec *Decoder) unmarshalMapTo(fromMap map[any]any, toObj any) error {
 	switch reflect.TypeOf(toObj).Kind() {
 	case reflect.Struct:
-		dec.unmarshalMapToStrct(fromObj, reflect.ValueOf(toObj))
+		dec.unmarshalMapToStrct(fromMap, reflect.ValueOf(toObj))
 	case reflect.Map:
-		dec.unmarshalMapToMap(fromObj, reflect.ValueOf(toObj))
+		dec.unmarshalMapToMap(fromMap, reflect.ValueOf(toObj))
 	case reflect.Pointer:
 		elem := reflect.ValueOf(toObj).Elem()
 		if elem.Type().Kind() != reflect.Struct {
 			return newErrorNotSupportedNativeType(toObj)
 		}
-		dec.unmarshalMapToStrct(fromObj, elem)
+		dec.unmarshalMapToStrct(fromMap, elem)
 	}
 
-	return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toObj)
+	return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toObj)
 }
 
 // nolint: exhaustive
-func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toStruct reflect.Value) error {
-	for fromMapKey, fromMapValue := range fromObj {
+func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStruct reflect.Value) error {
+	for fromMapKey, fromMapValue := range fromMap {
 		key, ok := fromMapKey.(string)
 		if !ok {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toStruct)
+			return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toStruct)
 		}
 		toStructField := toStruct.FieldByName(key)
 		if !ok {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toStruct)
+			return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toStruct)
 		}
 		fromMapValueStruct := reflect.ValueOf(fromMapValue)
 		if fromMapValueStruct.Type().Kind() != toStructField.Type().Kind() {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toStruct)
+			return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toStruct)
 		}
 		toStructField.Set(fromMapValueStruct)
 	}
