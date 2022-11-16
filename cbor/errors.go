@@ -22,6 +22,9 @@ import (
 
 var ErrNotSupported = errors.New("not supported")
 var ErrUnmarshal = errors.New("unmarshal error")
+var ErrDecode = errors.New("decode error")
+var ErrEncode = errors.New("encode error")
+var ErrCastType = errors.New("cast error")
 
 const (
 	errorUnkonwnNativeType     = "%T (%v) is %w"
@@ -29,6 +32,7 @@ const (
 	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
 	errorUnmarshalDataTypes    = " %w : cound not convert from %v(%T) to %T"
 	errorUnmarshalShortArray   = " %w : short array size (%T[%d] < %T[%d])"
+	errorCastDataTypes         = " %w : cound not convert from %v(%T) to %T"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -49,4 +53,8 @@ func newErrorUnmarshalDataTypes(fromItem any, toItem any) error {
 
 func newErrorUnmarshalArraySize(fromArray []any, toObj any, toArrayVal reflect.Value) error {
 	return fmt.Errorf(errorUnmarshalShortArray, ErrUnmarshal, fromArray, len(fromArray), toObj, toArrayVal.Cap())
+}
+
+func newErrorCastTypes(fromItem any, toItem any) error {
+	return fmt.Errorf(errorCastDataTypes, ErrUnmarshal, fromItem, fromItem, toItem)
 }
