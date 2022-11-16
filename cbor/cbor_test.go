@@ -70,7 +70,7 @@ func TestUnmarshalTo(t *testing.T) {
 			}
 			if !reflect.DeepEqual(fromObj, toObj) {
 				if fmt.Sprintf("%v", fromObj) != fmt.Sprintf("%v", toObj) {
-					t.Errorf("%v != %v", fromObj, toObj)
+					t.Errorf("%s != %s", fromObj, toObj)
 				}
 			}
 		})

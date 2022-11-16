@@ -124,22 +124,34 @@ func ExampleDecoder_Unmarshal() {
 }
 
 func ExampleUnmarshalTo() {
-	type Record struct {
-		Key   string
-		Value string
+	fromObjs := []any{
+		struct {
+			Key   string
+			Value string
+		}{
+			Key: "hello", Value: "world",
+		},
+		map[string]int{"one": 1, "two": 2},
 	}
 
-	from := Record{Key: "hello", Value: "world"}
-	cborBytes, _ := cbor.Marshal(&from)
-	fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
+	toObjs := []any{
+		&struct {
+			Key   string
+			Value string
+		}{},
+		map[string]int{},
+	}
 
-	to := Record{Key: "", Value: ""}
-	cbor.UnmarshalTo(cborBytes, &to)
-	fmt.Printf("%v\n", to)
+	for n, fromObj := range fromObjs {
+		toObj := toObjs[n]
+		encBytes, _ := cbor.Marshal(fromObj)
+		cbor.UnmarshalTo(encBytes, toObj)
+		fmt.Printf("%v\n", toObj)
+	}
 
 	// Output:
-	// a2634b65796568656c6c6f6556616c756565776f726c64
-	// {hello world}
+	// &{hello world}
+	// map[one:1 two:2]
 }
 
 func ExampleEncoder_Encode() {
