@@ -2,7 +2,7 @@
 
 ## v1.1.0 (2022-11-xx)
 - Updated Encoder::Encode() and Marshal() to support any user-defined maps, arrays, and structures
-- Added Decoder::Unmarshal() and UnmarshalTo() to unmarshal decoded objects into any user-defined maps, arrays, and structures
+- Added Decoder::Unmarshal() and UnmarshalTo() to unmarshal decoded objects into any user-defined maps and structures
 ###  Supported
 - Go
   - struct
