@@ -268,25 +268,24 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 			return newErrorNotSupportedNativeType(toObj)
 		}
 	case []any:
-		return dec.unmarshalArrayTo(v, toObj)
+		return dec.unmarshalArrayTo(v, reflect.ValueOf(toObj))
 	}
 
 	return newErrorNotSupportedNativeType(toObj)
 }
 
-func (dec *Decoder) unmarshalArrayTo(fromArray []any, toArray any) error {
-	fromArrayType := reflect.TypeOf(fromArray).Kind()
-	toArrayType := reflect.TypeOf(toArray).Kind()
-	if fromArrayType != toArrayType {
-		return newErrorNotSupportedUnmarshalingDataTypes(fromArray, toArray)
+func (dec *Decoder) unmarshalArrayTo(fromArray []any, toArrayVal reflect.Value) error {
+	fromArrayType := reflect.TypeOf(fromArray)
+	toArrayType := toArrayVal.Type()
+	if fromArrayType.Kind() != toArrayType.Kind() {
+		return newErrorNotSupportedUnmarshalingDataTypes(fromArray, toArrayVal)
 	}
 
-	toArrayVal := reflect.ValueOf(toArray)
-	toObjType := reflect.TypeOf(toArray).Elem().Kind()
+	toObjType := toArrayType.Elem().Kind()
 	for _, fromObj := range fromArray {
 		fromObjType := reflect.TypeOf(fromObj).Kind()
 		if fromObjType != toObjType {
-			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toArray)
+			return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toArrayVal)
 		}
 		toArrayVal = reflect.Append(toArrayVal, reflect.ValueOf(fromObj))
 	}
