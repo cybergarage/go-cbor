@@ -268,7 +268,11 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 			return newErrorNotSupportedNativeType(toObj)
 		}
 	case []any:
-		return dec.unmarshalArrayTo(v, toObj)
+		switch reflect.ValueOf(toObj).Type().Kind() {
+		case reflect.Array, reflect.Slice, reflect.Pointer:
+			return dec.unmarshalArrayTo(v, toObj)
+		}
+		return newErrorNotSupportedNativeType(toObj)
 	}
 
 	return newErrorNotSupportedNativeType(toObj)
