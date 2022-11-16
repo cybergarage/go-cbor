@@ -61,7 +61,7 @@ for _, cborObj := range cborObjs {
 }
 ```
 
-To unmarshal to a user-defined struct, `go-cbor` offers `UnmarshalTo()`. `Unmarshal()To` tries to convert from  an encoded bytes of CBOR into the specified user-defined struct as the following.
+To unmarshal to a user-defined struct, `go-cbor` offers `UnmarshalTo()`. `Unmarshal()To` tries to convert from an encoded bytes of CBOR into the specified user-defined struct or map as the following.
 
 ```
 fromObjs := []any{
