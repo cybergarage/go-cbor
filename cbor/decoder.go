@@ -36,7 +36,7 @@ func NewDecoder(r io.Reader) *Decoder {
 }
 
 // nolint: gocyclo, maintidx, exhaustive
-// Decode returns the next item if available, otherwise returns EOF or error.
+// Decode returns a next decoded item from the specified reader if available, otherwise returns EOF or another error.
 func (dec *Decoder) Decode() (any, error) {
 	returnDecordedUint8 := func(v uint8) any {
 		if math.MaxInt8 < v {
@@ -244,7 +244,7 @@ func (dec *Decoder) Decode() (any, error) {
 }
 
 // nolint: exhaustive
-// Unmarshal returns the next item to the specified data type if available, otherwise returns EOF or error.
+// Unmarshal decodes a next encoded item from the specified reader and stores the decoded item to the specified data type if appropriate.
 func (dec *Decoder) Unmarshal(toObj any) error {
 	fromObj, err := dec.Decode()
 	if err != nil {
@@ -254,8 +254,16 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 	switch v := fromObj.(type) {
 	case map[any]any:
 		switch reflect.ValueOf(toObj).Type().Kind() {
-		case reflect.Struct, reflect.Pointer:
-			return dec.unmarshalMapTo(v, toObj)
+		case reflect.Struct:
+			return dec.unmarshalMapToStrct(v, reflect.ValueOf(toObj))
+		case reflect.Map:
+			return dec.unmarshalMapToMap(v, reflect.ValueOf(toObj))
+		case reflect.Pointer:
+			elem := reflect.ValueOf(toObj).Elem()
+			if elem.Type().Kind() != reflect.Struct {
+				return newErrorNotSupportedNativeType(toObj)
+			}
+			return dec.unmarshalMapToStrct(v, elem)
 		default:
 			return newErrorNotSupportedNativeType(toObj)
 		}
@@ -288,26 +296,8 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toArray any) error {
 }
 
 // nolint: exhaustive
-func (dec *Decoder) unmarshalMapTo(fromMap map[any]any, toObj any) error {
-	switch reflect.TypeOf(toObj).Kind() {
-	case reflect.Struct:
-		return dec.unmarshalMapToStrct(fromMap, reflect.ValueOf(toObj))
-	case reflect.Map:
-		return dec.unmarshalMapToMap(fromMap, reflect.ValueOf(toObj))
-	case reflect.Pointer:
-		elem := reflect.ValueOf(toObj).Elem()
-		if elem.Type().Kind() != reflect.Struct {
-			return newErrorNotSupportedNativeType(toObj)
-		}
-		return dec.unmarshalMapToStrct(fromMap, elem)
-	}
-
-	return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toObj)
-}
-
-// nolint: exhaustive
 func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStruct reflect.Value) error {
-	for fromMapKey, fromMapValue := range fromMap {
+	for fromMapKey, fromMapElem := range fromMap {
 		key, ok := fromMapKey.(string)
 		if !ok {
 			return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toStruct)
@@ -316,16 +306,32 @@ func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStruct reflect.Va
 		if !ok {
 			return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toStruct)
 		}
-		fromMapValueStruct := reflect.ValueOf(fromMapValue)
-		if fromMapValueStruct.Type().Kind() != toStructField.Type().Kind() {
+		fromMapElemVal := reflect.ValueOf(fromMapElem)
+		if fromMapElemVal.Type().Kind() != toStructField.Type().Kind() {
 			return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toStruct)
 		}
-		toStructField.Set(fromMapValueStruct)
+		toStructField.Set(fromMapElemVal)
 	}
 	return nil
 }
 
 // nolint: exhaustive
-func (dec *Decoder) unmarshalMapToMap(fromObj map[any]any, toMap reflect.Value) error {
-	return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toMap)
+func (dec *Decoder) unmarshalMapToMap(fromMap map[any]any, toMap reflect.Value) error {
+	toMapKeyType := reflect.TypeOf(toMap).Key()
+	toMapKValype := reflect.TypeOf(toMap).Elem()
+	for fromMapKey, fromMapValue := range fromMap {
+		// key, ok := fromMapKey.(string)
+		// if !ok {
+		// 	return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toMap)
+		// }
+		fromMapKeyVal := reflect.ValueOf(fromMapKey)
+		if !fromMapKeyVal.CanConvert(toMapKeyType) {
+			return newErrorNotSupportedUnmarshalingDataTypes(fromMapKey, toMap)
+		}
+		fromMapElemVal := reflect.ValueOf(fromMapValue)
+		if !fromMapElemVal.CanConvert(toMapKValype) {
+			return newErrorNotSupportedUnmarshalingDataTypes(fromMapKey, toMap)
+		}
+	}
+	return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toMap)
 }
