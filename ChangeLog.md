@@ -1,7 +1,7 @@
 # Changelog
 
 ## v1.1.0 (2022-11-xx)
-- Updated Encoder::Encode() and Marshal() to support any user-defined structures
+- Updated Encoder::Encode() and Marshal() to support any user-defined maps, arrays, and structures
 - Added Decoder::Unmarshal() and UnmarshalTo() to unmarshal decoded objects into any user-defined maps, arrays, and structures
 ###  Supported
 - Go
@@ -35,4 +35,4 @@
   - array ([]any)
   - map (map[any]any)
   - time.Time
- b 
+ 
