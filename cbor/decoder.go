@@ -298,7 +298,7 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 	for n, fromObj := range fromArray {
 		fromObjType := reflect.TypeOf(fromObj).Kind()
 		if fromObjType != toObjType {
-			return newErrorUnmarshalDataTypes(fromObj, toArrayVal)
+			return newErrorUnmarshalDataTypes(fromObj, toObj)
 		}
 		toArrayIndex := toArrayVal.Index(n)
 		toArrayIndex.Set(reflect.ValueOf(fromObj))
