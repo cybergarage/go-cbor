@@ -22,23 +22,23 @@ import (
 
 func TestUnmarshalTo(t *testing.T) {
 	fromObjs := []any{
-		&struct {
-			Key   string
-			Value string
-		}{
-			Key: "hello", Value: "world",
-		},
+		// &struct {
+		// 	Key   string
+		// 	Value string
+		// }{
+		// 	Key: "hello", Value: "world",
+		// },
 		// []string{"one", "two"},
-		// map[any]any{1: "one", 2: "two"},
+		map[any]any{1: "one", 2: "two"},
 	}
 
 	toObjs := []any{
-		&struct {
-			Key   string
-			Value string
-		}{},
+		// &struct {
+		// 	Key   string
+		// 	Value string
+		// }{},
 		// []string{},
-		// map[int]string{},
+		map[int]string{},
 	}
 
 	for n, fromObj := range fromObjs {
