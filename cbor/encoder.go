@@ -337,9 +337,13 @@ func (enc *Encoder) encodeMap(item any) error {
 	v, ok := item.(map[any]any)
 	if ok {
 		return writeAnyMap(v)
+	} else {
+		v, err := toAnyMap(item)
+		if err != nil {
+			return err
+		}
+		return writeAnyMap(v)
 	}
-
-	return newErrorNotSupportedNativeType(item)
 }
 
 func (enc *Encoder) encodeStdStruct(item any) error {
