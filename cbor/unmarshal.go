@@ -18,13 +18,13 @@ import (
 	"bytes"
 )
 
-// Unmarshal decodes the specified CBOR-encoded bytes and returns the data representation of Go.
+// Unmarshal decodes the specified CBOR-encoded bytes and returns the data representation of Go. Unmarshal is a sugar function of Decoder::Decode().
 func Unmarshal(cborBytes []byte) (any, error) {
 	decoder := NewDecoder(bytes.NewReader(cborBytes))
 	return decoder.Decode()
 }
 
-// UnmarshalTo decodes the specified CBOR-encoded bytes to the specified data type of Go.
+// UnmarshalTo decodes the specified CBOR-encoded bytes and stores the decoded item to the specified data type if appropriate. UnmarshalTo is a sugar function of Decoder::Unmarshal().
 func UnmarshalTo(cborBytes []byte, s any) error {
 	decoder := NewDecoder(bytes.NewReader(cborBytes))
 	return decoder.Unmarshal(s)
