@@ -281,15 +281,15 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 	toArrayType := toArrayVal.Type()
 	switch toArrayType.Kind() {
 	case reflect.Array:
-		if toArrayVal.Cap() < fromArrayLen {
+		if toArrayVal.Len() < fromArrayLen {
 			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
 		}
 	case reflect.Slice:
-		if toArrayVal.Cap() < fromArrayLen {
+		if toArrayVal.Len() < fromArrayLen {
 			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
 		}
-		toArrayVal.SetLen(fromArrayLen)
-		toArrayVal.SetCap(fromArrayLen)
+		// toArrayVal.SetLen(fromArrayLen)
+		// toArrayVal.SetCap(fromArrayLen)
 	default:
 		return newErrorUnmarshalDataTypes(fromArray, toObj)
 	}
@@ -300,8 +300,8 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 		if fromObjType != toObjType {
 			return newErrorUnmarshalDataTypes(fromObj, toArrayVal)
 		}
-		toArrayField := toArrayVal.Field(n)
-		toArrayField.Set(reflect.ValueOf(fromObj))
+		toArrayIndex := toArrayVal.Index(n)
+		toArrayIndex.Set(reflect.ValueOf(fromObj))
 	}
 
 	return nil
