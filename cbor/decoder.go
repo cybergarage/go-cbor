@@ -307,19 +307,22 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 	return nil
 }
 
-func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStruct reflect.Value) error {
+func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStructVal reflect.Value) error {
+	if toStructVal.Type().Kind() != reflect.Struct {
+		return newErrorUnmarshalDataTypes(fromMap, toStructVal)
+	}
 	for fromMapKey, fromMapElem := range fromMap {
 		key, ok := fromMapKey.(string)
 		if !ok {
-			return newErrorUnmarshalDataTypes(fromMap, toStruct)
+			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 		}
-		toStructField := toStruct.FieldByName(key)
+		toStructField := toStructVal.FieldByName(key)
 		if !ok {
-			return newErrorUnmarshalDataTypes(fromMap, toStruct)
+			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 		}
 		fromMapElemVal := reflect.ValueOf(fromMapElem)
 		if fromMapElemVal.Type().Kind() != toStructField.Type().Kind() {
-			return newErrorUnmarshalDataTypes(fromMap, toStruct)
+			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 		}
 		toStructField.Set(fromMapElemVal)
 	}

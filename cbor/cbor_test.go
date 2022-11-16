@@ -38,6 +38,7 @@ func TestUnmarshalTo(t *testing.T) {
 			Value string
 		}{},
 		// []string{},
+		make([]string, 2),
 		map[int]string{},
 	}
 
