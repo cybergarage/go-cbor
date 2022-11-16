@@ -290,6 +290,8 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 		}
 		toArrayVal.SetLen(fromArrayLen)
 		toArrayVal.SetCap(fromArrayLen)
+	default:
+		return newErrorUnmarshalDataTypes(fromArray, toObj)
 	}
 
 	toObjType := toArrayType.Elem().Kind()
@@ -300,7 +302,6 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 		}
 		toArrayField := toArrayVal.Field(n)
 		toArrayField.Set(reflect.ValueOf(fromObj))
-		// toArrayVal = reflect.Append(toArrayVal, reflect.ValueOf(fromObj))
 	}
 
 	return nil
