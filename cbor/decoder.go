@@ -291,15 +291,15 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toArray any) error {
 func (dec *Decoder) unmarshalMapTo(fromMap map[any]any, toObj any) error {
 	switch reflect.TypeOf(toObj).Kind() {
 	case reflect.Struct:
-		dec.unmarshalMapToStrct(fromMap, reflect.ValueOf(toObj))
+		return dec.unmarshalMapToStrct(fromMap, reflect.ValueOf(toObj))
 	case reflect.Map:
-		dec.unmarshalMapToMap(fromMap, reflect.ValueOf(toObj))
+		return dec.unmarshalMapToMap(fromMap, reflect.ValueOf(toObj))
 	case reflect.Pointer:
 		elem := reflect.ValueOf(toObj).Elem()
 		if elem.Type().Kind() != reflect.Struct {
 			return newErrorNotSupportedNativeType(toObj)
 		}
-		dec.unmarshalMapToStrct(fromMap, elem)
+		return dec.unmarshalMapToStrct(fromMap, elem)
 	}
 
 	return newErrorNotSupportedUnmarshalingDataTypes(fromMap, toObj)
