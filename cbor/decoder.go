@@ -276,6 +276,8 @@ func (dec *Decoder) unmarshalMapTo(fromObj map[any]any, toObj any) error {
 	switch reflect.TypeOf(toObj).Kind() {
 	case reflect.Struct:
 		dec.unmarshalMapToStrct(fromObj, reflect.ValueOf(toObj))
+	case reflect.Map:
+		dec.unmarshalMapToMap(fromObj, reflect.ValueOf(toObj))
 	case reflect.Pointer:
 		elem := reflect.ValueOf(toObj).Elem()
 		if elem.Type().Kind() != reflect.Struct {
@@ -305,4 +307,9 @@ func (dec *Decoder) unmarshalMapToStrct(fromObj map[any]any, toStruct reflect.Va
 		toStructField.Set(fromMapValueStruct)
 	}
 	return nil
+}
+
+// nolint: exhaustive
+func (dec *Decoder) unmarshalMapToMap(fromObj map[any]any, toMap reflect.Value) error {
+	return newErrorNotSupportedUnmarshalingDataTypes(fromObj, toMap)
 }
