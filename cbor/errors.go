@@ -28,7 +28,7 @@ const (
 	errorUnkonwnMajorType      = "major type (%d) is %w"
 	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
 	errorUnmarshalDataTypes    = " %w cound not convert from %T to %T"
-	errorUnmarshalShortArray   = " %w short array size %T(%d) < %T(%d)"
+	errorUnmarshalShortArray   = " %w short array size (%T[%d] < %T[%d])"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -47,6 +47,6 @@ func newErrorUnmarshalDataTypes(fromItem any, toItem any) error {
 	return fmt.Errorf(errorUnmarshalDataTypes, ErrUnmarshal, fromItem, toItem)
 }
 
-func newErrorUnmarshalArraySize(fromArray []any, toArrayVal reflect.Value) error {
-	return fmt.Errorf(errorUnmarshalShortArray, ErrUnmarshal, fromArray, len(fromArray), toArrayVal, toArrayVal.Cap())
+func newErrorUnmarshalArraySize(fromArray []any, toObj any, toArrayVal reflect.Value) error {
+	return fmt.Errorf(errorUnmarshalShortArray, ErrUnmarshal, fromArray, len(fromArray), toObj, toArrayVal.Cap())
 }
