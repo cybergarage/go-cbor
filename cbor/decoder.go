@@ -280,6 +280,8 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 
 // nolint: exhaustive
 func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
+	fromArrayVal := reflect.ValueOf(fromArray)
+	fromArrayType := fromArrayVal.Type()
 	toArrayVal := reflect.ValueOf(toObj)
 	fromArrayLen := len(fromArray)
 	toArrayType := toArrayVal.Type()
@@ -290,26 +292,30 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 		}
 	case reflect.Slice:
 		if toArrayVal.Len() < fromArrayLen {
-			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+			if !toArrayVal.CanSet() {
+				return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+			}
+			toArrayVal.Set(reflect.MakeSlice(fromArrayType, fromArrayLen, fromArrayLen))
 		}
-		// toArrayVal.SetLen(fromArrayLen)
-		// toArrayVal.SetCap(fromArrayLen)
-	// case reflect.Pointer:
-	// 	elem := reflect.ValueOf(toObj).Elem()
-	// 	switch elem.Type().Kind() {
-	// 	case reflect.Array:
-	// 		if elem.Len() < fromArrayLen {
-	// 			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
-	// 		}
-	// 	case reflect.Slice:
-	// 		if elem.Len() < fromArrayLen {
-	// 			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
-	// 		}
-	// 		// toArrayVal.SetLen(fromArrayLen)
-	// 		// toArrayVal.SetCap(fromArrayLen)
-	// 	default:
-	// 		return newErrorUnmarshalDataTypes(fromArray, toObj)
-	// 	}
+	case reflect.Pointer:
+		elem := reflect.ValueOf(toObj).Elem()
+		switch elem.Type().Kind() {
+		case reflect.Array:
+			if elem.Len() < fromArrayLen {
+				return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+			}
+		case reflect.Slice:
+			if elem.Len() < fromArrayLen {
+				if !elem.CanSet() {
+					return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+				}
+				elem.Set(reflect.MakeSlice(fromArrayType, fromArrayLen, fromArrayLen))
+				toArrayVal = elem
+				toArrayType = toArrayVal.Type()
+			}
+		default:
+			return newErrorUnmarshalDataTypes(fromArray, toObj)
+		}
 	default:
 		return newErrorUnmarshalDataTypes(fromArray, toObj)
 	}
