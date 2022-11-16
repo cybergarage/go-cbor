@@ -25,7 +25,7 @@ const (
 	errorUnkonwnNativeType     = "%T (%v) is %w"
 	errorUnkonwnMajorType      = "major type (%d) is %w"
 	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
-	errorUnmarshalDataTypes    = " %w unmarshaling from %v to %v"
+	errorUnmarshalDataTypes    = " %w unmarshaling from %T to %T"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
