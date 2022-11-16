@@ -320,12 +320,30 @@ func writeFloat64Bytes(w io.Writer, v float64) error {
 // Array
 ////////////////////////////////////////////////////////////
 
-func toAnyArray[T comparable](v []T) []any {
-	a := make([]any, len(v))
-	for n, t := range v {
-		a[n] = t
+// nolint: exhaustive
+func toAnyArray(fromArray any) ([]any, error) {
+	fromArrayVal := reflect.ValueOf(fromArray)
+	fromArrayType := fromArrayVal.Type()
+	switch fromArrayType.Kind() {
+	case reflect.Array:
+	case reflect.Slice:
+	default:
+		return nil, newErrorCastTypes(fromArray, make([]any, 0))
 	}
-	return a
+
+	fromArrayLen := fromArrayVal.Len()
+	toArray := make([]any, fromArrayLen)
+
+	toArrayVal := reflect.ValueOf(toArray)
+	toArrayType := toArrayVal.Type()
+	toArrayElemType := toArrayType.Elem()
+	for n := 0; n < fromArrayLen; n++ {
+		fromArrayIndex := fromArrayVal.Index(n)
+		toArrayIndex := toArrayVal.Index(n)
+		toArrayIndex.Set(fromArrayIndex.Convert(toArrayElemType))
+	}
+
+	return toArray, nil
 }
 
 ////////////////////////////////////////////////////////////
