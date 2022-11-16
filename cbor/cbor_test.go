@@ -32,6 +32,7 @@ func TestUnmarshalTo(t *testing.T) {
 		[]string{"one", "two"},
 		map[int]string{1: "one", 2: "two"},
 		map[any]any{1: "one", 2: "two"},
+		map[int]string{1: "one", 2: "two"},
 	}
 
 	toObjs := []any{
@@ -43,6 +44,7 @@ func TestUnmarshalTo(t *testing.T) {
 		make([]string, 2),
 		map[int]string{},
 		map[int]string{},
+		map[any]any{},
 	}
 
 	for n, fromObj := range fromObjs {
