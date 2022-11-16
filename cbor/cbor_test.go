@@ -22,21 +22,21 @@ import (
 
 func TestUnmarshalTo(t *testing.T) {
 	fromObjs := []any{
-		// &struct {
-		// 	Key   string
-		// 	Value string
-		// }{
-		// 	Key: "hello", Value: "world",
-		// },
+		&struct {
+			Key   string
+			Value string
+		}{
+			Key: "hello", Value: "world",
+		},
 		// []string{"one", "two"},
 		map[any]any{1: "one", 2: "two"},
 	}
 
 	toObjs := []any{
-		// &struct {
-		// 	Key   string
-		// 	Value string
-		// }{},
+		&struct {
+			Key   string
+			Value string
+		}{},
 		// []string{},
 		map[int]string{},
 	}
@@ -54,7 +54,9 @@ func TestUnmarshalTo(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(fromObj, toObjs[n]) {
-				t.Errorf("%v != %v", fromObj, toObjs[n])
+				if fmt.Sprintf("%v", fromObj) != fmt.Sprintf("%v", toObjs[n]) {
+					t.Errorf("%v != %v", fromObj, toObjs[n])
+				}
 			}
 		})
 	}
