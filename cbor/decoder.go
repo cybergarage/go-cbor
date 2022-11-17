@@ -280,6 +280,9 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 
 // nolint: exhaustive
 func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
+	// NOTE: The Laws of Reflection - The Go Programming Language
+	// https://go.dev/blog/laws-of-reflection
+
 	fromArrayVal := reflect.ValueOf(fromArray)
 	fromArrayType := fromArrayVal.Type()
 	toArrayVal := reflect.ValueOf(toObj)
