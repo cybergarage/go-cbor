@@ -32,12 +32,9 @@ TEST_PKG_SRCS=\
 TEST_PKGS=\
 	${TEST_PKG_ID}
 
-.PHONY: version format vet lint clean fuzz
+.PHONY: version format vet lint clean
 
 all: test
-
-fuzz:
-	pushd ${TEST_PKG_DIR} && make && popd
 
 format: version
 	gofmt -s -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
@@ -51,8 +48,13 @@ lint: vet
 build: fuzz
 	go build -v ${PKGS}
 
-test: fuzz lint
-	go test -v -coverpkg=${PKG_ID} -timeout 60s -fuzz ${PKGS} ${TEST_PKGS}
+test: lint
+	go test -v -coverpkg=${PKG_ID} -timeout 60s ${PKGS} ${TEST_PKGS}
+
+fuzz: test
+	pushd ${TEST_PKG_DIR} && make && popd
+	go test -v -fuzz ${PKGS} ${TEST_PKGS}
+
 
 clean:
 	go clean -i ${PKGS}
