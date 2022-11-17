@@ -21,7 +21,7 @@ print<<HEADER;
 // You may obtain a copy of the License at
 //
 //    http://www.apache.org/licenses/LICENSE-2.0
-//
+//b
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,6 +58,7 @@ func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 HEADER
 
 my @priTypes = (
+	"byte", 
 	"int", 
 	"int8", 
 	"int16", 
@@ -67,7 +68,12 @@ my @priTypes = (
 	"uint8", 
 	"uint16", 
 	"uint32", 
-	"uint64");
+	"uint64",
+	"float32",
+	"float64",
+	"bool",
+	"string",
+	);
 
 foreach my $priType (@priTypes) {
 	printf("\n");
