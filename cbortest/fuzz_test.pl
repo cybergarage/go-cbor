@@ -32,7 +32,6 @@ package cbortest
 
 import (
 	"encoding/hex"
-	"fmt"
 	"math"
 	"testing"
 
@@ -110,9 +109,7 @@ for (my $i = 0; $i <= $#types; $i++){
 		printf("\tf.Add(%s(%s))\n", $type, $seeds[$i]->[$j]);
     }
 	printf("\tf.Fuzz(func(t *testing.T, v %s) {\n", $type);
-	printf("\t\tt.Run(fmt.Sprintf(\"%%v\", v), func(t *testing.T) {\n");
-	printf("\t\t\tfuzzPrimitiveTest(t, v)\n");
-	printf("\t\t})\n");
+	printf("\t\tfuzzPrimitiveTest(t, v)\n");
 	printf("\t})\n");
 	printf("}\n");
 }
