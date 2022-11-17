@@ -68,6 +68,7 @@ func TestUnmarshalTo(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(fromObj, toObj) {
+				t.Skipf("%s != %s", fromObj, toObj)
 				re := regexp.MustCompile(fmt.Sprintf("[&]?%v", fromObj))
 				if !re.MatchString(fmt.Sprintf("%v", toObj)) {
 					t.Errorf("%v != %v", fromObj, toObj)
