@@ -5,7 +5,7 @@
 // You may obtain a copy of the License at
 //
 //    http://www.apache.org/licenses/LICENSE-2.0
-//b
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,7 @@
 package cbortest
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/cybergarage/go-cbor/cbor"
@@ -40,92 +41,122 @@ func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 	}
 }
 
-func FuzzPrimitiveByte(f *testing.F) {
+func FuzzByte(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v byte) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveInt(f *testing.F) {
+func FuzzInt(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v int) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveInt8(f *testing.F) {
+func FuzzInt8(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v int8) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveInt16(f *testing.F) {
+func FuzzInt16(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v int16) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveInt32(f *testing.F) {
+func FuzzInt32(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v int32) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveInt64(f *testing.F) {
+func FuzzInt64(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v int64) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveUint(f *testing.F) {
+func FuzzUint(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v uint) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveUint8(f *testing.F) {
+func FuzzUint8(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v uint8) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveUint16(f *testing.F) {
+func FuzzUint16(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v uint16) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveUint32(f *testing.F) {
+func FuzzUint32(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v uint32) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveUint64(f *testing.F) {
+func FuzzUint64(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v uint64) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveFloat32(f *testing.F) {
+func FuzzFloat32(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v float32) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveFloat64(f *testing.F) {
+func FuzzFloat64(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v float64) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveBool(f *testing.F) {
+func FuzzBool(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v bool) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }
 
-func FuzzPrimitiveString(f *testing.F) {
+func FuzzString(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v string) {
-		fuzzPrimitiveTest(t, v)
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			fuzzPrimitiveTest(t, v)
+		})
 	})
 }

@@ -21,7 +21,7 @@ print<<HEADER;
 // You may obtain a copy of the License at
 //
 //    http://www.apache.org/licenses/LICENSE-2.0
-//b
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,7 @@ print<<HEADER;
 package cbortest
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/cybergarage/go-cbor/cbor"
@@ -57,6 +58,9 @@ func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 }
 HEADER
 
+# Go Fuzzing - The Go Programming Language
+# https://go.dev/security/fuzz/
+
 my @priTypes = (
 	"byte", 
 	"int", 
@@ -77,9 +81,11 @@ my @priTypes = (
 
 foreach my $priType (@priTypes) {
 	printf("\n");
-	printf("func FuzzPrimitive%s(f *testing.F) {\n", ucfirst($priType));
+	printf("func Fuzz%s(f *testing.F) {\n", ucfirst($priType));
 	printf("\tf.Fuzz(func(t *testing.T, v %s) {\n", $priType);
-	printf("\t\tfuzzPrimitiveTest(t, v)\n");
+	printf("\t\tt.Run(fmt.Sprintf(\"%%v\", v), func(t *testing.T) {\n");
+	printf("\t\t\tfuzzPrimitiveTest(t, v)\n");
+	printf("\t\t})\n");
 	printf("\t})\n");
 	printf("}\n");
 }
