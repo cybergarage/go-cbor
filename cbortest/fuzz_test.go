@@ -133,6 +133,8 @@ func FuzzUint64(f *testing.F) {
 }
 
 func FuzzFloat32(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32))
+	f.Add(float32(0))
 	f.Add(float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, v float32) {
 		fuzzPrimitiveTest(t, v)
@@ -140,6 +142,8 @@ func FuzzFloat32(f *testing.F) {
 }
 
 func FuzzFloat64(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32))
+	f.Add(float64(0))
 	f.Add(float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, v float64) {
 		fuzzPrimitiveTest(t, v)
@@ -318,6 +322,8 @@ func FuzzUint64Array(f *testing.F) {
 }
 
 func FuzzFloat32Array(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32))
+	f.Add(float32(0))
 	f.Add(float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, v float32) {
 		va := []float32{}
@@ -332,6 +338,8 @@ func FuzzFloat32Array(f *testing.F) {
 }
 
 func FuzzFloat64Array(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32))
+	f.Add(float64(0))
 	f.Add(float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, v float64) {
 		va := []float64{}
@@ -532,8 +540,14 @@ func FuzzIntUint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzIntFloat32Map(f *testing.F) {
+	f.Add(int(0), float32(-math.MaxFloat32))
+	f.Add(int(0), float32(0))
 	f.Add(int(0), float32(math.MaxFloat32))
+	f.Add(int(math.MinInt), float32(-math.MaxFloat32))
+	f.Add(int(math.MinInt), float32(0))
 	f.Add(int(math.MinInt), float32(math.MaxFloat32))
+	f.Add(int(math.MaxInt), float32(-math.MaxFloat32))
+	f.Add(int(math.MaxInt), float32(0))
 	f.Add(int(math.MaxInt), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int, v float32) {
 		vm := map[int]float32{k: v}
@@ -543,8 +557,14 @@ func FuzzIntFloat32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzIntFloat64Map(f *testing.F) {
+	f.Add(int(0), float64(-math.MaxFloat32))
+	f.Add(int(0), float64(0))
 	f.Add(int(0), float64(math.MaxFloat64))
+	f.Add(int(math.MinInt), float64(-math.MaxFloat32))
+	f.Add(int(math.MinInt), float64(0))
 	f.Add(int(math.MinInt), float64(math.MaxFloat64))
+	f.Add(int(math.MaxInt), float64(-math.MaxFloat32))
+	f.Add(int(math.MaxInt), float64(0))
 	f.Add(int(math.MaxInt), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int, v float64) {
 		vm := map[int]float64{k: v}
@@ -737,8 +757,14 @@ func FuzzInt8Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzInt8Float32Map(f *testing.F) {
+	f.Add(int8(0), float32(-math.MaxFloat32))
+	f.Add(int8(0), float32(0))
 	f.Add(int8(0), float32(math.MaxFloat32))
+	f.Add(int8(math.MinInt8), float32(-math.MaxFloat32))
+	f.Add(int8(math.MinInt8), float32(0))
 	f.Add(int8(math.MinInt8), float32(math.MaxFloat32))
+	f.Add(int8(math.MaxInt8), float32(-math.MaxFloat32))
+	f.Add(int8(math.MaxInt8), float32(0))
 	f.Add(int8(math.MaxInt8), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int8, v float32) {
 		vm := map[int8]float32{k: v}
@@ -748,8 +774,14 @@ func FuzzInt8Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzInt8Float64Map(f *testing.F) {
+	f.Add(int8(0), float64(-math.MaxFloat32))
+	f.Add(int8(0), float64(0))
 	f.Add(int8(0), float64(math.MaxFloat64))
+	f.Add(int8(math.MinInt8), float64(-math.MaxFloat32))
+	f.Add(int8(math.MinInt8), float64(0))
 	f.Add(int8(math.MinInt8), float64(math.MaxFloat64))
+	f.Add(int8(math.MaxInt8), float64(-math.MaxFloat32))
+	f.Add(int8(math.MaxInt8), float64(0))
 	f.Add(int8(math.MaxInt8), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int8, v float64) {
 		vm := map[int8]float64{k: v}
@@ -942,8 +974,14 @@ func FuzzInt16Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzInt16Float32Map(f *testing.F) {
+	f.Add(int16(0), float32(-math.MaxFloat32))
+	f.Add(int16(0), float32(0))
 	f.Add(int16(0), float32(math.MaxFloat32))
+	f.Add(int16(math.MinInt16), float32(-math.MaxFloat32))
+	f.Add(int16(math.MinInt16), float32(0))
 	f.Add(int16(math.MinInt16), float32(math.MaxFloat32))
+	f.Add(int16(math.MaxInt16), float32(-math.MaxFloat32))
+	f.Add(int16(math.MaxInt16), float32(0))
 	f.Add(int16(math.MaxInt16), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int16, v float32) {
 		vm := map[int16]float32{k: v}
@@ -953,8 +991,14 @@ func FuzzInt16Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzInt16Float64Map(f *testing.F) {
+	f.Add(int16(0), float64(-math.MaxFloat32))
+	f.Add(int16(0), float64(0))
 	f.Add(int16(0), float64(math.MaxFloat64))
+	f.Add(int16(math.MinInt16), float64(-math.MaxFloat32))
+	f.Add(int16(math.MinInt16), float64(0))
 	f.Add(int16(math.MinInt16), float64(math.MaxFloat64))
+	f.Add(int16(math.MaxInt16), float64(-math.MaxFloat32))
+	f.Add(int16(math.MaxInt16), float64(0))
 	f.Add(int16(math.MaxInt16), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int16, v float64) {
 		vm := map[int16]float64{k: v}
@@ -1147,8 +1191,14 @@ func FuzzInt32Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzInt32Float32Map(f *testing.F) {
+	f.Add(int32(0), float32(-math.MaxFloat32))
+	f.Add(int32(0), float32(0))
 	f.Add(int32(0), float32(math.MaxFloat32))
+	f.Add(int32(math.MinInt32), float32(-math.MaxFloat32))
+	f.Add(int32(math.MinInt32), float32(0))
 	f.Add(int32(math.MinInt32), float32(math.MaxFloat32))
+	f.Add(int32(math.MaxInt32), float32(-math.MaxFloat32))
+	f.Add(int32(math.MaxInt32), float32(0))
 	f.Add(int32(math.MaxInt32), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int32, v float32) {
 		vm := map[int32]float32{k: v}
@@ -1158,8 +1208,14 @@ func FuzzInt32Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzInt32Float64Map(f *testing.F) {
+	f.Add(int32(0), float64(-math.MaxFloat32))
+	f.Add(int32(0), float64(0))
 	f.Add(int32(0), float64(math.MaxFloat64))
+	f.Add(int32(math.MinInt32), float64(-math.MaxFloat32))
+	f.Add(int32(math.MinInt32), float64(0))
 	f.Add(int32(math.MinInt32), float64(math.MaxFloat64))
+	f.Add(int32(math.MaxInt32), float64(-math.MaxFloat32))
+	f.Add(int32(math.MaxInt32), float64(0))
 	f.Add(int32(math.MaxInt32), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int32, v float64) {
 		vm := map[int32]float64{k: v}
@@ -1352,8 +1408,14 @@ func FuzzInt64Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzInt64Float32Map(f *testing.F) {
+	f.Add(int64(0), float32(-math.MaxFloat32))
+	f.Add(int64(0), float32(0))
 	f.Add(int64(0), float32(math.MaxFloat32))
+	f.Add(int64(math.MinInt64), float32(-math.MaxFloat32))
+	f.Add(int64(math.MinInt64), float32(0))
 	f.Add(int64(math.MinInt64), float32(math.MaxFloat32))
+	f.Add(int64(math.MaxInt64), float32(-math.MaxFloat32))
+	f.Add(int64(math.MaxInt64), float32(0))
 	f.Add(int64(math.MaxInt64), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int64, v float32) {
 		vm := map[int64]float32{k: v}
@@ -1363,8 +1425,14 @@ func FuzzInt64Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzInt64Float64Map(f *testing.F) {
+	f.Add(int64(0), float64(-math.MaxFloat32))
+	f.Add(int64(0), float64(0))
 	f.Add(int64(0), float64(math.MaxFloat64))
+	f.Add(int64(math.MinInt64), float64(-math.MaxFloat32))
+	f.Add(int64(math.MinInt64), float64(0))
 	f.Add(int64(math.MinInt64), float64(math.MaxFloat64))
+	f.Add(int64(math.MaxInt64), float64(-math.MaxFloat32))
+	f.Add(int64(math.MaxInt64), float64(0))
 	f.Add(int64(math.MaxInt64), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int64, v float64) {
 		vm := map[int64]float64{k: v}
@@ -1532,7 +1600,11 @@ func FuzzUintUint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUintFloat32Map(f *testing.F) {
+	f.Add(uint(0), float32(-math.MaxFloat32))
+	f.Add(uint(0), float32(0))
 	f.Add(uint(0), float32(math.MaxFloat32))
+	f.Add(uint(math.MaxUint), float32(-math.MaxFloat32))
+	f.Add(uint(math.MaxUint), float32(0))
 	f.Add(uint(math.MaxUint), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint, v float32) {
 		vm := map[uint]float32{k: v}
@@ -1542,7 +1614,11 @@ func FuzzUintFloat32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUintFloat64Map(f *testing.F) {
+	f.Add(uint(0), float64(-math.MaxFloat32))
+	f.Add(uint(0), float64(0))
 	f.Add(uint(0), float64(math.MaxFloat64))
+	f.Add(uint(math.MaxUint), float64(-math.MaxFloat32))
+	f.Add(uint(math.MaxUint), float64(0))
 	f.Add(uint(math.MaxUint), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint, v float64) {
 		vm := map[uint]float64{k: v}
@@ -1706,7 +1782,11 @@ func FuzzUint8Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUint8Float32Map(f *testing.F) {
+	f.Add(uint8(0), float32(-math.MaxFloat32))
+	f.Add(uint8(0), float32(0))
 	f.Add(uint8(0), float32(math.MaxFloat32))
+	f.Add(uint8(math.MaxUint8), float32(-math.MaxFloat32))
+	f.Add(uint8(math.MaxUint8), float32(0))
 	f.Add(uint8(math.MaxUint8), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint8, v float32) {
 		vm := map[uint8]float32{k: v}
@@ -1716,7 +1796,11 @@ func FuzzUint8Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUint8Float64Map(f *testing.F) {
+	f.Add(uint8(0), float64(-math.MaxFloat32))
+	f.Add(uint8(0), float64(0))
 	f.Add(uint8(0), float64(math.MaxFloat64))
+	f.Add(uint8(math.MaxUint8), float64(-math.MaxFloat32))
+	f.Add(uint8(math.MaxUint8), float64(0))
 	f.Add(uint8(math.MaxUint8), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint8, v float64) {
 		vm := map[uint8]float64{k: v}
@@ -1880,7 +1964,11 @@ func FuzzUint16Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUint16Float32Map(f *testing.F) {
+	f.Add(uint16(0), float32(-math.MaxFloat32))
+	f.Add(uint16(0), float32(0))
 	f.Add(uint16(0), float32(math.MaxFloat32))
+	f.Add(uint16(math.MaxUint16), float32(-math.MaxFloat32))
+	f.Add(uint16(math.MaxUint16), float32(0))
 	f.Add(uint16(math.MaxUint16), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint16, v float32) {
 		vm := map[uint16]float32{k: v}
@@ -1890,7 +1978,11 @@ func FuzzUint16Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUint16Float64Map(f *testing.F) {
+	f.Add(uint16(0), float64(-math.MaxFloat32))
+	f.Add(uint16(0), float64(0))
 	f.Add(uint16(0), float64(math.MaxFloat64))
+	f.Add(uint16(math.MaxUint16), float64(-math.MaxFloat32))
+	f.Add(uint16(math.MaxUint16), float64(0))
 	f.Add(uint16(math.MaxUint16), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint16, v float64) {
 		vm := map[uint16]float64{k: v}
@@ -2054,7 +2146,11 @@ func FuzzUint32Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUint32Float32Map(f *testing.F) {
+	f.Add(uint32(0), float32(-math.MaxFloat32))
+	f.Add(uint32(0), float32(0))
 	f.Add(uint32(0), float32(math.MaxFloat32))
+	f.Add(uint32(math.MaxUint32), float32(-math.MaxFloat32))
+	f.Add(uint32(math.MaxUint32), float32(0))
 	f.Add(uint32(math.MaxUint32), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint32, v float32) {
 		vm := map[uint32]float32{k: v}
@@ -2064,7 +2160,11 @@ func FuzzUint32Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUint32Float64Map(f *testing.F) {
+	f.Add(uint32(0), float64(-math.MaxFloat32))
+	f.Add(uint32(0), float64(0))
 	f.Add(uint32(0), float64(math.MaxFloat64))
+	f.Add(uint32(math.MaxUint32), float64(-math.MaxFloat32))
+	f.Add(uint32(math.MaxUint32), float64(0))
 	f.Add(uint32(math.MaxUint32), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint32, v float64) {
 		vm := map[uint32]float64{k: v}
@@ -2228,7 +2328,11 @@ func FuzzUint64Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUint64Float32Map(f *testing.F) {
+	f.Add(uint64(0), float32(-math.MaxFloat32))
+	f.Add(uint64(0), float32(0))
 	f.Add(uint64(0), float32(math.MaxFloat32))
+	f.Add(uint64(math.MaxInt64), float32(-math.MaxFloat32))
+	f.Add(uint64(math.MaxInt64), float32(0))
 	f.Add(uint64(math.MaxInt64), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint64, v float32) {
 		vm := map[uint64]float32{k: v}
@@ -2238,7 +2342,11 @@ func FuzzUint64Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzUint64Float64Map(f *testing.F) {
+	f.Add(uint64(0), float64(-math.MaxFloat32))
+	f.Add(uint64(0), float64(0))
 	f.Add(uint64(0), float64(math.MaxFloat64))
+	f.Add(uint64(math.MaxInt64), float64(-math.MaxFloat32))
+	f.Add(uint64(math.MaxInt64), float64(0))
 	f.Add(uint64(math.MaxInt64), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint64, v float64) {
 		vm := map[uint64]float64{k: v}
@@ -2272,6 +2380,12 @@ func FuzzUint64StringMap(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32IntMap(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), int(0))
+	f.Add(float32(-math.MaxFloat32), int(math.MinInt))
+	f.Add(float32(-math.MaxFloat32), int(math.MaxInt))
+	f.Add(float32(0), int(0))
+	f.Add(float32(0), int(math.MinInt))
+	f.Add(float32(0), int(math.MaxInt))
 	f.Add(float32(math.MaxFloat32), int(0))
 	f.Add(float32(math.MaxFloat32), int(math.MinInt))
 	f.Add(float32(math.MaxFloat32), int(math.MaxInt))
@@ -2283,6 +2397,12 @@ func FuzzFloat32IntMap(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Int8Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), int8(0))
+	f.Add(float32(-math.MaxFloat32), int8(math.MinInt8))
+	f.Add(float32(-math.MaxFloat32), int8(math.MaxInt8))
+	f.Add(float32(0), int8(0))
+	f.Add(float32(0), int8(math.MinInt8))
+	f.Add(float32(0), int8(math.MaxInt8))
 	f.Add(float32(math.MaxFloat32), int8(0))
 	f.Add(float32(math.MaxFloat32), int8(math.MinInt8))
 	f.Add(float32(math.MaxFloat32), int8(math.MaxInt8))
@@ -2294,6 +2414,12 @@ func FuzzFloat32Int8Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Int16Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), int16(0))
+	f.Add(float32(-math.MaxFloat32), int16(math.MinInt16))
+	f.Add(float32(-math.MaxFloat32), int16(math.MaxInt16))
+	f.Add(float32(0), int16(0))
+	f.Add(float32(0), int16(math.MinInt16))
+	f.Add(float32(0), int16(math.MaxInt16))
 	f.Add(float32(math.MaxFloat32), int16(0))
 	f.Add(float32(math.MaxFloat32), int16(math.MinInt16))
 	f.Add(float32(math.MaxFloat32), int16(math.MaxInt16))
@@ -2305,6 +2431,12 @@ func FuzzFloat32Int16Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Int32Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), int32(0))
+	f.Add(float32(-math.MaxFloat32), int32(math.MinInt32))
+	f.Add(float32(-math.MaxFloat32), int32(math.MaxInt32))
+	f.Add(float32(0), int32(0))
+	f.Add(float32(0), int32(math.MinInt32))
+	f.Add(float32(0), int32(math.MaxInt32))
 	f.Add(float32(math.MaxFloat32), int32(0))
 	f.Add(float32(math.MaxFloat32), int32(math.MinInt32))
 	f.Add(float32(math.MaxFloat32), int32(math.MaxInt32))
@@ -2316,6 +2448,12 @@ func FuzzFloat32Int32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Int64Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), int64(0))
+	f.Add(float32(-math.MaxFloat32), int64(math.MinInt64))
+	f.Add(float32(-math.MaxFloat32), int64(math.MaxInt64))
+	f.Add(float32(0), int64(0))
+	f.Add(float32(0), int64(math.MinInt64))
+	f.Add(float32(0), int64(math.MaxInt64))
 	f.Add(float32(math.MaxFloat32), int64(0))
 	f.Add(float32(math.MaxFloat32), int64(math.MinInt64))
 	f.Add(float32(math.MaxFloat32), int64(math.MaxInt64))
@@ -2327,6 +2465,10 @@ func FuzzFloat32Int64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32UintMap(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), uint(0))
+	f.Add(float32(-math.MaxFloat32), uint(math.MaxUint))
+	f.Add(float32(0), uint(0))
+	f.Add(float32(0), uint(math.MaxUint))
 	f.Add(float32(math.MaxFloat32), uint(0))
 	f.Add(float32(math.MaxFloat32), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k float32, v uint) {
@@ -2337,6 +2479,10 @@ func FuzzFloat32UintMap(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Uint8Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), uint8(0))
+	f.Add(float32(-math.MaxFloat32), uint8(math.MaxUint8))
+	f.Add(float32(0), uint8(0))
+	f.Add(float32(0), uint8(math.MaxUint8))
 	f.Add(float32(math.MaxFloat32), uint8(0))
 	f.Add(float32(math.MaxFloat32), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k float32, v uint8) {
@@ -2347,6 +2493,10 @@ func FuzzFloat32Uint8Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Uint16Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), uint16(0))
+	f.Add(float32(-math.MaxFloat32), uint16(math.MaxUint16))
+	f.Add(float32(0), uint16(0))
+	f.Add(float32(0), uint16(math.MaxUint16))
 	f.Add(float32(math.MaxFloat32), uint16(0))
 	f.Add(float32(math.MaxFloat32), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k float32, v uint16) {
@@ -2357,6 +2507,10 @@ func FuzzFloat32Uint16Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Uint32Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), uint32(0))
+	f.Add(float32(-math.MaxFloat32), uint32(math.MaxUint32))
+	f.Add(float32(0), uint32(0))
+	f.Add(float32(0), uint32(math.MaxUint32))
 	f.Add(float32(math.MaxFloat32), uint32(0))
 	f.Add(float32(math.MaxFloat32), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k float32, v uint32) {
@@ -2367,6 +2521,10 @@ func FuzzFloat32Uint32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Uint64Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), uint64(0))
+	f.Add(float32(-math.MaxFloat32), uint64(math.MaxInt64))
+	f.Add(float32(0), uint64(0))
+	f.Add(float32(0), uint64(math.MaxInt64))
 	f.Add(float32(math.MaxFloat32), uint64(0))
 	f.Add(float32(math.MaxFloat32), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k float32, v uint64) {
@@ -2377,6 +2535,14 @@ func FuzzFloat32Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Float32Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), float32(-math.MaxFloat32))
+	f.Add(float32(-math.MaxFloat32), float32(0))
+	f.Add(float32(-math.MaxFloat32), float32(math.MaxFloat32))
+	f.Add(float32(0), float32(-math.MaxFloat32))
+	f.Add(float32(0), float32(0))
+	f.Add(float32(0), float32(math.MaxFloat32))
+	f.Add(float32(math.MaxFloat32), float32(-math.MaxFloat32))
+	f.Add(float32(math.MaxFloat32), float32(0))
 	f.Add(float32(math.MaxFloat32), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k float32, v float32) {
 		vm := map[float32]float32{k: v}
@@ -2386,6 +2552,14 @@ func FuzzFloat32Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32Float64Map(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), float64(-math.MaxFloat32))
+	f.Add(float32(-math.MaxFloat32), float64(0))
+	f.Add(float32(-math.MaxFloat32), float64(math.MaxFloat64))
+	f.Add(float32(0), float64(-math.MaxFloat32))
+	f.Add(float32(0), float64(0))
+	f.Add(float32(0), float64(math.MaxFloat64))
+	f.Add(float32(math.MaxFloat32), float64(-math.MaxFloat32))
+	f.Add(float32(math.MaxFloat32), float64(0))
 	f.Add(float32(math.MaxFloat32), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k float32, v float64) {
 		vm := map[float32]float64{k: v}
@@ -2395,6 +2569,10 @@ func FuzzFloat32Float64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32BoolMap(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), bool(true))
+	f.Add(float32(-math.MaxFloat32), bool(false))
+	f.Add(float32(0), bool(true))
+	f.Add(float32(0), bool(false))
 	f.Add(float32(math.MaxFloat32), bool(true))
 	f.Add(float32(math.MaxFloat32), bool(false))
 	f.Fuzz(func(t *testing.T, k float32, v bool) {
@@ -2405,6 +2583,10 @@ func FuzzFloat32BoolMap(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat32StringMap(f *testing.F) {
+	f.Add(float32(-math.MaxFloat32), string("abc"))
+	f.Add(float32(-math.MaxFloat32), string("xyz"))
+	f.Add(float32(0), string("abc"))
+	f.Add(float32(0), string("xyz"))
 	f.Add(float32(math.MaxFloat32), string("abc"))
 	f.Add(float32(math.MaxFloat32), string("xyz"))
 	f.Fuzz(func(t *testing.T, k float32, v string) {
@@ -2415,6 +2597,12 @@ func FuzzFloat32StringMap(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64IntMap(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), int(0))
+	f.Add(float64(-math.MaxFloat32), int(math.MinInt))
+	f.Add(float64(-math.MaxFloat32), int(math.MaxInt))
+	f.Add(float64(0), int(0))
+	f.Add(float64(0), int(math.MinInt))
+	f.Add(float64(0), int(math.MaxInt))
 	f.Add(float64(math.MaxFloat64), int(0))
 	f.Add(float64(math.MaxFloat64), int(math.MinInt))
 	f.Add(float64(math.MaxFloat64), int(math.MaxInt))
@@ -2426,6 +2614,12 @@ func FuzzFloat64IntMap(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Int8Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), int8(0))
+	f.Add(float64(-math.MaxFloat32), int8(math.MinInt8))
+	f.Add(float64(-math.MaxFloat32), int8(math.MaxInt8))
+	f.Add(float64(0), int8(0))
+	f.Add(float64(0), int8(math.MinInt8))
+	f.Add(float64(0), int8(math.MaxInt8))
 	f.Add(float64(math.MaxFloat64), int8(0))
 	f.Add(float64(math.MaxFloat64), int8(math.MinInt8))
 	f.Add(float64(math.MaxFloat64), int8(math.MaxInt8))
@@ -2437,6 +2631,12 @@ func FuzzFloat64Int8Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Int16Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), int16(0))
+	f.Add(float64(-math.MaxFloat32), int16(math.MinInt16))
+	f.Add(float64(-math.MaxFloat32), int16(math.MaxInt16))
+	f.Add(float64(0), int16(0))
+	f.Add(float64(0), int16(math.MinInt16))
+	f.Add(float64(0), int16(math.MaxInt16))
 	f.Add(float64(math.MaxFloat64), int16(0))
 	f.Add(float64(math.MaxFloat64), int16(math.MinInt16))
 	f.Add(float64(math.MaxFloat64), int16(math.MaxInt16))
@@ -2448,6 +2648,12 @@ func FuzzFloat64Int16Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Int32Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), int32(0))
+	f.Add(float64(-math.MaxFloat32), int32(math.MinInt32))
+	f.Add(float64(-math.MaxFloat32), int32(math.MaxInt32))
+	f.Add(float64(0), int32(0))
+	f.Add(float64(0), int32(math.MinInt32))
+	f.Add(float64(0), int32(math.MaxInt32))
 	f.Add(float64(math.MaxFloat64), int32(0))
 	f.Add(float64(math.MaxFloat64), int32(math.MinInt32))
 	f.Add(float64(math.MaxFloat64), int32(math.MaxInt32))
@@ -2459,6 +2665,12 @@ func FuzzFloat64Int32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Int64Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), int64(0))
+	f.Add(float64(-math.MaxFloat32), int64(math.MinInt64))
+	f.Add(float64(-math.MaxFloat32), int64(math.MaxInt64))
+	f.Add(float64(0), int64(0))
+	f.Add(float64(0), int64(math.MinInt64))
+	f.Add(float64(0), int64(math.MaxInt64))
 	f.Add(float64(math.MaxFloat64), int64(0))
 	f.Add(float64(math.MaxFloat64), int64(math.MinInt64))
 	f.Add(float64(math.MaxFloat64), int64(math.MaxInt64))
@@ -2470,6 +2682,10 @@ func FuzzFloat64Int64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64UintMap(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), uint(0))
+	f.Add(float64(-math.MaxFloat32), uint(math.MaxUint))
+	f.Add(float64(0), uint(0))
+	f.Add(float64(0), uint(math.MaxUint))
 	f.Add(float64(math.MaxFloat64), uint(0))
 	f.Add(float64(math.MaxFloat64), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k float64, v uint) {
@@ -2480,6 +2696,10 @@ func FuzzFloat64UintMap(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Uint8Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), uint8(0))
+	f.Add(float64(-math.MaxFloat32), uint8(math.MaxUint8))
+	f.Add(float64(0), uint8(0))
+	f.Add(float64(0), uint8(math.MaxUint8))
 	f.Add(float64(math.MaxFloat64), uint8(0))
 	f.Add(float64(math.MaxFloat64), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k float64, v uint8) {
@@ -2490,6 +2710,10 @@ func FuzzFloat64Uint8Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Uint16Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), uint16(0))
+	f.Add(float64(-math.MaxFloat32), uint16(math.MaxUint16))
+	f.Add(float64(0), uint16(0))
+	f.Add(float64(0), uint16(math.MaxUint16))
 	f.Add(float64(math.MaxFloat64), uint16(0))
 	f.Add(float64(math.MaxFloat64), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k float64, v uint16) {
@@ -2500,6 +2724,10 @@ func FuzzFloat64Uint16Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Uint32Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), uint32(0))
+	f.Add(float64(-math.MaxFloat32), uint32(math.MaxUint32))
+	f.Add(float64(0), uint32(0))
+	f.Add(float64(0), uint32(math.MaxUint32))
 	f.Add(float64(math.MaxFloat64), uint32(0))
 	f.Add(float64(math.MaxFloat64), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k float64, v uint32) {
@@ -2510,6 +2738,10 @@ func FuzzFloat64Uint32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Uint64Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), uint64(0))
+	f.Add(float64(-math.MaxFloat32), uint64(math.MaxInt64))
+	f.Add(float64(0), uint64(0))
+	f.Add(float64(0), uint64(math.MaxInt64))
 	f.Add(float64(math.MaxFloat64), uint64(0))
 	f.Add(float64(math.MaxFloat64), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k float64, v uint64) {
@@ -2520,6 +2752,14 @@ func FuzzFloat64Uint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Float32Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), float32(-math.MaxFloat32))
+	f.Add(float64(-math.MaxFloat32), float32(0))
+	f.Add(float64(-math.MaxFloat32), float32(math.MaxFloat32))
+	f.Add(float64(0), float32(-math.MaxFloat32))
+	f.Add(float64(0), float32(0))
+	f.Add(float64(0), float32(math.MaxFloat32))
+	f.Add(float64(math.MaxFloat64), float32(-math.MaxFloat32))
+	f.Add(float64(math.MaxFloat64), float32(0))
 	f.Add(float64(math.MaxFloat64), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k float64, v float32) {
 		vm := map[float64]float32{k: v}
@@ -2529,6 +2769,14 @@ func FuzzFloat64Float32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64Float64Map(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), float64(-math.MaxFloat32))
+	f.Add(float64(-math.MaxFloat32), float64(0))
+	f.Add(float64(-math.MaxFloat32), float64(math.MaxFloat64))
+	f.Add(float64(0), float64(-math.MaxFloat32))
+	f.Add(float64(0), float64(0))
+	f.Add(float64(0), float64(math.MaxFloat64))
+	f.Add(float64(math.MaxFloat64), float64(-math.MaxFloat32))
+	f.Add(float64(math.MaxFloat64), float64(0))
 	f.Add(float64(math.MaxFloat64), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k float64, v float64) {
 		vm := map[float64]float64{k: v}
@@ -2538,6 +2786,10 @@ func FuzzFloat64Float64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64BoolMap(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), bool(true))
+	f.Add(float64(-math.MaxFloat32), bool(false))
+	f.Add(float64(0), bool(true))
+	f.Add(float64(0), bool(false))
 	f.Add(float64(math.MaxFloat64), bool(true))
 	f.Add(float64(math.MaxFloat64), bool(false))
 	f.Fuzz(func(t *testing.T, k float64, v bool) {
@@ -2548,6 +2800,10 @@ func FuzzFloat64BoolMap(f *testing.F) {
 
 // nolint: dupl
 func FuzzFloat64StringMap(f *testing.F) {
+	f.Add(float64(-math.MaxFloat32), string("abc"))
+	f.Add(float64(-math.MaxFloat32), string("xyz"))
+	f.Add(float64(0), string("abc"))
+	f.Add(float64(0), string("xyz"))
 	f.Add(float64(math.MaxFloat64), string("abc"))
 	f.Add(float64(math.MaxFloat64), string("xyz"))
 	f.Fuzz(func(t *testing.T, k float64, v string) {
@@ -2688,7 +2944,11 @@ func FuzzBoolUint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzBoolFloat32Map(f *testing.F) {
+	f.Add(bool(true), float32(-math.MaxFloat32))
+	f.Add(bool(true), float32(0))
 	f.Add(bool(true), float32(math.MaxFloat32))
+	f.Add(bool(false), float32(-math.MaxFloat32))
+	f.Add(bool(false), float32(0))
 	f.Add(bool(false), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k bool, v float32) {
 		vm := map[bool]float32{k: v}
@@ -2698,7 +2958,11 @@ func FuzzBoolFloat32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzBoolFloat64Map(f *testing.F) {
+	f.Add(bool(true), float64(-math.MaxFloat32))
+	f.Add(bool(true), float64(0))
 	f.Add(bool(true), float64(math.MaxFloat64))
+	f.Add(bool(false), float64(-math.MaxFloat32))
+	f.Add(bool(false), float64(0))
 	f.Add(bool(false), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k bool, v float64) {
 		vm := map[bool]float64{k: v}
@@ -2862,7 +3126,11 @@ func FuzzStringUint64Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzStringFloat32Map(f *testing.F) {
+	f.Add(string("abc"), float32(-math.MaxFloat32))
+	f.Add(string("abc"), float32(0))
 	f.Add(string("abc"), float32(math.MaxFloat32))
+	f.Add(string("xyz"), float32(-math.MaxFloat32))
+	f.Add(string("xyz"), float32(0))
 	f.Add(string("xyz"), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k string, v float32) {
 		vm := map[string]float32{k: v}
@@ -2872,7 +3140,11 @@ func FuzzStringFloat32Map(f *testing.F) {
 
 // nolint: dupl
 func FuzzStringFloat64Map(f *testing.F) {
+	f.Add(string("abc"), float64(-math.MaxFloat32))
+	f.Add(string("abc"), float64(0))
 	f.Add(string("abc"), float64(math.MaxFloat64))
+	f.Add(string("xyz"), float64(-math.MaxFloat32))
+	f.Add(string("xyz"), float64(0))
 	f.Add(string("xyz"), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k string, v float64) {
 		vm := map[string]float64{k: v}
