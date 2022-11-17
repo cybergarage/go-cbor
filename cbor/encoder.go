@@ -200,8 +200,9 @@ func (enc *Encoder) encodePrimitiveTypes(item any) error {
 			return encodeUint8(uint8(v))
 		}
 		header := byte(mtNInt)
-		if (-v) < 24 {
-			header |= uint8(-v) - 1
+		iv := -(v + 1)
+		if iv < 24 {
+			header |= uint8(iv)
 			return writeByte(enc.writer, header)
 		}
 		header |= byte(aiOneByte)
