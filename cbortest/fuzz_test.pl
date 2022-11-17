@@ -98,7 +98,7 @@ my @seeds = (
 	["-math.MaxFloat32", "0", "math.MaxFloat32"],
 	["-math.MaxFloat32", "0", "math.MaxFloat64"],
 	["true", "false"],
-	["\"abc\"", "\"xyz\""],
+	["\"x\"", "\"xy\"", "\"xyz\""],
 	);
 
 ########################################
