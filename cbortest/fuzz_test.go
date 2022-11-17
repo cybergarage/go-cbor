@@ -47,7 +47,7 @@ func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 	fuzzTest(t, v)
 }
 
-func FuzzInt(f *testing.F) {
+func FuzzIntData(f *testing.F) {
 	f.Add(int(0))
 	f.Add(int(math.MinInt))
 	f.Add(int(math.MaxInt))
@@ -56,7 +56,7 @@ func FuzzInt(f *testing.F) {
 	})
 }
 
-func FuzzInt8(f *testing.F) {
+func FuzzInt8Data(f *testing.F) {
 	f.Add(int8(0))
 	f.Add(int8(math.MinInt8))
 	f.Add(int8(math.MaxInt8))
@@ -65,7 +65,7 @@ func FuzzInt8(f *testing.F) {
 	})
 }
 
-func FuzzInt16(f *testing.F) {
+func FuzzInt16Data(f *testing.F) {
 	f.Add(int16(0))
 	f.Add(int16(math.MinInt16))
 	f.Add(int16(math.MaxInt16))
@@ -74,7 +74,7 @@ func FuzzInt16(f *testing.F) {
 	})
 }
 
-func FuzzInt32(f *testing.F) {
+func FuzzInt32Data(f *testing.F) {
 	f.Add(int32(0))
 	f.Add(int32(math.MinInt32))
 	f.Add(int32(math.MaxInt32))
@@ -83,7 +83,7 @@ func FuzzInt32(f *testing.F) {
 	})
 }
 
-func FuzzInt64(f *testing.F) {
+func FuzzInt64Data(f *testing.F) {
 	f.Add(int64(0))
 	f.Add(int64(math.MinInt64))
 	f.Add(int64(math.MaxInt64))
@@ -92,7 +92,7 @@ func FuzzInt64(f *testing.F) {
 	})
 }
 
-func FuzzUint(f *testing.F) {
+func FuzzUintData(f *testing.F) {
 	f.Add(uint(0))
 	f.Add(uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, v uint) {
@@ -100,7 +100,7 @@ func FuzzUint(f *testing.F) {
 	})
 }
 
-func FuzzUint8(f *testing.F) {
+func FuzzUint8Data(f *testing.F) {
 	f.Add(uint8(0))
 	f.Add(uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, v uint8) {
@@ -108,7 +108,7 @@ func FuzzUint8(f *testing.F) {
 	})
 }
 
-func FuzzUint16(f *testing.F) {
+func FuzzUint16Data(f *testing.F) {
 	f.Add(uint16(0))
 	f.Add(uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, v uint16) {
@@ -116,7 +116,7 @@ func FuzzUint16(f *testing.F) {
 	})
 }
 
-func FuzzUint32(f *testing.F) {
+func FuzzUint32Data(f *testing.F) {
 	f.Add(uint32(0))
 	f.Add(uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, v uint32) {
@@ -124,7 +124,7 @@ func FuzzUint32(f *testing.F) {
 	})
 }
 
-func FuzzUint64(f *testing.F) {
+func FuzzUint64Data(f *testing.F) {
 	f.Add(uint64(0))
 	f.Add(uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, v uint64) {
@@ -132,7 +132,7 @@ func FuzzUint64(f *testing.F) {
 	})
 }
 
-func FuzzFloat32(f *testing.F) {
+func FuzzFloat32Data(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32))
 	f.Add(float32(0))
 	f.Add(float32(math.MaxFloat32))
@@ -141,7 +141,7 @@ func FuzzFloat32(f *testing.F) {
 	})
 }
 
-func FuzzFloat64(f *testing.F) {
+func FuzzFloat64Data(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32))
 	f.Add(float64(0))
 	f.Add(float64(math.MaxFloat64))
@@ -150,7 +150,7 @@ func FuzzFloat64(f *testing.F) {
 	})
 }
 
-func FuzzBool(f *testing.F) {
+func FuzzBoolData(f *testing.F) {
 	f.Add(bool(true))
 	f.Add(bool(false))
 	f.Fuzz(func(t *testing.T, v bool) {
@@ -158,7 +158,7 @@ func FuzzBool(f *testing.F) {
 	})
 }
 
-func FuzzString(f *testing.F) {
+func FuzzStringData(f *testing.F) {
 	f.Add(string("abc"))
 	f.Add(string("xyz"))
 	f.Fuzz(func(t *testing.T, v string) {
