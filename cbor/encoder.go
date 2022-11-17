@@ -285,7 +285,7 @@ func (enc *Encoder) encodeArray(item any) error {
 		return writeAnyArray(v)
 	}
 
-	v, err := toAnyArray(item)
+	v, err := arrayToAnyArray(item)
 	if err != nil {
 		return err
 	}
@@ -315,7 +315,7 @@ func (enc *Encoder) encodeMap(item any) error {
 		return writeAnyMap(v)
 	}
 
-	v, err := toAnyMap(item)
+	v, err := mapToAnyMap(item)
 	if err != nil {
 		return err
 	}

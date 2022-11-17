@@ -321,7 +321,7 @@ func writeFloat64Bytes(w io.Writer, v float64) error {
 ////////////////////////////////////////////////////////////
 
 // nolint: exhaustive
-func toAnyArray(fromArray any) ([]any, error) {
+func arrayToAnyArray(fromArray any) ([]any, error) {
 	fromArrayVal := reflect.ValueOf(fromArray)
 	fromArrayType := fromArrayVal.Type()
 	switch fromArrayType.Kind() {
@@ -350,7 +350,7 @@ func toAnyArray(fromArray any) ([]any, error) {
 // Array
 ////////////////////////////////////////////////////////////
 
-func toAnyMap(fromMap any) (map[any]any, error) {
+func mapToAnyMap(fromMap any) (map[any]any, error) {
 	toMap := map[any]any{}
 
 	fromMapVal := reflect.ValueOf(fromMap)
@@ -364,11 +364,13 @@ func toAnyMap(fromMap any) (map[any]any, error) {
 	toMapKeyType := toMapType.Key()
 	toMapElemType := toMapType.Elem()
 
-	for _, fromMapKeyVal := range fromMapVal.MapKeys() {
+	fromMapIter := fromMapVal.MapRange()
+	for fromMapIter.Next() {
+		fromMapKeyVal := fromMapIter.Key()
 		if !fromMapKeyVal.CanConvert(toMapKeyType) {
 			return nil, newErrorCastTypes(fromMap, toMap)
 		}
-		fromMapElemVal := fromMapVal.MapIndex(fromMapKeyVal)
+		fromMapElemVal := fromMapIter.Value()
 		if !fromMapElemVal.CanConvert(toMapElemType) {
 			return nil, newErrorCastTypes(fromMap, toMap)
 		}
