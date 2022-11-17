@@ -55,6 +55,5 @@ fuzz: test
 	pushd ${TEST_PKG_DIR} && make && popd
 	go test -v -fuzz ${PKGS} ${TEST_PKGS}
 
-
 clean:
 	go clean -i ${PKGS}
