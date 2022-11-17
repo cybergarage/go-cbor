@@ -189,8 +189,8 @@ for (my $i = 0; $i <= $#types; $i++){
     	}
 		printf("\tf.Fuzz(func(t *testing.T, k %s, v %s) {\n", $itype, $jtype);
 		printf("\t\tvs := struct {\n");
-		printf("\t\t\tKey\t%s\n", $itype);
-		printf("\t\t\tVal\t%s\n", $jtype);
+		printf("\t\t\tKey %s\n", $itype);
+		printf("\t\t\tVal %s\n", $jtype);
 		printf("\t\t}{\n");
 		printf("\t\t\tKey: k, Val: v,\n");
 		printf("\t\t}\n");
