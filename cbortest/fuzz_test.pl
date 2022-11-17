@@ -170,3 +170,32 @@ for (my $i = 0; $i <= $#types; $i++){
 		printf("}\n");
 	}
 }
+
+########################################
+# Struct tests
+########################################
+
+for (my $i = 0; $i <= $#types; $i++){
+	my $itype = $types[$i];
+	for (my $j = 0; $j <= $#types; $j++){
+		my $jtype = $types[$j];
+		printf("\n");
+		printf("// nolint: dupl\n");
+		printf("func Fuzz%s%sStruct(f *testing.F) {\n", ucfirst($itype), ucfirst($jtype));
+		for (my $n = 0; $n < @{$seeds[$i]}; $n++) {
+			for (my $m = 0; $m < @{$seeds[$j]}; $m++) {
+				printf("\tf.Add(%s(%s), %s(%s))\n", $itype, $seeds[$i]->[$n], $jtype, $seeds[$j]->[$m]);
+	    	}
+    	}
+		printf("\tf.Fuzz(func(t *testing.T, k %s, v %s) {\n", $itype, $jtype);
+		printf("\t\tvs := struct {\n");
+		printf("\t\t\tKey\t%s\n", $itype);
+		printf("\t\t\tVal\t%s\n", $jtype);
+		printf("\t\t}{\n");
+		printf("\t\t\tKey: k, Val: v,\n");
+		printf("\t\t}\n");
+		printf("\t\tfuzzTest(t, vs)\n");
+		printf("\t})\n");
+		printf("}\n");
+	}
+}
