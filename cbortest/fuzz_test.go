@@ -167,7 +167,13 @@ func FuzzIntArray(f *testing.F) {
 	f.Add(int(math.MinInt))
 	f.Add(int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, v int) {
-		va := []int{v, v, v, v, v}
+		va := []int{}
+		fuzzTest(t, va)
+		va = []int{v}
+		fuzzTest(t, va)
+		va = []int{v, v}
+		fuzzTest(t, va)
+		va = []int{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -177,7 +183,13 @@ func FuzzInt8Array(f *testing.F) {
 	f.Add(int8(math.MinInt8))
 	f.Add(int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, v int8) {
-		va := []int8{v, v, v, v, v}
+		va := []int8{}
+		fuzzTest(t, va)
+		va = []int8{v}
+		fuzzTest(t, va)
+		va = []int8{v, v}
+		fuzzTest(t, va)
+		va = []int8{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -187,7 +199,13 @@ func FuzzInt16Array(f *testing.F) {
 	f.Add(int16(math.MinInt16))
 	f.Add(int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, v int16) {
-		va := []int16{v, v, v, v, v}
+		va := []int16{}
+		fuzzTest(t, va)
+		va = []int16{v}
+		fuzzTest(t, va)
+		va = []int16{v, v}
+		fuzzTest(t, va)
+		va = []int16{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -197,7 +215,13 @@ func FuzzInt32Array(f *testing.F) {
 	f.Add(int32(math.MinInt32))
 	f.Add(int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, v int32) {
-		va := []int32{v, v, v, v, v}
+		va := []int32{}
+		fuzzTest(t, va)
+		va = []int32{v}
+		fuzzTest(t, va)
+		va = []int32{v, v}
+		fuzzTest(t, va)
+		va = []int32{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -207,7 +231,13 @@ func FuzzInt64Array(f *testing.F) {
 	f.Add(int64(math.MinInt64))
 	f.Add(int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, v int64) {
-		va := []int64{v, v, v, v, v}
+		va := []int64{}
+		fuzzTest(t, va)
+		va = []int64{v}
+		fuzzTest(t, va)
+		va = []int64{v, v}
+		fuzzTest(t, va)
+		va = []int64{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -216,7 +246,13 @@ func FuzzUintArray(f *testing.F) {
 	f.Add(uint(0))
 	f.Add(uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, v uint) {
-		va := []uint{v, v, v, v, v}
+		va := []uint{}
+		fuzzTest(t, va)
+		va = []uint{v}
+		fuzzTest(t, va)
+		va = []uint{v, v}
+		fuzzTest(t, va)
+		va = []uint{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -225,7 +261,13 @@ func FuzzUint8Array(f *testing.F) {
 	f.Add(uint8(0))
 	f.Add(uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, v uint8) {
-		va := []uint8{v, v, v, v, v}
+		va := []uint8{}
+		fuzzTest(t, va)
+		va = []uint8{v}
+		fuzzTest(t, va)
+		va = []uint8{v, v}
+		fuzzTest(t, va)
+		va = []uint8{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -234,7 +276,13 @@ func FuzzUint16Array(f *testing.F) {
 	f.Add(uint16(0))
 	f.Add(uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, v uint16) {
-		va := []uint16{v, v, v, v, v}
+		va := []uint16{}
+		fuzzTest(t, va)
+		va = []uint16{v}
+		fuzzTest(t, va)
+		va = []uint16{v, v}
+		fuzzTest(t, va)
+		va = []uint16{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -243,7 +291,13 @@ func FuzzUint32Array(f *testing.F) {
 	f.Add(uint32(0))
 	f.Add(uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, v uint32) {
-		va := []uint32{v, v, v, v, v}
+		va := []uint32{}
+		fuzzTest(t, va)
+		va = []uint32{v}
+		fuzzTest(t, va)
+		va = []uint32{v, v}
+		fuzzTest(t, va)
+		va = []uint32{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -252,7 +306,13 @@ func FuzzUint64Array(f *testing.F) {
 	f.Add(uint64(0))
 	f.Add(uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, v uint64) {
-		va := []uint64{v, v, v, v, v}
+		va := []uint64{}
+		fuzzTest(t, va)
+		va = []uint64{v}
+		fuzzTest(t, va)
+		va = []uint64{v, v}
+		fuzzTest(t, va)
+		va = []uint64{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -260,7 +320,13 @@ func FuzzUint64Array(f *testing.F) {
 func FuzzFloat32Array(f *testing.F) {
 	f.Add(float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, v float32) {
-		va := []float32{v, v, v, v, v}
+		va := []float32{}
+		fuzzTest(t, va)
+		va = []float32{v}
+		fuzzTest(t, va)
+		va = []float32{v, v}
+		fuzzTest(t, va)
+		va = []float32{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -268,7 +334,13 @@ func FuzzFloat32Array(f *testing.F) {
 func FuzzFloat64Array(f *testing.F) {
 	f.Add(float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, v float64) {
-		va := []float64{v, v, v, v, v}
+		va := []float64{}
+		fuzzTest(t, va)
+		va = []float64{v}
+		fuzzTest(t, va)
+		va = []float64{v, v}
+		fuzzTest(t, va)
+		va = []float64{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -277,7 +349,13 @@ func FuzzBoolArray(f *testing.F) {
 	f.Add(bool(true))
 	f.Add(bool(false))
 	f.Fuzz(func(t *testing.T, v bool) {
-		va := []bool{v, v, v, v, v}
+		va := []bool{}
+		fuzzTest(t, va)
+		va = []bool{v}
+		fuzzTest(t, va)
+		va = []bool{v, v}
+		fuzzTest(t, va)
+		va = []bool{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -286,7 +364,13 @@ func FuzzStringArray(f *testing.F) {
 	f.Add(string("abc"))
 	f.Add(string("xyz"))
 	f.Fuzz(func(t *testing.T, v string) {
-		va := []string{v, v, v, v, v}
+		va := []string{}
+		fuzzTest(t, va)
+		va = []string{v}
+		fuzzTest(t, va)
+		va = []string{v, v}
+		fuzzTest(t, va)
+		va = []string{v, v, v, v, v}
 		fuzzTest(t, va)
 	})
 }

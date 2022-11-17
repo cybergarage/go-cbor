@@ -130,7 +130,13 @@ for (my $i = 0; $i <= $#types; $i++){
 		printf("\tf.Add(%s(%s))\n", $type, $seeds[$i]->[$j]);
     }
 	printf("\tf.Fuzz(func(t *testing.T, v %s) {\n", $type);
-	printf("\t\tva := []%s{v, v, v, v, v}\n", $type);
+	printf("\t\tva := []%s{}\n", $type);
+	printf("\t\tfuzzTest(t, va)\n");
+	printf("\t\tva = []%s{v}\n", $type);
+	printf("\t\tfuzzTest(t, va)\n");
+	printf("\t\tva = []%s{v, v}\n", $type);
+	printf("\t\tfuzzTest(t, va)\n");
+	printf("\t\tva = []%s{v, v, v, v, v}\n", $type);
 	printf("\t\tfuzzTest(t, va)\n");
 	printf("\t})\n");
 	printf("}\n");
