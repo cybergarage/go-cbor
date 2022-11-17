@@ -16,3 +16,6 @@
 
 # macOS
 .DS_Store
+
+# Fuzzing
+cbortest/testdata/
