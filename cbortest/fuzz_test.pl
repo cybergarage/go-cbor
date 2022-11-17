@@ -39,7 +39,7 @@ import (
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
-func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
+func fuzzTes(t *testing.T, v any) {
 	t.Helper()
 	b, err := cbor.Marshal(v)
 	if err != nil {
@@ -57,6 +57,11 @@ func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 		t.Error(err)
 		return
 	}
+}
+
+func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
+	t.Helper()
+	fuzzTes(t, v)
 }
 HEADER
 
