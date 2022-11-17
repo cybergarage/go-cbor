@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cbor
+package cbortest
 
 import (
 	"fmt"
-	"reflect"
-	"regexp"
 	"testing"
+
+	"github.com/cybergarage/go-cbor/cbor"
 )
 
 func TestUnmarshalTo(t *testing.T) {
@@ -57,22 +57,21 @@ func TestUnmarshalTo(t *testing.T) {
 	for n, fromObj := range fromObjs {
 		toObj := toObjs[n]
 		t.Run(fmt.Sprintf("%T=>%T", fromObj, toObj), func(t *testing.T) {
-			encBytes, err := Marshal(fromObj)
+			encBytes, err := cbor.Marshal(fromObj)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-			err = UnmarshalTo(encBytes, toObj)
+			err = cbor.UnmarshalTo(encBytes, toObj)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-			if !reflect.DeepEqual(fromObj, toObj) {
-				t.Skipf("%s != %s", fromObj, toObj)
-				re := regexp.MustCompile(fmt.Sprintf("[&]?%v", fromObj))
-				if !re.MatchString(fmt.Sprintf("%v", toObj)) {
-					t.Errorf("%v != %v", fromObj, toObj)
-				}
+
+			err = DeepEqual(fromObj, toObj)
+			if err != nil {
+				t.Error(err)
+				return
 			}
 		})
 	}
