@@ -17,6 +17,7 @@ package cbor
 import (
 	"fmt"
 	"reflect"
+	"regexp"
 	"testing"
 )
 
@@ -29,8 +30,7 @@ func TestUnmarshalTo(t *testing.T) {
 			Key: "hello", Value: "world",
 		},
 		[]string{"one", "two"},
-		// []string{"one", "two"},
-		// []string{"one", "two"},
+		[]string{"one", "two"},
 		map[string]int{"one": 1, "two": 2},
 		map[any]any{"one": 1, "two": 2},
 		map[string]int{"one": 1, "two": 2},
@@ -44,9 +44,8 @@ func TestUnmarshalTo(t *testing.T) {
 			Key   string
 			Value string
 		}{},
+		&[]string{},
 		make([]string, 2),
-		// make([]string, 0),
-		// []string{},
 		map[string]int{},
 		map[string]int{},
 		map[any]any{},
@@ -69,8 +68,9 @@ func TestUnmarshalTo(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(fromObj, toObj) {
-				if fmt.Sprintf("%v", fromObj) != fmt.Sprintf("%v", toObj) {
-					t.Errorf("%s != %s", fromObj, toObj)
+				re := regexp.MustCompile(fmt.Sprintf("[&]?%v", fromObj))
+				if !re.MatchString(fmt.Sprintf("%v", toObj)) {
+					t.Errorf("%v != %v", fromObj, toObj)
 				}
 			}
 		})
