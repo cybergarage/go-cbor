@@ -1,0 +1,2 @@
+#!/bin/bash
+grep Fuzz fuzz_test.go | grep "func " | awk -F'[ ()]+' '{print $2}' | xargs -L 1 -Iname sh -c 'echo name; go test . -fuzztime 100x -fuzz=name'
