@@ -158,9 +158,14 @@ for (my $i = 0; $i <= $#types; $i++){
 				printf("\tf.Add(%s(%s), %s(%s))\n", $itype, $seeds[$i]->[$n], $jtype, $seeds[$j]->[$m]);
 	    	}
     	}
-		printf("\tf.Fuzz(func(t *testing.T, k %s, v %s) {\n", $itype, $jtype);
-		printf("\t\tvm := map[%s]%s{k: v}\n", $itype, $jtype);
+		printf("\tf.Fuzz(func(t *testing.T, k1 %s, v1 %s) {\n", $itype, $jtype);
+		# printf("\tf.Fuzz(func(t *testing.T, k1 %s, k2 %s, k3 %s, v1 %s, v2 %s, v3 %s) {\n", $itype, $itype, $itype, $jtype, $jtype, $jtype);
+		printf("\t\tvm := map[%s]%s{k1: v1}\n", $itype, $jtype);
 		printf("\t\tfuzzTest(t, vm)\n");
+		# printf("\t\tvm = map[%s]%s{k1: v1, k2: v2}\n", $itype, $jtype);
+		# printf("\t\tfuzzTest(t, vm)\n");
+		# printf("\t\tvm = map[%s]%s{k1: v1, k2: v2, k3: v3}\n", $itype, $jtype);
+		# printf("\t\tfuzzTest(t, vm)\n");
 		printf("\t})\n");
 		printf("}\n");
 	}
