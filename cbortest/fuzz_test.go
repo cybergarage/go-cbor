@@ -15,6 +15,7 @@
 package cbortest
 
 import (
+	"encoding/hex"
 	"fmt"
 	"math"
 	"testing"
@@ -24,14 +25,14 @@ import (
 
 func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 	t.Helper()
-	bytes, err := cbor.Marshal(v)
+	b, err := cbor.Marshal(v)
 	if err != nil {
-		t.Errorf("%v : %s", v, err)
+		t.Errorf("Marshal(%v) : %s", v, err)
 		return
 	}
-	r, err := cbor.Unmarshal(bytes)
+	r, err := cbor.Unmarshal(b)
 	if err != nil {
-		t.Errorf("%v : %s", v, err)
+		t.Errorf("Unmarshal(%v => %s) : %s", v, hex.EncodeToString(b), err)
 		return
 	}
 
