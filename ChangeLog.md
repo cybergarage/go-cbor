@@ -1,6 +1,10 @@
 # Changelog
 
-## v1.1.0 (2022-11-17)
+## v1.1.1 (2022-11-xx)
+- Improved performance of Decoder::Unmarshal() when a map is specified as the unmarshal object.
+- Improved Decoder::Unmarshal() to expand the slice capacity automatically if the specified array is shorter than the decorded array.
+
+## v1.1.0 (2022-11-16)
 - Updated Encoder::Encode() and Marshal() to support any user-defined maps, arrays, and structures
 - Added Decoder::Unmarshal() and UnmarshalTo() to unmarshal decoded objects into any user-defined maps and structures
 ###  Supported
