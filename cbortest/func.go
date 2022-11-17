@@ -18,20 +18,36 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"strings"
 )
 
 func DeepEqual(fromObj any, toObj any) error {
 	if reflect.DeepEqual(fromObj, toObj) {
 		return nil
 	}
-	fromObjStr := fmt.Sprintf("%v", fromObj)
-	toObjStr := fmt.Sprintf("%v", toObj)
+	fromObjStr := fmt.Sprintf("%+v", fromObj)
+	toObjStr := fmt.Sprintf("%+v", toObj)
 	if toObjStr == fromObjStr {
 		return nil
 	}
+
+	// Array representation
+	// fromObj: "[one two]"
+	// toObj  : "&[one two]"
 	re := regexp.MustCompile(fmt.Sprintf("[&]?%s", fromObjStr))
 	if re.MatchString(toObjStr) {
 		return nil
 	}
+
+	// Map representation
+	// fromObj:    "{Key:0 Val:-3.4028234663852886e+38}"
+	// toObj  : "map[Key:0 Val:-3.4028234663852886e+38]"
+	toObjStr = strings.ReplaceAll(toObjStr, "[", "{")
+	toObjStr = strings.ReplaceAll(toObjStr, "]", "}")
+	toObjStr = strings.ReplaceAll(toObjStr, "map", "")
+	if toObjStr == fromObjStr {
+		return nil
+	}
+
 	return fmt.Errorf("%v != %v", toObjStr, fromObjStr)
 }
