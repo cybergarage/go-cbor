@@ -17,7 +17,6 @@ package cbortest
 import (
 	"fmt"
 	"reflect"
-	"regexp"
 	"strings"
 )
 
@@ -36,8 +35,13 @@ func DeepEqual(fromObj any, toObj any) error {
 	// Array string comparisons
 	// fromObj: "[one two]"
 	// toObj  : "&[one two]"
-	re := regexp.MustCompile(fmt.Sprintf("[&]?%s", fromObjStr))
-	if re.MatchString(toObjStr) {
+	// NOTE: (}`): error parsing regexp: missing closing )
+	// re := regexp.MustCompile(fmt.Sprintf("[&]?%s", fromObjStr))
+	// if re.MatchString(toObjStr) {
+	// 	return nil
+	// }
+	toObjStr = strings.ReplaceAll(toObjStr, "&", "")
+	if toObjStr == fromObjStr {
 		return nil
 	}
 
@@ -47,6 +51,13 @@ func DeepEqual(fromObj any, toObj any) error {
 	toObjStr = strings.ReplaceAll(toObjStr, "[", "{")
 	toObjStr = strings.ReplaceAll(toObjStr, "]", "}")
 	toObjStr = strings.ReplaceAll(toObjStr, "map", "")
+	if toObjStr == fromObjStr {
+		return nil
+	}
+	// "{Key:32767 Val:&} != "{Key:32767 Val:}""
+	// {Key:32767 Val:} != {Key:32767 Val:&}
+	fromObjStr = strings.ReplaceAll(fromObjStr, "&", "")
+	toObjStr = strings.ReplaceAll(toObjStr, "&", "")
 	if toObjStr == fromObjStr {
 		return nil
 	}
