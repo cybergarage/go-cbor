@@ -38,7 +38,7 @@ import (
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
-func fuzzTes(t *testing.T, v any) {
+func fuzzTest(t *testing.T, v any) {
 	t.Helper()
 	b, err := cbor.Marshal(v)
 	if err != nil {
@@ -60,7 +60,7 @@ func fuzzTes(t *testing.T, v any) {
 
 func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 	t.Helper()
-	fuzzTes(t, v)
+	fuzzTest(t, v)
 }
 HEADER
 
@@ -101,6 +101,10 @@ my @seeds = (
 	["\"abc\"", "\"xyz\""],
 	);
 
+########################################
+# Primitive data type tests
+########################################
+
 for (my $i = 0; $i <= $#types; $i++){
 	printf("\n");
 	my $type = $types[$i];
@@ -112,4 +116,46 @@ for (my $i = 0; $i <= $#types; $i++){
 	printf("\t\tfuzzPrimitiveTest(t, v)\n");
 	printf("\t})\n");
 	printf("}\n");
+}
+
+########################################
+# Array tests
+########################################
+
+for (my $i = 0; $i <= $#types; $i++){
+	printf("\n");
+	my $type = $types[$i];
+	printf("func Fuzz%sArray(f *testing.F) {\n", ucfirst($type));
+	for ($j = 0; $j < @{$seeds[$i]}; $j++) {
+		printf("\tf.Add(%s(%s))\n", $type, $seeds[$i]->[$j]);
+    }
+	printf("\tf.Fuzz(func(t *testing.T, v %s) {\n", $type);
+	printf("\t\tva := []%s{v, v, v, v, v}\n", $type);
+	printf("\t\tfuzzTest(t, va)\n");
+	printf("\t})\n");
+	printf("}\n");
+}
+
+########################################
+# Map tests
+########################################
+
+for (my $i = 0; $i <= $#types; $i++){
+	my $itype = $types[$i];
+	for (my $j = 0; $j <= $#types; $j++){
+		my $jtype = $types[$j];
+		printf("\n");
+		printf("// nolint: dupl\n");
+		printf("func Fuzz%s%sMap(f *testing.F) {\n", ucfirst($itype), ucfirst($jtype));
+		for (my $n = 0; $n < @{$seeds[$i]}; $n++) {
+			for (my $m = 0; $m < @{$seeds[$j]}; $m++) {
+				printf("\tf.Add(%s(%s), %s(%s))\n", $itype, $seeds[$i]->[$n], $jtype, $seeds[$j]->[$m]);
+	    	}
+    	}
+		printf("\tf.Fuzz(func(t *testing.T, k %s, v %s) {\n", $itype, $jtype);
+		printf("\t\tvm := map[%s]%s{k: v}\n", $itype, $jtype);
+		printf("\t\tfuzzTest(t, vm)\n");
+		printf("\t})\n");
+		printf("}\n");
+	}
 }
