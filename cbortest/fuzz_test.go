@@ -20,9 +20,82 @@ import (
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
-func FuzzDecEnc(f *testing.F) {
-	cbor.NewDecoder(nil)
-	cbor.NewEncoder(nil)
+func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
+	t.Helper()
+	bytes, err := cbor.Marshal(v)
+	if err != nil {
+		t.Errorf("%v : %s", v, err)
+		return
+	}
+	r, err := cbor.Unmarshal(bytes)
+	if err != nil {
+		t.Errorf("%v : %s", v, err)
+		return
+	}
+
+	err = DeepEqual(v, r)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+}
+
+func FuzzPrimitiveInt(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v int) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveInt8(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v int8) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveInt16(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v int16) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveInt32(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v int32) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveInt64(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v int64) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveUint(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v uint) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveUint8(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v uint8) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveUint16(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v uint16) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveUint32(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v uint32) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveUint64(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v uint64) {
+		fuzzPrimitiveTest(t, v)
 	})
 }
