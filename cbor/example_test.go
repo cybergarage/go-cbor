@@ -125,21 +125,23 @@ func ExampleDecoder_Unmarshal() {
 
 func ExampleUnmarshalTo() {
 	fromObjs := []any{
+		[]string{"one", "two"},
+		map[string]int{"one": 1, "two": 2},
 		struct {
 			Key   string
 			Value string
 		}{
 			Key: "hello", Value: "world",
 		},
-		map[string]int{"one": 1, "two": 2},
 	}
 
 	toObjs := []any{
+		&[]string{},
+		map[string]int{},
 		&struct {
 			Key   string
 			Value string
 		}{},
-		map[string]int{},
 	}
 
 	for n, fromObj := range fromObjs {
@@ -150,8 +152,9 @@ func ExampleUnmarshalTo() {
 	}
 
 	// Output:
-	// &{hello world}
+	// &[one two]
 	// map[one:1 two:2]
+	// &{hello world}
 }
 
 func ExampleEncoder_Encode() {
