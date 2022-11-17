@@ -32,9 +32,12 @@ TEST_PKG_SRCS=\
 TEST_PKGS=\
 	${TEST_PKG_ID}
 
-.PHONY: version format vet lint clean
+.PHONY: version format vet lint clean fuzz
 
 all: test
+
+fuzz:
+	pushd ${TEST_PKG_DIR} && make && popd
 
 format: version
 	gofmt -s -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
@@ -45,10 +48,10 @@ vet: format
 lint: vet
 	golangci-lint run ${PKG_SRCS} ${BIN_SRCS} ${TEST_PKG_SRCS}
 
-build:
+build: fuzz
 	go build -v ${PKGS}
 
-test: lint
+test: fuzz lint
 	go test -v -coverpkg=${PKG_ID} -timeout 60s ${PKGS} ${TEST_PKGS}
 
 clean:
