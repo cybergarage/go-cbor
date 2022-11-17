@@ -52,7 +52,8 @@ test: lint
 	go test -v -coverpkg=${PKG_ID} -timeout 60s ${PKGS} ${TEST_PKGS}
 
 fuzz: test
-	pushd ${TEST_PKG_DIR} && make && ./fuzz && popd
+	pushd ${TEST_PKG_DIR} && make && popd
+	pushd ${TEST_PKG_DIR} && ./fuzz && popd
 
 clean:
 	go clean -i ${PKGS}
