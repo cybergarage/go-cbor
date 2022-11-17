@@ -5,7 +5,7 @@
 // You may obtain a copy of the License at
 //
 //    http://www.apache.org/licenses/LICENSE-2.0
-//
+//b
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,6 +38,12 @@ func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 		t.Error(err)
 		return
 	}
+}
+
+func FuzzPrimitiveByte(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v byte) {
+		fuzzPrimitiveTest(t, v)
+	})
 }
 
 func FuzzPrimitiveInt(f *testing.F) {
@@ -96,6 +102,30 @@ func FuzzPrimitiveUint32(f *testing.F) {
 
 func FuzzPrimitiveUint64(f *testing.F) {
 	f.Fuzz(func(t *testing.T, v uint64) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveFloat32(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v float32) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveFloat64(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v float64) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveBool(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v bool) {
+		fuzzPrimitiveTest(t, v)
+	})
+}
+
+func FuzzPrimitiveString(f *testing.F) {
+	f.Fuzz(func(t *testing.T, v string) {
 		fuzzPrimitiveTest(t, v)
 	})
 }
