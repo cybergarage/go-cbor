@@ -108,7 +108,7 @@ my @seeds = (
 for (my $i = 0; $i <= $#types; $i++){
 	printf("\n");
 	my $type = $types[$i];
-	printf("func Fuzz%s(f *testing.F) {\n", ucfirst($type));
+	printf("func Fuzz%sData(f *testing.F) {\n", ucfirst($type));
 	for ($j = 0; $j < @{$seeds[$i]}; $j++) {
 		printf("\tf.Add(%s(%s))\n", $type, $seeds[$i]->[$j]);
     }
