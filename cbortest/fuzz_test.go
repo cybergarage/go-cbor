@@ -16,6 +16,7 @@ package cbortest
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/cybergarage/go-cbor/cbor"
@@ -41,15 +42,10 @@ func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 	}
 }
 
-func FuzzByte(f *testing.F) {
-	f.Fuzz(func(t *testing.T, v byte) {
-		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
-			fuzzPrimitiveTest(t, v)
-		})
-	})
-}
-
 func FuzzInt(f *testing.F) {
+	f.Add(int(0))
+	f.Add(int(math.MinInt))
+	f.Add(int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, v int) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -58,6 +54,9 @@ func FuzzInt(f *testing.F) {
 }
 
 func FuzzInt8(f *testing.F) {
+	f.Add(int8(0))
+	f.Add(int8(math.MinInt8))
+	f.Add(int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, v int8) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -66,6 +65,9 @@ func FuzzInt8(f *testing.F) {
 }
 
 func FuzzInt16(f *testing.F) {
+	f.Add(int16(0))
+	f.Add(int16(math.MinInt16))
+	f.Add(int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, v int16) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -74,6 +76,9 @@ func FuzzInt16(f *testing.F) {
 }
 
 func FuzzInt32(f *testing.F) {
+	f.Add(int32(0))
+	f.Add(int32(math.MinInt32))
+	f.Add(int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, v int32) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -82,6 +87,9 @@ func FuzzInt32(f *testing.F) {
 }
 
 func FuzzInt64(f *testing.F) {
+	f.Add(int64(0))
+	f.Add(int64(math.MinInt64))
+	f.Add(int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, v int64) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -90,6 +98,8 @@ func FuzzInt64(f *testing.F) {
 }
 
 func FuzzUint(f *testing.F) {
+	f.Add(uint(0))
+	f.Add(uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, v uint) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -98,6 +108,8 @@ func FuzzUint(f *testing.F) {
 }
 
 func FuzzUint8(f *testing.F) {
+	f.Add(uint8(0))
+	f.Add(uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, v uint8) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -106,6 +118,8 @@ func FuzzUint8(f *testing.F) {
 }
 
 func FuzzUint16(f *testing.F) {
+	f.Add(uint16(0))
+	f.Add(uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, v uint16) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -114,6 +128,8 @@ func FuzzUint16(f *testing.F) {
 }
 
 func FuzzUint32(f *testing.F) {
+	f.Add(uint32(0))
+	f.Add(uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, v uint32) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -122,6 +138,8 @@ func FuzzUint32(f *testing.F) {
 }
 
 func FuzzUint64(f *testing.F) {
+	f.Add(uint64(0))
+	f.Add(uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, v uint64) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -130,6 +148,7 @@ func FuzzUint64(f *testing.F) {
 }
 
 func FuzzFloat32(f *testing.F) {
+	f.Add(float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, v float32) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -138,6 +157,7 @@ func FuzzFloat32(f *testing.F) {
 }
 
 func FuzzFloat64(f *testing.F) {
+	f.Add(float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, v float64) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -146,6 +166,8 @@ func FuzzFloat64(f *testing.F) {
 }
 
 func FuzzBool(f *testing.F) {
+	f.Add(bool(true))
+	f.Add(bool(false))
 	f.Fuzz(func(t *testing.T, v bool) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)
@@ -154,6 +176,8 @@ func FuzzBool(f *testing.F) {
 }
 
 func FuzzString(f *testing.F) {
+	f.Add(string("abc"))
+	f.Add(string("xyz"))
 	f.Fuzz(func(t *testing.T, v string) {
 		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
 			fuzzPrimitiveTest(t, v)

@@ -32,6 +32,7 @@ package cbortest
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/cybergarage/go-cbor/cbor"
@@ -61,8 +62,7 @@ HEADER
 # Go Fuzzing - The Go Programming Language
 # https://go.dev/security/fuzz/
 
-my @priTypes = (
-	"byte", 
+my @types = (
 	"int", 
 	"int8", 
 	"int16", 
@@ -79,10 +79,31 @@ my @priTypes = (
 	"string",
 	);
 
-foreach my $priType (@priTypes) {
+my @seeds = (
+	["0", "math.MinInt", "math.MaxInt"],
+	["0", "math.MinInt8", "math.MaxInt8"],
+	["0", "math.MinInt16", "math.MaxInt16"],
+	["0", "math.MinInt32", "math.MaxInt32"],
+	["0", "math.MinInt64", "math.MaxInt64"],
+	["0", "math.MaxUint"],
+	["0", "math.MaxUint8"],
+	["0", "math.MaxUint16"],
+	["0", "math.MaxUint32"],
+	["0", "math.MaxInt64"],
+	["math.MaxFloat32"],
+	["math.MaxFloat64"],
+	["true", "false"],
+	["\"abc\"", "\"xyz\""],
+	);
+
+for (my $i = 0; $i <= $#types; $i++){
 	printf("\n");
-	printf("func Fuzz%s(f *testing.F) {\n", ucfirst($priType));
-	printf("\tf.Fuzz(func(t *testing.T, v %s) {\n", $priType);
+	my $type = $types[$i];
+	printf("func Fuzz%s(f *testing.F) {\n", ucfirst($type));
+	for ($j = 0; $j < @{$seeds[$i]}; $j++) {
+		printf("\tf.Add(%s(%s))\n", $type, $seeds[$i]->[$j]);
+    }
+	printf("\tf.Fuzz(func(t *testing.T, v %s) {\n", $type);
 	printf("\t\tt.Run(fmt.Sprintf(\"%%v\", v), func(t *testing.T) {\n");
 	printf("\t\t\tfuzzPrimitiveTest(t, v)\n");
 	printf("\t\t})\n");
