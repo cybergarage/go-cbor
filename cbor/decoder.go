@@ -301,7 +301,7 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 			toArrayVal.Set(reflect.MakeSlice(fromArrayType, fromArrayLen, fromArrayLen))
 		}
 	case reflect.Pointer:
-		elem := reflect.ValueOf(toObj).Elem()
+		elem := toArrayVal.Elem()
 		switch elem.Type().Kind() {
 		case reflect.Array:
 			if elem.Len() < fromArrayLen {
@@ -312,9 +312,10 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 				if !elem.CanSet() {
 					return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
 				}
-				elem.Set(reflect.MakeSlice(fromArrayType, fromArrayLen, fromArrayLen))
+				toArrayType = elem.Type()
+				appendLen := fromArrayLen - elem.Len()
+				elem.Set(reflect.AppendSlice(elem, reflect.MakeSlice(toArrayType, appendLen, appendLen)))
 				toArrayVal = elem
-				toArrayType = toArrayVal.Type()
 			}
 		default:
 			return newErrorUnmarshalDataTypes(fromArray, toObj)
