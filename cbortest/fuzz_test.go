@@ -42,6 +42,26 @@ func fuzzUnmarshalTest(t *testing.T, v any) {
 	}
 }
 
+func fuzzUnmarshalToTest(t *testing.T, v any, to any) {
+	t.Helper()
+	b, err := cbor.Marshal(v)
+	if err != nil {
+		t.Errorf("Marshal(%v) : %s", v, err)
+		return
+	}
+	err = cbor.UnmarshalTo(b, to)
+	if err != nil {
+		t.Errorf("Unmarshal(%v => %T) : %s", v, to, err)
+		return
+	}
+
+	err = deepEqual(v, to)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+}
+
 func FuzzIntData(f *testing.F) {
 	f.Add(int(0))
 	f.Add(int(math.MinInt))
