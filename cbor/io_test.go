@@ -244,6 +244,7 @@ func TestEncodeDecodeFunc(t *testing.T) {
 	})
 	t.Run("float32", func(t *testing.T) {
 		testValues := []float32{
+			-math.MaxFloat32,
 			-1,
 			0,
 			1,
@@ -271,6 +272,7 @@ func TestEncodeDecodeFunc(t *testing.T) {
 	})
 	t.Run("float64", func(t *testing.T) {
 		testValues := []float64{
+			-math.MaxFloat64,
 			-1,
 			0,
 			1,
