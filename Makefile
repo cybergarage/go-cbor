@@ -32,7 +32,7 @@ TEST_PKG_SRCS=\
 TEST_PKGS=\
 	${TEST_PKG_ID}
 
-.PHONY: version format vet lint clean
+.PHONY: version format vet lint cover clean
 
 all: test
 
@@ -49,10 +49,13 @@ build: fuzz
 	go build -v ${PKGS}
 
 test: lint
-	go test -v -coverpkg=${PKG_ID} -timeout 60s ${PKGS} ${TEST_PKGS}
+	go test -v -cover -coverpkg=${PKG_ID} -coverprofile=coverage.out -timeout 60s ${PKGS} ${TEST_PKGS}
 
 fuzz: test
 	pushd ${TEST_PKG_DIR} && ./fuzz && popd
+
+cover: test
+	go tool cover -html=coverage.out -o coverage.html
 
 clean:
 	go clean -i ${PKGS}
