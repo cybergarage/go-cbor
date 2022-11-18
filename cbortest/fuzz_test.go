@@ -178,7 +178,7 @@ func FuzzIntArray(f *testing.F) {
 		fuzzTest(t, va)
 		va = []int{v, v}
 		fuzzTest(t, va)
-		va = []int{v, v, v, v, v}
+		va = []int{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -194,7 +194,7 @@ func FuzzInt8Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []int8{v, v}
 		fuzzTest(t, va)
-		va = []int8{v, v, v, v, v}
+		va = []int8{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -210,7 +210,7 @@ func FuzzInt16Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []int16{v, v}
 		fuzzTest(t, va)
-		va = []int16{v, v, v, v, v}
+		va = []int16{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -226,7 +226,7 @@ func FuzzInt32Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []int32{v, v}
 		fuzzTest(t, va)
-		va = []int32{v, v, v, v, v}
+		va = []int32{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -242,7 +242,7 @@ func FuzzInt64Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []int64{v, v}
 		fuzzTest(t, va)
-		va = []int64{v, v, v, v, v}
+		va = []int64{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -257,7 +257,7 @@ func FuzzUintArray(f *testing.F) {
 		fuzzTest(t, va)
 		va = []uint{v, v}
 		fuzzTest(t, va)
-		va = []uint{v, v, v, v, v}
+		va = []uint{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -272,7 +272,7 @@ func FuzzUint8Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []uint8{v, v}
 		fuzzTest(t, va)
-		va = []uint8{v, v, v, v, v}
+		va = []uint8{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -287,7 +287,7 @@ func FuzzUint16Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []uint16{v, v}
 		fuzzTest(t, va)
-		va = []uint16{v, v, v, v, v}
+		va = []uint16{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -302,7 +302,7 @@ func FuzzUint32Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []uint32{v, v}
 		fuzzTest(t, va)
-		va = []uint32{v, v, v, v, v}
+		va = []uint32{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -317,7 +317,7 @@ func FuzzUint64Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []uint64{v, v}
 		fuzzTest(t, va)
-		va = []uint64{v, v, v, v, v}
+		va = []uint64{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -333,7 +333,7 @@ func FuzzFloat32Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []float32{v, v}
 		fuzzTest(t, va)
-		va = []float32{v, v, v, v, v}
+		va = []float32{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -349,7 +349,7 @@ func FuzzFloat64Array(f *testing.F) {
 		fuzzTest(t, va)
 		va = []float64{v, v}
 		fuzzTest(t, va)
-		va = []float64{v, v, v, v, v}
+		va = []float64{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -364,7 +364,7 @@ func FuzzBoolArray(f *testing.F) {
 		fuzzTest(t, va)
 		va = []bool{v, v}
 		fuzzTest(t, va)
-		va = []bool{v, v, v, v, v}
+		va = []bool{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -380,7 +380,7 @@ func FuzzStringArray(f *testing.F) {
 		fuzzTest(t, va)
 		va = []string{v, v}
 		fuzzTest(t, va)
-		va = []string{v, v, v, v, v}
+		va = []string{v, v, v}
 		fuzzTest(t, va)
 	})
 }
@@ -3249,7 +3249,7 @@ func FuzzStringStringMap(f *testing.F) {
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntIntStruct(f *testing.F) {
 	f.Add(int(0), int(0))
 	f.Add(int(0), int(math.MinInt))
@@ -3261,17 +3261,31 @@ func FuzzIntIntStruct(f *testing.F) {
 	f.Add(int(math.MaxInt), int(math.MinInt))
 	f.Add(int(math.MaxInt), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k int, v int) {
-		vs := struct {
-			Key int
-			Val int
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 int
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntInt8Struct(f *testing.F) {
 	f.Add(int(0), int8(0))
 	f.Add(int(0), int8(math.MinInt8))
@@ -3283,17 +3297,31 @@ func FuzzIntInt8Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), int8(math.MinInt8))
 	f.Add(int(math.MaxInt), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k int, v int8) {
-		vs := struct {
-			Key int
-			Val int8
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 int8
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntInt16Struct(f *testing.F) {
 	f.Add(int(0), int16(0))
 	f.Add(int(0), int16(math.MinInt16))
@@ -3305,17 +3333,31 @@ func FuzzIntInt16Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), int16(math.MinInt16))
 	f.Add(int(math.MaxInt), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k int, v int16) {
-		vs := struct {
-			Key int
-			Val int16
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 int16
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntInt32Struct(f *testing.F) {
 	f.Add(int(0), int32(0))
 	f.Add(int(0), int32(math.MinInt32))
@@ -3327,17 +3369,31 @@ func FuzzIntInt32Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), int32(math.MinInt32))
 	f.Add(int(math.MaxInt), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k int, v int32) {
-		vs := struct {
-			Key int
-			Val int32
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 int32
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntInt64Struct(f *testing.F) {
 	f.Add(int(0), int64(0))
 	f.Add(int(0), int64(math.MinInt64))
@@ -3349,17 +3405,31 @@ func FuzzIntInt64Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), int64(math.MinInt64))
 	f.Add(int(math.MaxInt), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int, v int64) {
-		vs := struct {
-			Key int
-			Val int64
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 int64
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntUintStruct(f *testing.F) {
 	f.Add(int(0), uint(0))
 	f.Add(int(0), uint(math.MaxUint))
@@ -3368,17 +3438,31 @@ func FuzzIntUintStruct(f *testing.F) {
 	f.Add(int(math.MaxInt), uint(0))
 	f.Add(int(math.MaxInt), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k int, v uint) {
-		vs := struct {
-			Key int
-			Val uint
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 uint
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntUint8Struct(f *testing.F) {
 	f.Add(int(0), uint8(0))
 	f.Add(int(0), uint8(math.MaxUint8))
@@ -3387,17 +3471,31 @@ func FuzzIntUint8Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), uint8(0))
 	f.Add(int(math.MaxInt), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k int, v uint8) {
-		vs := struct {
-			Key int
-			Val uint8
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 uint8
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntUint16Struct(f *testing.F) {
 	f.Add(int(0), uint16(0))
 	f.Add(int(0), uint16(math.MaxUint16))
@@ -3406,17 +3504,31 @@ func FuzzIntUint16Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), uint16(0))
 	f.Add(int(math.MaxInt), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k int, v uint16) {
-		vs := struct {
-			Key int
-			Val uint16
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 uint16
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntUint32Struct(f *testing.F) {
 	f.Add(int(0), uint32(0))
 	f.Add(int(0), uint32(math.MaxUint32))
@@ -3425,17 +3537,31 @@ func FuzzIntUint32Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), uint32(0))
 	f.Add(int(math.MaxInt), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k int, v uint32) {
-		vs := struct {
-			Key int
-			Val uint32
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 uint32
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntUint64Struct(f *testing.F) {
 	f.Add(int(0), uint64(0))
 	f.Add(int(0), uint64(math.MaxInt64))
@@ -3444,17 +3570,31 @@ func FuzzIntUint64Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), uint64(0))
 	f.Add(int(math.MaxInt), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int, v uint64) {
-		vs := struct {
-			Key int
-			Val uint64
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 uint64
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntFloat32Struct(f *testing.F) {
 	f.Add(int(0), float32(-math.MaxFloat32))
 	f.Add(int(0), float32(0))
@@ -3466,17 +3606,31 @@ func FuzzIntFloat32Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), float32(0))
 	f.Add(int(math.MaxInt), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int, v float32) {
-		vs := struct {
-			Key int
-			Val float32
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 float32
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntFloat64Struct(f *testing.F) {
 	f.Add(int(0), float64(-math.MaxFloat32))
 	f.Add(int(0), float64(0))
@@ -3488,17 +3642,31 @@ func FuzzIntFloat64Struct(f *testing.F) {
 	f.Add(int(math.MaxInt), float64(0))
 	f.Add(int(math.MaxInt), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int, v float64) {
-		vs := struct {
-			Key int
-			Val float64
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 float64
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntBoolStruct(f *testing.F) {
 	f.Add(int(0), bool(true))
 	f.Add(int(0), bool(false))
@@ -3507,17 +3675,31 @@ func FuzzIntBoolStruct(f *testing.F) {
 	f.Add(int(math.MaxInt), bool(true))
 	f.Add(int(math.MaxInt), bool(false))
 	f.Fuzz(func(t *testing.T, k int, v bool) {
-		vs := struct {
-			Key int
-			Val bool
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 bool
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzIntStringStruct(f *testing.F) {
 	f.Add(int(0), string("x"))
 	f.Add(int(0), string("xy"))
@@ -3529,17 +3711,31 @@ func FuzzIntStringStruct(f *testing.F) {
 	f.Add(int(math.MaxInt), string("xy"))
 	f.Add(int(math.MaxInt), string("xyz"))
 	f.Fuzz(func(t *testing.T, k int, v string) {
-		vs := struct {
-			Key int
-			Val string
+		vs1 := struct {
+			Elem1 int
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int
+			Elem2 string
+			Elem3 int
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8IntStruct(f *testing.F) {
 	f.Add(int8(0), int(0))
 	f.Add(int8(0), int(math.MinInt))
@@ -3551,17 +3747,31 @@ func FuzzInt8IntStruct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), int(math.MinInt))
 	f.Add(int8(math.MaxInt8), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k int8, v int) {
-		vs := struct {
-			Key int8
-			Val int
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 int
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Int8Struct(f *testing.F) {
 	f.Add(int8(0), int8(0))
 	f.Add(int8(0), int8(math.MinInt8))
@@ -3573,17 +3783,31 @@ func FuzzInt8Int8Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), int8(math.MinInt8))
 	f.Add(int8(math.MaxInt8), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k int8, v int8) {
-		vs := struct {
-			Key int8
-			Val int8
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 int8
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Int16Struct(f *testing.F) {
 	f.Add(int8(0), int16(0))
 	f.Add(int8(0), int16(math.MinInt16))
@@ -3595,17 +3819,31 @@ func FuzzInt8Int16Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), int16(math.MinInt16))
 	f.Add(int8(math.MaxInt8), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k int8, v int16) {
-		vs := struct {
-			Key int8
-			Val int16
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 int16
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Int32Struct(f *testing.F) {
 	f.Add(int8(0), int32(0))
 	f.Add(int8(0), int32(math.MinInt32))
@@ -3617,17 +3855,31 @@ func FuzzInt8Int32Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), int32(math.MinInt32))
 	f.Add(int8(math.MaxInt8), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k int8, v int32) {
-		vs := struct {
-			Key int8
-			Val int32
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 int32
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Int64Struct(f *testing.F) {
 	f.Add(int8(0), int64(0))
 	f.Add(int8(0), int64(math.MinInt64))
@@ -3639,17 +3891,31 @@ func FuzzInt8Int64Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), int64(math.MinInt64))
 	f.Add(int8(math.MaxInt8), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int8, v int64) {
-		vs := struct {
-			Key int8
-			Val int64
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 int64
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8UintStruct(f *testing.F) {
 	f.Add(int8(0), uint(0))
 	f.Add(int8(0), uint(math.MaxUint))
@@ -3658,17 +3924,31 @@ func FuzzInt8UintStruct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), uint(0))
 	f.Add(int8(math.MaxInt8), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k int8, v uint) {
-		vs := struct {
-			Key int8
-			Val uint
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 uint
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Uint8Struct(f *testing.F) {
 	f.Add(int8(0), uint8(0))
 	f.Add(int8(0), uint8(math.MaxUint8))
@@ -3677,17 +3957,31 @@ func FuzzInt8Uint8Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), uint8(0))
 	f.Add(int8(math.MaxInt8), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k int8, v uint8) {
-		vs := struct {
-			Key int8
-			Val uint8
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 uint8
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Uint16Struct(f *testing.F) {
 	f.Add(int8(0), uint16(0))
 	f.Add(int8(0), uint16(math.MaxUint16))
@@ -3696,17 +3990,31 @@ func FuzzInt8Uint16Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), uint16(0))
 	f.Add(int8(math.MaxInt8), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k int8, v uint16) {
-		vs := struct {
-			Key int8
-			Val uint16
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 uint16
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Uint32Struct(f *testing.F) {
 	f.Add(int8(0), uint32(0))
 	f.Add(int8(0), uint32(math.MaxUint32))
@@ -3715,17 +4023,31 @@ func FuzzInt8Uint32Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), uint32(0))
 	f.Add(int8(math.MaxInt8), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k int8, v uint32) {
-		vs := struct {
-			Key int8
-			Val uint32
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 uint32
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Uint64Struct(f *testing.F) {
 	f.Add(int8(0), uint64(0))
 	f.Add(int8(0), uint64(math.MaxInt64))
@@ -3734,17 +4056,31 @@ func FuzzInt8Uint64Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), uint64(0))
 	f.Add(int8(math.MaxInt8), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int8, v uint64) {
-		vs := struct {
-			Key int8
-			Val uint64
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 uint64
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Float32Struct(f *testing.F) {
 	f.Add(int8(0), float32(-math.MaxFloat32))
 	f.Add(int8(0), float32(0))
@@ -3756,17 +4092,31 @@ func FuzzInt8Float32Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), float32(0))
 	f.Add(int8(math.MaxInt8), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int8, v float32) {
-		vs := struct {
-			Key int8
-			Val float32
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 float32
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8Float64Struct(f *testing.F) {
 	f.Add(int8(0), float64(-math.MaxFloat32))
 	f.Add(int8(0), float64(0))
@@ -3778,17 +4128,31 @@ func FuzzInt8Float64Struct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), float64(0))
 	f.Add(int8(math.MaxInt8), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int8, v float64) {
-		vs := struct {
-			Key int8
-			Val float64
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 float64
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8BoolStruct(f *testing.F) {
 	f.Add(int8(0), bool(true))
 	f.Add(int8(0), bool(false))
@@ -3797,17 +4161,31 @@ func FuzzInt8BoolStruct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), bool(true))
 	f.Add(int8(math.MaxInt8), bool(false))
 	f.Fuzz(func(t *testing.T, k int8, v bool) {
-		vs := struct {
-			Key int8
-			Val bool
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 bool
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt8StringStruct(f *testing.F) {
 	f.Add(int8(0), string("x"))
 	f.Add(int8(0), string("xy"))
@@ -3819,17 +4197,31 @@ func FuzzInt8StringStruct(f *testing.F) {
 	f.Add(int8(math.MaxInt8), string("xy"))
 	f.Add(int8(math.MaxInt8), string("xyz"))
 	f.Fuzz(func(t *testing.T, k int8, v string) {
-		vs := struct {
-			Key int8
-			Val string
+		vs1 := struct {
+			Elem1 int8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int8
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int8
+			Elem2 string
+			Elem3 int8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16IntStruct(f *testing.F) {
 	f.Add(int16(0), int(0))
 	f.Add(int16(0), int(math.MinInt))
@@ -3841,17 +4233,31 @@ func FuzzInt16IntStruct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), int(math.MinInt))
 	f.Add(int16(math.MaxInt16), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k int16, v int) {
-		vs := struct {
-			Key int16
-			Val int
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 int
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Int8Struct(f *testing.F) {
 	f.Add(int16(0), int8(0))
 	f.Add(int16(0), int8(math.MinInt8))
@@ -3863,17 +4269,31 @@ func FuzzInt16Int8Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), int8(math.MinInt8))
 	f.Add(int16(math.MaxInt16), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k int16, v int8) {
-		vs := struct {
-			Key int16
-			Val int8
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 int8
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Int16Struct(f *testing.F) {
 	f.Add(int16(0), int16(0))
 	f.Add(int16(0), int16(math.MinInt16))
@@ -3885,17 +4305,31 @@ func FuzzInt16Int16Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), int16(math.MinInt16))
 	f.Add(int16(math.MaxInt16), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k int16, v int16) {
-		vs := struct {
-			Key int16
-			Val int16
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 int16
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Int32Struct(f *testing.F) {
 	f.Add(int16(0), int32(0))
 	f.Add(int16(0), int32(math.MinInt32))
@@ -3907,17 +4341,31 @@ func FuzzInt16Int32Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), int32(math.MinInt32))
 	f.Add(int16(math.MaxInt16), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k int16, v int32) {
-		vs := struct {
-			Key int16
-			Val int32
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 int32
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Int64Struct(f *testing.F) {
 	f.Add(int16(0), int64(0))
 	f.Add(int16(0), int64(math.MinInt64))
@@ -3929,17 +4377,31 @@ func FuzzInt16Int64Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), int64(math.MinInt64))
 	f.Add(int16(math.MaxInt16), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int16, v int64) {
-		vs := struct {
-			Key int16
-			Val int64
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 int64
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16UintStruct(f *testing.F) {
 	f.Add(int16(0), uint(0))
 	f.Add(int16(0), uint(math.MaxUint))
@@ -3948,17 +4410,31 @@ func FuzzInt16UintStruct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), uint(0))
 	f.Add(int16(math.MaxInt16), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k int16, v uint) {
-		vs := struct {
-			Key int16
-			Val uint
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 uint
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Uint8Struct(f *testing.F) {
 	f.Add(int16(0), uint8(0))
 	f.Add(int16(0), uint8(math.MaxUint8))
@@ -3967,17 +4443,31 @@ func FuzzInt16Uint8Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), uint8(0))
 	f.Add(int16(math.MaxInt16), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k int16, v uint8) {
-		vs := struct {
-			Key int16
-			Val uint8
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 uint8
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Uint16Struct(f *testing.F) {
 	f.Add(int16(0), uint16(0))
 	f.Add(int16(0), uint16(math.MaxUint16))
@@ -3986,17 +4476,31 @@ func FuzzInt16Uint16Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), uint16(0))
 	f.Add(int16(math.MaxInt16), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k int16, v uint16) {
-		vs := struct {
-			Key int16
-			Val uint16
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 uint16
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Uint32Struct(f *testing.F) {
 	f.Add(int16(0), uint32(0))
 	f.Add(int16(0), uint32(math.MaxUint32))
@@ -4005,17 +4509,31 @@ func FuzzInt16Uint32Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), uint32(0))
 	f.Add(int16(math.MaxInt16), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k int16, v uint32) {
-		vs := struct {
-			Key int16
-			Val uint32
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 uint32
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Uint64Struct(f *testing.F) {
 	f.Add(int16(0), uint64(0))
 	f.Add(int16(0), uint64(math.MaxInt64))
@@ -4024,17 +4542,31 @@ func FuzzInt16Uint64Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), uint64(0))
 	f.Add(int16(math.MaxInt16), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int16, v uint64) {
-		vs := struct {
-			Key int16
-			Val uint64
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 uint64
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Float32Struct(f *testing.F) {
 	f.Add(int16(0), float32(-math.MaxFloat32))
 	f.Add(int16(0), float32(0))
@@ -4046,17 +4578,31 @@ func FuzzInt16Float32Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), float32(0))
 	f.Add(int16(math.MaxInt16), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int16, v float32) {
-		vs := struct {
-			Key int16
-			Val float32
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 float32
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16Float64Struct(f *testing.F) {
 	f.Add(int16(0), float64(-math.MaxFloat32))
 	f.Add(int16(0), float64(0))
@@ -4068,17 +4614,31 @@ func FuzzInt16Float64Struct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), float64(0))
 	f.Add(int16(math.MaxInt16), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int16, v float64) {
-		vs := struct {
-			Key int16
-			Val float64
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 float64
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16BoolStruct(f *testing.F) {
 	f.Add(int16(0), bool(true))
 	f.Add(int16(0), bool(false))
@@ -4087,17 +4647,31 @@ func FuzzInt16BoolStruct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), bool(true))
 	f.Add(int16(math.MaxInt16), bool(false))
 	f.Fuzz(func(t *testing.T, k int16, v bool) {
-		vs := struct {
-			Key int16
-			Val bool
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 bool
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt16StringStruct(f *testing.F) {
 	f.Add(int16(0), string("x"))
 	f.Add(int16(0), string("xy"))
@@ -4109,17 +4683,31 @@ func FuzzInt16StringStruct(f *testing.F) {
 	f.Add(int16(math.MaxInt16), string("xy"))
 	f.Add(int16(math.MaxInt16), string("xyz"))
 	f.Fuzz(func(t *testing.T, k int16, v string) {
-		vs := struct {
-			Key int16
-			Val string
+		vs1 := struct {
+			Elem1 int16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int16
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int16
+			Elem2 string
+			Elem3 int16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32IntStruct(f *testing.F) {
 	f.Add(int32(0), int(0))
 	f.Add(int32(0), int(math.MinInt))
@@ -4131,17 +4719,31 @@ func FuzzInt32IntStruct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), int(math.MinInt))
 	f.Add(int32(math.MaxInt32), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k int32, v int) {
-		vs := struct {
-			Key int32
-			Val int
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 int
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Int8Struct(f *testing.F) {
 	f.Add(int32(0), int8(0))
 	f.Add(int32(0), int8(math.MinInt8))
@@ -4153,17 +4755,31 @@ func FuzzInt32Int8Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), int8(math.MinInt8))
 	f.Add(int32(math.MaxInt32), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k int32, v int8) {
-		vs := struct {
-			Key int32
-			Val int8
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 int8
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Int16Struct(f *testing.F) {
 	f.Add(int32(0), int16(0))
 	f.Add(int32(0), int16(math.MinInt16))
@@ -4175,17 +4791,31 @@ func FuzzInt32Int16Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), int16(math.MinInt16))
 	f.Add(int32(math.MaxInt32), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k int32, v int16) {
-		vs := struct {
-			Key int32
-			Val int16
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 int16
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Int32Struct(f *testing.F) {
 	f.Add(int32(0), int32(0))
 	f.Add(int32(0), int32(math.MinInt32))
@@ -4197,17 +4827,31 @@ func FuzzInt32Int32Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), int32(math.MinInt32))
 	f.Add(int32(math.MaxInt32), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k int32, v int32) {
-		vs := struct {
-			Key int32
-			Val int32
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 int32
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Int64Struct(f *testing.F) {
 	f.Add(int32(0), int64(0))
 	f.Add(int32(0), int64(math.MinInt64))
@@ -4219,17 +4863,31 @@ func FuzzInt32Int64Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), int64(math.MinInt64))
 	f.Add(int32(math.MaxInt32), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int32, v int64) {
-		vs := struct {
-			Key int32
-			Val int64
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 int64
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32UintStruct(f *testing.F) {
 	f.Add(int32(0), uint(0))
 	f.Add(int32(0), uint(math.MaxUint))
@@ -4238,17 +4896,31 @@ func FuzzInt32UintStruct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), uint(0))
 	f.Add(int32(math.MaxInt32), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k int32, v uint) {
-		vs := struct {
-			Key int32
-			Val uint
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 uint
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Uint8Struct(f *testing.F) {
 	f.Add(int32(0), uint8(0))
 	f.Add(int32(0), uint8(math.MaxUint8))
@@ -4257,17 +4929,31 @@ func FuzzInt32Uint8Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), uint8(0))
 	f.Add(int32(math.MaxInt32), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k int32, v uint8) {
-		vs := struct {
-			Key int32
-			Val uint8
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 uint8
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Uint16Struct(f *testing.F) {
 	f.Add(int32(0), uint16(0))
 	f.Add(int32(0), uint16(math.MaxUint16))
@@ -4276,17 +4962,31 @@ func FuzzInt32Uint16Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), uint16(0))
 	f.Add(int32(math.MaxInt32), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k int32, v uint16) {
-		vs := struct {
-			Key int32
-			Val uint16
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 uint16
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Uint32Struct(f *testing.F) {
 	f.Add(int32(0), uint32(0))
 	f.Add(int32(0), uint32(math.MaxUint32))
@@ -4295,17 +4995,31 @@ func FuzzInt32Uint32Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), uint32(0))
 	f.Add(int32(math.MaxInt32), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k int32, v uint32) {
-		vs := struct {
-			Key int32
-			Val uint32
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 uint32
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Uint64Struct(f *testing.F) {
 	f.Add(int32(0), uint64(0))
 	f.Add(int32(0), uint64(math.MaxInt64))
@@ -4314,17 +5028,31 @@ func FuzzInt32Uint64Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), uint64(0))
 	f.Add(int32(math.MaxInt32), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int32, v uint64) {
-		vs := struct {
-			Key int32
-			Val uint64
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 uint64
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Float32Struct(f *testing.F) {
 	f.Add(int32(0), float32(-math.MaxFloat32))
 	f.Add(int32(0), float32(0))
@@ -4336,17 +5064,31 @@ func FuzzInt32Float32Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), float32(0))
 	f.Add(int32(math.MaxInt32), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int32, v float32) {
-		vs := struct {
-			Key int32
-			Val float32
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 float32
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32Float64Struct(f *testing.F) {
 	f.Add(int32(0), float64(-math.MaxFloat32))
 	f.Add(int32(0), float64(0))
@@ -4358,17 +5100,31 @@ func FuzzInt32Float64Struct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), float64(0))
 	f.Add(int32(math.MaxInt32), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int32, v float64) {
-		vs := struct {
-			Key int32
-			Val float64
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 float64
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32BoolStruct(f *testing.F) {
 	f.Add(int32(0), bool(true))
 	f.Add(int32(0), bool(false))
@@ -4377,17 +5133,31 @@ func FuzzInt32BoolStruct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), bool(true))
 	f.Add(int32(math.MaxInt32), bool(false))
 	f.Fuzz(func(t *testing.T, k int32, v bool) {
-		vs := struct {
-			Key int32
-			Val bool
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 bool
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt32StringStruct(f *testing.F) {
 	f.Add(int32(0), string("x"))
 	f.Add(int32(0), string("xy"))
@@ -4399,17 +5169,31 @@ func FuzzInt32StringStruct(f *testing.F) {
 	f.Add(int32(math.MaxInt32), string("xy"))
 	f.Add(int32(math.MaxInt32), string("xyz"))
 	f.Fuzz(func(t *testing.T, k int32, v string) {
-		vs := struct {
-			Key int32
-			Val string
+		vs1 := struct {
+			Elem1 int32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int32
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int32
+			Elem2 string
+			Elem3 int32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64IntStruct(f *testing.F) {
 	f.Add(int64(0), int(0))
 	f.Add(int64(0), int(math.MinInt))
@@ -4421,17 +5205,31 @@ func FuzzInt64IntStruct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), int(math.MinInt))
 	f.Add(int64(math.MaxInt64), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k int64, v int) {
-		vs := struct {
-			Key int64
-			Val int
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 int
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Int8Struct(f *testing.F) {
 	f.Add(int64(0), int8(0))
 	f.Add(int64(0), int8(math.MinInt8))
@@ -4443,17 +5241,31 @@ func FuzzInt64Int8Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), int8(math.MinInt8))
 	f.Add(int64(math.MaxInt64), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k int64, v int8) {
-		vs := struct {
-			Key int64
-			Val int8
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 int8
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Int16Struct(f *testing.F) {
 	f.Add(int64(0), int16(0))
 	f.Add(int64(0), int16(math.MinInt16))
@@ -4465,17 +5277,31 @@ func FuzzInt64Int16Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), int16(math.MinInt16))
 	f.Add(int64(math.MaxInt64), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k int64, v int16) {
-		vs := struct {
-			Key int64
-			Val int16
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 int16
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Int32Struct(f *testing.F) {
 	f.Add(int64(0), int32(0))
 	f.Add(int64(0), int32(math.MinInt32))
@@ -4487,17 +5313,31 @@ func FuzzInt64Int32Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), int32(math.MinInt32))
 	f.Add(int64(math.MaxInt64), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k int64, v int32) {
-		vs := struct {
-			Key int64
-			Val int32
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 int32
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Int64Struct(f *testing.F) {
 	f.Add(int64(0), int64(0))
 	f.Add(int64(0), int64(math.MinInt64))
@@ -4509,17 +5349,31 @@ func FuzzInt64Int64Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), int64(math.MinInt64))
 	f.Add(int64(math.MaxInt64), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int64, v int64) {
-		vs := struct {
-			Key int64
-			Val int64
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 int64
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64UintStruct(f *testing.F) {
 	f.Add(int64(0), uint(0))
 	f.Add(int64(0), uint(math.MaxUint))
@@ -4528,17 +5382,31 @@ func FuzzInt64UintStruct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), uint(0))
 	f.Add(int64(math.MaxInt64), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k int64, v uint) {
-		vs := struct {
-			Key int64
-			Val uint
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 uint
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Uint8Struct(f *testing.F) {
 	f.Add(int64(0), uint8(0))
 	f.Add(int64(0), uint8(math.MaxUint8))
@@ -4547,17 +5415,31 @@ func FuzzInt64Uint8Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), uint8(0))
 	f.Add(int64(math.MaxInt64), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k int64, v uint8) {
-		vs := struct {
-			Key int64
-			Val uint8
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 uint8
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Uint16Struct(f *testing.F) {
 	f.Add(int64(0), uint16(0))
 	f.Add(int64(0), uint16(math.MaxUint16))
@@ -4566,17 +5448,31 @@ func FuzzInt64Uint16Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), uint16(0))
 	f.Add(int64(math.MaxInt64), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k int64, v uint16) {
-		vs := struct {
-			Key int64
-			Val uint16
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 uint16
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Uint32Struct(f *testing.F) {
 	f.Add(int64(0), uint32(0))
 	f.Add(int64(0), uint32(math.MaxUint32))
@@ -4585,17 +5481,31 @@ func FuzzInt64Uint32Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), uint32(0))
 	f.Add(int64(math.MaxInt64), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k int64, v uint32) {
-		vs := struct {
-			Key int64
-			Val uint32
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 uint32
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Uint64Struct(f *testing.F) {
 	f.Add(int64(0), uint64(0))
 	f.Add(int64(0), uint64(math.MaxInt64))
@@ -4604,17 +5514,31 @@ func FuzzInt64Uint64Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), uint64(0))
 	f.Add(int64(math.MaxInt64), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k int64, v uint64) {
-		vs := struct {
-			Key int64
-			Val uint64
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 uint64
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Float32Struct(f *testing.F) {
 	f.Add(int64(0), float32(-math.MaxFloat32))
 	f.Add(int64(0), float32(0))
@@ -4626,17 +5550,31 @@ func FuzzInt64Float32Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), float32(0))
 	f.Add(int64(math.MaxInt64), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k int64, v float32) {
-		vs := struct {
-			Key int64
-			Val float32
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 float32
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64Float64Struct(f *testing.F) {
 	f.Add(int64(0), float64(-math.MaxFloat32))
 	f.Add(int64(0), float64(0))
@@ -4648,17 +5586,31 @@ func FuzzInt64Float64Struct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), float64(0))
 	f.Add(int64(math.MaxInt64), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k int64, v float64) {
-		vs := struct {
-			Key int64
-			Val float64
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 float64
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64BoolStruct(f *testing.F) {
 	f.Add(int64(0), bool(true))
 	f.Add(int64(0), bool(false))
@@ -4667,17 +5619,31 @@ func FuzzInt64BoolStruct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), bool(true))
 	f.Add(int64(math.MaxInt64), bool(false))
 	f.Fuzz(func(t *testing.T, k int64, v bool) {
-		vs := struct {
-			Key int64
-			Val bool
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 bool
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzInt64StringStruct(f *testing.F) {
 	f.Add(int64(0), string("x"))
 	f.Add(int64(0), string("xy"))
@@ -4689,17 +5655,31 @@ func FuzzInt64StringStruct(f *testing.F) {
 	f.Add(int64(math.MaxInt64), string("xy"))
 	f.Add(int64(math.MaxInt64), string("xyz"))
 	f.Fuzz(func(t *testing.T, k int64, v string) {
-		vs := struct {
-			Key int64
-			Val string
+		vs1 := struct {
+			Elem1 int64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 int64
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 int64
+			Elem2 string
+			Elem3 int64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintIntStruct(f *testing.F) {
 	f.Add(uint(0), int(0))
 	f.Add(uint(0), int(math.MinInt))
@@ -4708,17 +5688,31 @@ func FuzzUintIntStruct(f *testing.F) {
 	f.Add(uint(math.MaxUint), int(math.MinInt))
 	f.Add(uint(math.MaxUint), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k uint, v int) {
-		vs := struct {
-			Key uint
-			Val int
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 int
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintInt8Struct(f *testing.F) {
 	f.Add(uint(0), int8(0))
 	f.Add(uint(0), int8(math.MinInt8))
@@ -4727,17 +5721,31 @@ func FuzzUintInt8Struct(f *testing.F) {
 	f.Add(uint(math.MaxUint), int8(math.MinInt8))
 	f.Add(uint(math.MaxUint), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k uint, v int8) {
-		vs := struct {
-			Key uint
-			Val int8
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 int8
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintInt16Struct(f *testing.F) {
 	f.Add(uint(0), int16(0))
 	f.Add(uint(0), int16(math.MinInt16))
@@ -4746,17 +5754,31 @@ func FuzzUintInt16Struct(f *testing.F) {
 	f.Add(uint(math.MaxUint), int16(math.MinInt16))
 	f.Add(uint(math.MaxUint), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k uint, v int16) {
-		vs := struct {
-			Key uint
-			Val int16
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 int16
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintInt32Struct(f *testing.F) {
 	f.Add(uint(0), int32(0))
 	f.Add(uint(0), int32(math.MinInt32))
@@ -4765,17 +5787,31 @@ func FuzzUintInt32Struct(f *testing.F) {
 	f.Add(uint(math.MaxUint), int32(math.MinInt32))
 	f.Add(uint(math.MaxUint), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k uint, v int32) {
-		vs := struct {
-			Key uint
-			Val int32
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 int32
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintInt64Struct(f *testing.F) {
 	f.Add(uint(0), int64(0))
 	f.Add(uint(0), int64(math.MinInt64))
@@ -4784,102 +5820,186 @@ func FuzzUintInt64Struct(f *testing.F) {
 	f.Add(uint(math.MaxUint), int64(math.MinInt64))
 	f.Add(uint(math.MaxUint), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint, v int64) {
-		vs := struct {
-			Key uint
-			Val int64
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 int64
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintUintStruct(f *testing.F) {
 	f.Add(uint(0), uint(0))
 	f.Add(uint(0), uint(math.MaxUint))
 	f.Add(uint(math.MaxUint), uint(0))
 	f.Add(uint(math.MaxUint), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k uint, v uint) {
-		vs := struct {
-			Key uint
-			Val uint
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 uint
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintUint8Struct(f *testing.F) {
 	f.Add(uint(0), uint8(0))
 	f.Add(uint(0), uint8(math.MaxUint8))
 	f.Add(uint(math.MaxUint), uint8(0))
 	f.Add(uint(math.MaxUint), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k uint, v uint8) {
-		vs := struct {
-			Key uint
-			Val uint8
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 uint8
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintUint16Struct(f *testing.F) {
 	f.Add(uint(0), uint16(0))
 	f.Add(uint(0), uint16(math.MaxUint16))
 	f.Add(uint(math.MaxUint), uint16(0))
 	f.Add(uint(math.MaxUint), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k uint, v uint16) {
-		vs := struct {
-			Key uint
-			Val uint16
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 uint16
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintUint32Struct(f *testing.F) {
 	f.Add(uint(0), uint32(0))
 	f.Add(uint(0), uint32(math.MaxUint32))
 	f.Add(uint(math.MaxUint), uint32(0))
 	f.Add(uint(math.MaxUint), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k uint, v uint32) {
-		vs := struct {
-			Key uint
-			Val uint32
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 uint32
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintUint64Struct(f *testing.F) {
 	f.Add(uint(0), uint64(0))
 	f.Add(uint(0), uint64(math.MaxInt64))
 	f.Add(uint(math.MaxUint), uint64(0))
 	f.Add(uint(math.MaxUint), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint, v uint64) {
-		vs := struct {
-			Key uint
-			Val uint64
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 uint64
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintFloat32Struct(f *testing.F) {
 	f.Add(uint(0), float32(-math.MaxFloat32))
 	f.Add(uint(0), float32(0))
@@ -4888,17 +6008,31 @@ func FuzzUintFloat32Struct(f *testing.F) {
 	f.Add(uint(math.MaxUint), float32(0))
 	f.Add(uint(math.MaxUint), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint, v float32) {
-		vs := struct {
-			Key uint
-			Val float32
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 float32
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintFloat64Struct(f *testing.F) {
 	f.Add(uint(0), float64(-math.MaxFloat32))
 	f.Add(uint(0), float64(0))
@@ -4907,34 +6041,62 @@ func FuzzUintFloat64Struct(f *testing.F) {
 	f.Add(uint(math.MaxUint), float64(0))
 	f.Add(uint(math.MaxUint), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint, v float64) {
-		vs := struct {
-			Key uint
-			Val float64
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 float64
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintBoolStruct(f *testing.F) {
 	f.Add(uint(0), bool(true))
 	f.Add(uint(0), bool(false))
 	f.Add(uint(math.MaxUint), bool(true))
 	f.Add(uint(math.MaxUint), bool(false))
 	f.Fuzz(func(t *testing.T, k uint, v bool) {
-		vs := struct {
-			Key uint
-			Val bool
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 bool
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUintStringStruct(f *testing.F) {
 	f.Add(uint(0), string("x"))
 	f.Add(uint(0), string("xy"))
@@ -4943,17 +6105,31 @@ func FuzzUintStringStruct(f *testing.F) {
 	f.Add(uint(math.MaxUint), string("xy"))
 	f.Add(uint(math.MaxUint), string("xyz"))
 	f.Fuzz(func(t *testing.T, k uint, v string) {
-		vs := struct {
-			Key uint
-			Val string
+		vs1 := struct {
+			Elem1 uint
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint
+			Elem2 string
+			Elem3 uint
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8IntStruct(f *testing.F) {
 	f.Add(uint8(0), int(0))
 	f.Add(uint8(0), int(math.MinInt))
@@ -4962,17 +6138,31 @@ func FuzzUint8IntStruct(f *testing.F) {
 	f.Add(uint8(math.MaxUint8), int(math.MinInt))
 	f.Add(uint8(math.MaxUint8), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k uint8, v int) {
-		vs := struct {
-			Key uint8
-			Val int
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 int
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Int8Struct(f *testing.F) {
 	f.Add(uint8(0), int8(0))
 	f.Add(uint8(0), int8(math.MinInt8))
@@ -4981,17 +6171,31 @@ func FuzzUint8Int8Struct(f *testing.F) {
 	f.Add(uint8(math.MaxUint8), int8(math.MinInt8))
 	f.Add(uint8(math.MaxUint8), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k uint8, v int8) {
-		vs := struct {
-			Key uint8
-			Val int8
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 int8
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Int16Struct(f *testing.F) {
 	f.Add(uint8(0), int16(0))
 	f.Add(uint8(0), int16(math.MinInt16))
@@ -5000,17 +6204,31 @@ func FuzzUint8Int16Struct(f *testing.F) {
 	f.Add(uint8(math.MaxUint8), int16(math.MinInt16))
 	f.Add(uint8(math.MaxUint8), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k uint8, v int16) {
-		vs := struct {
-			Key uint8
-			Val int16
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 int16
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Int32Struct(f *testing.F) {
 	f.Add(uint8(0), int32(0))
 	f.Add(uint8(0), int32(math.MinInt32))
@@ -5019,17 +6237,31 @@ func FuzzUint8Int32Struct(f *testing.F) {
 	f.Add(uint8(math.MaxUint8), int32(math.MinInt32))
 	f.Add(uint8(math.MaxUint8), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k uint8, v int32) {
-		vs := struct {
-			Key uint8
-			Val int32
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 int32
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Int64Struct(f *testing.F) {
 	f.Add(uint8(0), int64(0))
 	f.Add(uint8(0), int64(math.MinInt64))
@@ -5038,102 +6270,186 @@ func FuzzUint8Int64Struct(f *testing.F) {
 	f.Add(uint8(math.MaxUint8), int64(math.MinInt64))
 	f.Add(uint8(math.MaxUint8), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint8, v int64) {
-		vs := struct {
-			Key uint8
-			Val int64
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 int64
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8UintStruct(f *testing.F) {
 	f.Add(uint8(0), uint(0))
 	f.Add(uint8(0), uint(math.MaxUint))
 	f.Add(uint8(math.MaxUint8), uint(0))
 	f.Add(uint8(math.MaxUint8), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k uint8, v uint) {
-		vs := struct {
-			Key uint8
-			Val uint
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 uint
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Uint8Struct(f *testing.F) {
 	f.Add(uint8(0), uint8(0))
 	f.Add(uint8(0), uint8(math.MaxUint8))
 	f.Add(uint8(math.MaxUint8), uint8(0))
 	f.Add(uint8(math.MaxUint8), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k uint8, v uint8) {
-		vs := struct {
-			Key uint8
-			Val uint8
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 uint8
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Uint16Struct(f *testing.F) {
 	f.Add(uint8(0), uint16(0))
 	f.Add(uint8(0), uint16(math.MaxUint16))
 	f.Add(uint8(math.MaxUint8), uint16(0))
 	f.Add(uint8(math.MaxUint8), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k uint8, v uint16) {
-		vs := struct {
-			Key uint8
-			Val uint16
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 uint16
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Uint32Struct(f *testing.F) {
 	f.Add(uint8(0), uint32(0))
 	f.Add(uint8(0), uint32(math.MaxUint32))
 	f.Add(uint8(math.MaxUint8), uint32(0))
 	f.Add(uint8(math.MaxUint8), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k uint8, v uint32) {
-		vs := struct {
-			Key uint8
-			Val uint32
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 uint32
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Uint64Struct(f *testing.F) {
 	f.Add(uint8(0), uint64(0))
 	f.Add(uint8(0), uint64(math.MaxInt64))
 	f.Add(uint8(math.MaxUint8), uint64(0))
 	f.Add(uint8(math.MaxUint8), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint8, v uint64) {
-		vs := struct {
-			Key uint8
-			Val uint64
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 uint64
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Float32Struct(f *testing.F) {
 	f.Add(uint8(0), float32(-math.MaxFloat32))
 	f.Add(uint8(0), float32(0))
@@ -5142,17 +6458,31 @@ func FuzzUint8Float32Struct(f *testing.F) {
 	f.Add(uint8(math.MaxUint8), float32(0))
 	f.Add(uint8(math.MaxUint8), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint8, v float32) {
-		vs := struct {
-			Key uint8
-			Val float32
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 float32
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8Float64Struct(f *testing.F) {
 	f.Add(uint8(0), float64(-math.MaxFloat32))
 	f.Add(uint8(0), float64(0))
@@ -5161,34 +6491,62 @@ func FuzzUint8Float64Struct(f *testing.F) {
 	f.Add(uint8(math.MaxUint8), float64(0))
 	f.Add(uint8(math.MaxUint8), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint8, v float64) {
-		vs := struct {
-			Key uint8
-			Val float64
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 float64
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8BoolStruct(f *testing.F) {
 	f.Add(uint8(0), bool(true))
 	f.Add(uint8(0), bool(false))
 	f.Add(uint8(math.MaxUint8), bool(true))
 	f.Add(uint8(math.MaxUint8), bool(false))
 	f.Fuzz(func(t *testing.T, k uint8, v bool) {
-		vs := struct {
-			Key uint8
-			Val bool
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 bool
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint8StringStruct(f *testing.F) {
 	f.Add(uint8(0), string("x"))
 	f.Add(uint8(0), string("xy"))
@@ -5197,17 +6555,31 @@ func FuzzUint8StringStruct(f *testing.F) {
 	f.Add(uint8(math.MaxUint8), string("xy"))
 	f.Add(uint8(math.MaxUint8), string("xyz"))
 	f.Fuzz(func(t *testing.T, k uint8, v string) {
-		vs := struct {
-			Key uint8
-			Val string
+		vs1 := struct {
+			Elem1 uint8
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint8
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint8
+			Elem2 string
+			Elem3 uint8
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16IntStruct(f *testing.F) {
 	f.Add(uint16(0), int(0))
 	f.Add(uint16(0), int(math.MinInt))
@@ -5216,17 +6588,31 @@ func FuzzUint16IntStruct(f *testing.F) {
 	f.Add(uint16(math.MaxUint16), int(math.MinInt))
 	f.Add(uint16(math.MaxUint16), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k uint16, v int) {
-		vs := struct {
-			Key uint16
-			Val int
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 int
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Int8Struct(f *testing.F) {
 	f.Add(uint16(0), int8(0))
 	f.Add(uint16(0), int8(math.MinInt8))
@@ -5235,17 +6621,31 @@ func FuzzUint16Int8Struct(f *testing.F) {
 	f.Add(uint16(math.MaxUint16), int8(math.MinInt8))
 	f.Add(uint16(math.MaxUint16), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k uint16, v int8) {
-		vs := struct {
-			Key uint16
-			Val int8
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 int8
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Int16Struct(f *testing.F) {
 	f.Add(uint16(0), int16(0))
 	f.Add(uint16(0), int16(math.MinInt16))
@@ -5254,17 +6654,31 @@ func FuzzUint16Int16Struct(f *testing.F) {
 	f.Add(uint16(math.MaxUint16), int16(math.MinInt16))
 	f.Add(uint16(math.MaxUint16), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k uint16, v int16) {
-		vs := struct {
-			Key uint16
-			Val int16
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 int16
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Int32Struct(f *testing.F) {
 	f.Add(uint16(0), int32(0))
 	f.Add(uint16(0), int32(math.MinInt32))
@@ -5273,17 +6687,31 @@ func FuzzUint16Int32Struct(f *testing.F) {
 	f.Add(uint16(math.MaxUint16), int32(math.MinInt32))
 	f.Add(uint16(math.MaxUint16), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k uint16, v int32) {
-		vs := struct {
-			Key uint16
-			Val int32
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 int32
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Int64Struct(f *testing.F) {
 	f.Add(uint16(0), int64(0))
 	f.Add(uint16(0), int64(math.MinInt64))
@@ -5292,102 +6720,186 @@ func FuzzUint16Int64Struct(f *testing.F) {
 	f.Add(uint16(math.MaxUint16), int64(math.MinInt64))
 	f.Add(uint16(math.MaxUint16), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint16, v int64) {
-		vs := struct {
-			Key uint16
-			Val int64
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 int64
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16UintStruct(f *testing.F) {
 	f.Add(uint16(0), uint(0))
 	f.Add(uint16(0), uint(math.MaxUint))
 	f.Add(uint16(math.MaxUint16), uint(0))
 	f.Add(uint16(math.MaxUint16), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k uint16, v uint) {
-		vs := struct {
-			Key uint16
-			Val uint
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 uint
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Uint8Struct(f *testing.F) {
 	f.Add(uint16(0), uint8(0))
 	f.Add(uint16(0), uint8(math.MaxUint8))
 	f.Add(uint16(math.MaxUint16), uint8(0))
 	f.Add(uint16(math.MaxUint16), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k uint16, v uint8) {
-		vs := struct {
-			Key uint16
-			Val uint8
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 uint8
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Uint16Struct(f *testing.F) {
 	f.Add(uint16(0), uint16(0))
 	f.Add(uint16(0), uint16(math.MaxUint16))
 	f.Add(uint16(math.MaxUint16), uint16(0))
 	f.Add(uint16(math.MaxUint16), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k uint16, v uint16) {
-		vs := struct {
-			Key uint16
-			Val uint16
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 uint16
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Uint32Struct(f *testing.F) {
 	f.Add(uint16(0), uint32(0))
 	f.Add(uint16(0), uint32(math.MaxUint32))
 	f.Add(uint16(math.MaxUint16), uint32(0))
 	f.Add(uint16(math.MaxUint16), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k uint16, v uint32) {
-		vs := struct {
-			Key uint16
-			Val uint32
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 uint32
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Uint64Struct(f *testing.F) {
 	f.Add(uint16(0), uint64(0))
 	f.Add(uint16(0), uint64(math.MaxInt64))
 	f.Add(uint16(math.MaxUint16), uint64(0))
 	f.Add(uint16(math.MaxUint16), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint16, v uint64) {
-		vs := struct {
-			Key uint16
-			Val uint64
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 uint64
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Float32Struct(f *testing.F) {
 	f.Add(uint16(0), float32(-math.MaxFloat32))
 	f.Add(uint16(0), float32(0))
@@ -5396,17 +6908,31 @@ func FuzzUint16Float32Struct(f *testing.F) {
 	f.Add(uint16(math.MaxUint16), float32(0))
 	f.Add(uint16(math.MaxUint16), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint16, v float32) {
-		vs := struct {
-			Key uint16
-			Val float32
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 float32
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16Float64Struct(f *testing.F) {
 	f.Add(uint16(0), float64(-math.MaxFloat32))
 	f.Add(uint16(0), float64(0))
@@ -5415,34 +6941,62 @@ func FuzzUint16Float64Struct(f *testing.F) {
 	f.Add(uint16(math.MaxUint16), float64(0))
 	f.Add(uint16(math.MaxUint16), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint16, v float64) {
-		vs := struct {
-			Key uint16
-			Val float64
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 float64
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16BoolStruct(f *testing.F) {
 	f.Add(uint16(0), bool(true))
 	f.Add(uint16(0), bool(false))
 	f.Add(uint16(math.MaxUint16), bool(true))
 	f.Add(uint16(math.MaxUint16), bool(false))
 	f.Fuzz(func(t *testing.T, k uint16, v bool) {
-		vs := struct {
-			Key uint16
-			Val bool
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 bool
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint16StringStruct(f *testing.F) {
 	f.Add(uint16(0), string("x"))
 	f.Add(uint16(0), string("xy"))
@@ -5451,17 +7005,31 @@ func FuzzUint16StringStruct(f *testing.F) {
 	f.Add(uint16(math.MaxUint16), string("xy"))
 	f.Add(uint16(math.MaxUint16), string("xyz"))
 	f.Fuzz(func(t *testing.T, k uint16, v string) {
-		vs := struct {
-			Key uint16
-			Val string
+		vs1 := struct {
+			Elem1 uint16
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint16
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint16
+			Elem2 string
+			Elem3 uint16
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32IntStruct(f *testing.F) {
 	f.Add(uint32(0), int(0))
 	f.Add(uint32(0), int(math.MinInt))
@@ -5470,17 +7038,31 @@ func FuzzUint32IntStruct(f *testing.F) {
 	f.Add(uint32(math.MaxUint32), int(math.MinInt))
 	f.Add(uint32(math.MaxUint32), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k uint32, v int) {
-		vs := struct {
-			Key uint32
-			Val int
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 int
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Int8Struct(f *testing.F) {
 	f.Add(uint32(0), int8(0))
 	f.Add(uint32(0), int8(math.MinInt8))
@@ -5489,17 +7071,31 @@ func FuzzUint32Int8Struct(f *testing.F) {
 	f.Add(uint32(math.MaxUint32), int8(math.MinInt8))
 	f.Add(uint32(math.MaxUint32), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k uint32, v int8) {
-		vs := struct {
-			Key uint32
-			Val int8
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 int8
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Int16Struct(f *testing.F) {
 	f.Add(uint32(0), int16(0))
 	f.Add(uint32(0), int16(math.MinInt16))
@@ -5508,17 +7104,31 @@ func FuzzUint32Int16Struct(f *testing.F) {
 	f.Add(uint32(math.MaxUint32), int16(math.MinInt16))
 	f.Add(uint32(math.MaxUint32), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k uint32, v int16) {
-		vs := struct {
-			Key uint32
-			Val int16
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 int16
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Int32Struct(f *testing.F) {
 	f.Add(uint32(0), int32(0))
 	f.Add(uint32(0), int32(math.MinInt32))
@@ -5527,17 +7137,31 @@ func FuzzUint32Int32Struct(f *testing.F) {
 	f.Add(uint32(math.MaxUint32), int32(math.MinInt32))
 	f.Add(uint32(math.MaxUint32), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k uint32, v int32) {
-		vs := struct {
-			Key uint32
-			Val int32
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 int32
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Int64Struct(f *testing.F) {
 	f.Add(uint32(0), int64(0))
 	f.Add(uint32(0), int64(math.MinInt64))
@@ -5546,102 +7170,186 @@ func FuzzUint32Int64Struct(f *testing.F) {
 	f.Add(uint32(math.MaxUint32), int64(math.MinInt64))
 	f.Add(uint32(math.MaxUint32), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint32, v int64) {
-		vs := struct {
-			Key uint32
-			Val int64
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 int64
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32UintStruct(f *testing.F) {
 	f.Add(uint32(0), uint(0))
 	f.Add(uint32(0), uint(math.MaxUint))
 	f.Add(uint32(math.MaxUint32), uint(0))
 	f.Add(uint32(math.MaxUint32), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k uint32, v uint) {
-		vs := struct {
-			Key uint32
-			Val uint
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 uint
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Uint8Struct(f *testing.F) {
 	f.Add(uint32(0), uint8(0))
 	f.Add(uint32(0), uint8(math.MaxUint8))
 	f.Add(uint32(math.MaxUint32), uint8(0))
 	f.Add(uint32(math.MaxUint32), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k uint32, v uint8) {
-		vs := struct {
-			Key uint32
-			Val uint8
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 uint8
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Uint16Struct(f *testing.F) {
 	f.Add(uint32(0), uint16(0))
 	f.Add(uint32(0), uint16(math.MaxUint16))
 	f.Add(uint32(math.MaxUint32), uint16(0))
 	f.Add(uint32(math.MaxUint32), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k uint32, v uint16) {
-		vs := struct {
-			Key uint32
-			Val uint16
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 uint16
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Uint32Struct(f *testing.F) {
 	f.Add(uint32(0), uint32(0))
 	f.Add(uint32(0), uint32(math.MaxUint32))
 	f.Add(uint32(math.MaxUint32), uint32(0))
 	f.Add(uint32(math.MaxUint32), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k uint32, v uint32) {
-		vs := struct {
-			Key uint32
-			Val uint32
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 uint32
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Uint64Struct(f *testing.F) {
 	f.Add(uint32(0), uint64(0))
 	f.Add(uint32(0), uint64(math.MaxInt64))
 	f.Add(uint32(math.MaxUint32), uint64(0))
 	f.Add(uint32(math.MaxUint32), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint32, v uint64) {
-		vs := struct {
-			Key uint32
-			Val uint64
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 uint64
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Float32Struct(f *testing.F) {
 	f.Add(uint32(0), float32(-math.MaxFloat32))
 	f.Add(uint32(0), float32(0))
@@ -5650,17 +7358,31 @@ func FuzzUint32Float32Struct(f *testing.F) {
 	f.Add(uint32(math.MaxUint32), float32(0))
 	f.Add(uint32(math.MaxUint32), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint32, v float32) {
-		vs := struct {
-			Key uint32
-			Val float32
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 float32
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32Float64Struct(f *testing.F) {
 	f.Add(uint32(0), float64(-math.MaxFloat32))
 	f.Add(uint32(0), float64(0))
@@ -5669,34 +7391,62 @@ func FuzzUint32Float64Struct(f *testing.F) {
 	f.Add(uint32(math.MaxUint32), float64(0))
 	f.Add(uint32(math.MaxUint32), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint32, v float64) {
-		vs := struct {
-			Key uint32
-			Val float64
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 float64
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32BoolStruct(f *testing.F) {
 	f.Add(uint32(0), bool(true))
 	f.Add(uint32(0), bool(false))
 	f.Add(uint32(math.MaxUint32), bool(true))
 	f.Add(uint32(math.MaxUint32), bool(false))
 	f.Fuzz(func(t *testing.T, k uint32, v bool) {
-		vs := struct {
-			Key uint32
-			Val bool
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 bool
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint32StringStruct(f *testing.F) {
 	f.Add(uint32(0), string("x"))
 	f.Add(uint32(0), string("xy"))
@@ -5705,17 +7455,31 @@ func FuzzUint32StringStruct(f *testing.F) {
 	f.Add(uint32(math.MaxUint32), string("xy"))
 	f.Add(uint32(math.MaxUint32), string("xyz"))
 	f.Fuzz(func(t *testing.T, k uint32, v string) {
-		vs := struct {
-			Key uint32
-			Val string
+		vs1 := struct {
+			Elem1 uint32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint32
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint32
+			Elem2 string
+			Elem3 uint32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64IntStruct(f *testing.F) {
 	f.Add(uint64(0), int(0))
 	f.Add(uint64(0), int(math.MinInt))
@@ -5724,17 +7488,31 @@ func FuzzUint64IntStruct(f *testing.F) {
 	f.Add(uint64(math.MaxInt64), int(math.MinInt))
 	f.Add(uint64(math.MaxInt64), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k uint64, v int) {
-		vs := struct {
-			Key uint64
-			Val int
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 int
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Int8Struct(f *testing.F) {
 	f.Add(uint64(0), int8(0))
 	f.Add(uint64(0), int8(math.MinInt8))
@@ -5743,17 +7521,31 @@ func FuzzUint64Int8Struct(f *testing.F) {
 	f.Add(uint64(math.MaxInt64), int8(math.MinInt8))
 	f.Add(uint64(math.MaxInt64), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k uint64, v int8) {
-		vs := struct {
-			Key uint64
-			Val int8
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 int8
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Int16Struct(f *testing.F) {
 	f.Add(uint64(0), int16(0))
 	f.Add(uint64(0), int16(math.MinInt16))
@@ -5762,17 +7554,31 @@ func FuzzUint64Int16Struct(f *testing.F) {
 	f.Add(uint64(math.MaxInt64), int16(math.MinInt16))
 	f.Add(uint64(math.MaxInt64), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k uint64, v int16) {
-		vs := struct {
-			Key uint64
-			Val int16
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 int16
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Int32Struct(f *testing.F) {
 	f.Add(uint64(0), int32(0))
 	f.Add(uint64(0), int32(math.MinInt32))
@@ -5781,17 +7587,31 @@ func FuzzUint64Int32Struct(f *testing.F) {
 	f.Add(uint64(math.MaxInt64), int32(math.MinInt32))
 	f.Add(uint64(math.MaxInt64), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k uint64, v int32) {
-		vs := struct {
-			Key uint64
-			Val int32
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 int32
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Int64Struct(f *testing.F) {
 	f.Add(uint64(0), int64(0))
 	f.Add(uint64(0), int64(math.MinInt64))
@@ -5800,102 +7620,186 @@ func FuzzUint64Int64Struct(f *testing.F) {
 	f.Add(uint64(math.MaxInt64), int64(math.MinInt64))
 	f.Add(uint64(math.MaxInt64), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint64, v int64) {
-		vs := struct {
-			Key uint64
-			Val int64
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 int64
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64UintStruct(f *testing.F) {
 	f.Add(uint64(0), uint(0))
 	f.Add(uint64(0), uint(math.MaxUint))
 	f.Add(uint64(math.MaxInt64), uint(0))
 	f.Add(uint64(math.MaxInt64), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k uint64, v uint) {
-		vs := struct {
-			Key uint64
-			Val uint
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 uint
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Uint8Struct(f *testing.F) {
 	f.Add(uint64(0), uint8(0))
 	f.Add(uint64(0), uint8(math.MaxUint8))
 	f.Add(uint64(math.MaxInt64), uint8(0))
 	f.Add(uint64(math.MaxInt64), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k uint64, v uint8) {
-		vs := struct {
-			Key uint64
-			Val uint8
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 uint8
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Uint16Struct(f *testing.F) {
 	f.Add(uint64(0), uint16(0))
 	f.Add(uint64(0), uint16(math.MaxUint16))
 	f.Add(uint64(math.MaxInt64), uint16(0))
 	f.Add(uint64(math.MaxInt64), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k uint64, v uint16) {
-		vs := struct {
-			Key uint64
-			Val uint16
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 uint16
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Uint32Struct(f *testing.F) {
 	f.Add(uint64(0), uint32(0))
 	f.Add(uint64(0), uint32(math.MaxUint32))
 	f.Add(uint64(math.MaxInt64), uint32(0))
 	f.Add(uint64(math.MaxInt64), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k uint64, v uint32) {
-		vs := struct {
-			Key uint64
-			Val uint32
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 uint32
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Uint64Struct(f *testing.F) {
 	f.Add(uint64(0), uint64(0))
 	f.Add(uint64(0), uint64(math.MaxInt64))
 	f.Add(uint64(math.MaxInt64), uint64(0))
 	f.Add(uint64(math.MaxInt64), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k uint64, v uint64) {
-		vs := struct {
-			Key uint64
-			Val uint64
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 uint64
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Float32Struct(f *testing.F) {
 	f.Add(uint64(0), float32(-math.MaxFloat32))
 	f.Add(uint64(0), float32(0))
@@ -5904,17 +7808,31 @@ func FuzzUint64Float32Struct(f *testing.F) {
 	f.Add(uint64(math.MaxInt64), float32(0))
 	f.Add(uint64(math.MaxInt64), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k uint64, v float32) {
-		vs := struct {
-			Key uint64
-			Val float32
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 float32
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64Float64Struct(f *testing.F) {
 	f.Add(uint64(0), float64(-math.MaxFloat32))
 	f.Add(uint64(0), float64(0))
@@ -5923,34 +7841,62 @@ func FuzzUint64Float64Struct(f *testing.F) {
 	f.Add(uint64(math.MaxInt64), float64(0))
 	f.Add(uint64(math.MaxInt64), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k uint64, v float64) {
-		vs := struct {
-			Key uint64
-			Val float64
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 float64
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64BoolStruct(f *testing.F) {
 	f.Add(uint64(0), bool(true))
 	f.Add(uint64(0), bool(false))
 	f.Add(uint64(math.MaxInt64), bool(true))
 	f.Add(uint64(math.MaxInt64), bool(false))
 	f.Fuzz(func(t *testing.T, k uint64, v bool) {
-		vs := struct {
-			Key uint64
-			Val bool
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 bool
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzUint64StringStruct(f *testing.F) {
 	f.Add(uint64(0), string("x"))
 	f.Add(uint64(0), string("xy"))
@@ -5959,17 +7905,31 @@ func FuzzUint64StringStruct(f *testing.F) {
 	f.Add(uint64(math.MaxInt64), string("xy"))
 	f.Add(uint64(math.MaxInt64), string("xyz"))
 	f.Fuzz(func(t *testing.T, k uint64, v string) {
-		vs := struct {
-			Key uint64
-			Val string
+		vs1 := struct {
+			Elem1 uint64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 uint64
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 uint64
+			Elem2 string
+			Elem3 uint64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32IntStruct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), int(0))
 	f.Add(float32(-math.MaxFloat32), int(math.MinInt))
@@ -5981,17 +7941,31 @@ func FuzzFloat32IntStruct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), int(math.MinInt))
 	f.Add(float32(math.MaxFloat32), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k float32, v int) {
-		vs := struct {
-			Key float32
-			Val int
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 int
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Int8Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), int8(0))
 	f.Add(float32(-math.MaxFloat32), int8(math.MinInt8))
@@ -6003,17 +7977,31 @@ func FuzzFloat32Int8Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), int8(math.MinInt8))
 	f.Add(float32(math.MaxFloat32), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k float32, v int8) {
-		vs := struct {
-			Key float32
-			Val int8
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 int8
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Int16Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), int16(0))
 	f.Add(float32(-math.MaxFloat32), int16(math.MinInt16))
@@ -6025,17 +8013,31 @@ func FuzzFloat32Int16Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), int16(math.MinInt16))
 	f.Add(float32(math.MaxFloat32), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k float32, v int16) {
-		vs := struct {
-			Key float32
-			Val int16
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 int16
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Int32Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), int32(0))
 	f.Add(float32(-math.MaxFloat32), int32(math.MinInt32))
@@ -6047,17 +8049,31 @@ func FuzzFloat32Int32Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), int32(math.MinInt32))
 	f.Add(float32(math.MaxFloat32), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k float32, v int32) {
-		vs := struct {
-			Key float32
-			Val int32
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 int32
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Int64Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), int64(0))
 	f.Add(float32(-math.MaxFloat32), int64(math.MinInt64))
@@ -6069,17 +8085,31 @@ func FuzzFloat32Int64Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), int64(math.MinInt64))
 	f.Add(float32(math.MaxFloat32), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k float32, v int64) {
-		vs := struct {
-			Key float32
-			Val int64
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 int64
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32UintStruct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), uint(0))
 	f.Add(float32(-math.MaxFloat32), uint(math.MaxUint))
@@ -6088,17 +8118,31 @@ func FuzzFloat32UintStruct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), uint(0))
 	f.Add(float32(math.MaxFloat32), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k float32, v uint) {
-		vs := struct {
-			Key float32
-			Val uint
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 uint
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Uint8Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), uint8(0))
 	f.Add(float32(-math.MaxFloat32), uint8(math.MaxUint8))
@@ -6107,17 +8151,31 @@ func FuzzFloat32Uint8Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), uint8(0))
 	f.Add(float32(math.MaxFloat32), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k float32, v uint8) {
-		vs := struct {
-			Key float32
-			Val uint8
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 uint8
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Uint16Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), uint16(0))
 	f.Add(float32(-math.MaxFloat32), uint16(math.MaxUint16))
@@ -6126,17 +8184,31 @@ func FuzzFloat32Uint16Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), uint16(0))
 	f.Add(float32(math.MaxFloat32), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k float32, v uint16) {
-		vs := struct {
-			Key float32
-			Val uint16
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 uint16
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Uint32Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), uint32(0))
 	f.Add(float32(-math.MaxFloat32), uint32(math.MaxUint32))
@@ -6145,17 +8217,31 @@ func FuzzFloat32Uint32Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), uint32(0))
 	f.Add(float32(math.MaxFloat32), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k float32, v uint32) {
-		vs := struct {
-			Key float32
-			Val uint32
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 uint32
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Uint64Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), uint64(0))
 	f.Add(float32(-math.MaxFloat32), uint64(math.MaxInt64))
@@ -6164,17 +8250,31 @@ func FuzzFloat32Uint64Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), uint64(0))
 	f.Add(float32(math.MaxFloat32), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k float32, v uint64) {
-		vs := struct {
-			Key float32
-			Val uint64
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 uint64
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Float32Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), float32(-math.MaxFloat32))
 	f.Add(float32(-math.MaxFloat32), float32(0))
@@ -6186,17 +8286,31 @@ func FuzzFloat32Float32Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), float32(0))
 	f.Add(float32(math.MaxFloat32), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k float32, v float32) {
-		vs := struct {
-			Key float32
-			Val float32
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 float32
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32Float64Struct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), float64(-math.MaxFloat32))
 	f.Add(float32(-math.MaxFloat32), float64(0))
@@ -6208,17 +8322,31 @@ func FuzzFloat32Float64Struct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), float64(0))
 	f.Add(float32(math.MaxFloat32), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k float32, v float64) {
-		vs := struct {
-			Key float32
-			Val float64
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 float64
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32BoolStruct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), bool(true))
 	f.Add(float32(-math.MaxFloat32), bool(false))
@@ -6227,17 +8355,31 @@ func FuzzFloat32BoolStruct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), bool(true))
 	f.Add(float32(math.MaxFloat32), bool(false))
 	f.Fuzz(func(t *testing.T, k float32, v bool) {
-		vs := struct {
-			Key float32
-			Val bool
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 bool
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat32StringStruct(f *testing.F) {
 	f.Add(float32(-math.MaxFloat32), string("x"))
 	f.Add(float32(-math.MaxFloat32), string("xy"))
@@ -6249,17 +8391,31 @@ func FuzzFloat32StringStruct(f *testing.F) {
 	f.Add(float32(math.MaxFloat32), string("xy"))
 	f.Add(float32(math.MaxFloat32), string("xyz"))
 	f.Fuzz(func(t *testing.T, k float32, v string) {
-		vs := struct {
-			Key float32
-			Val string
+		vs1 := struct {
+			Elem1 float32
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float32
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float32
+			Elem2 string
+			Elem3 float32
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64IntStruct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), int(0))
 	f.Add(float64(-math.MaxFloat32), int(math.MinInt))
@@ -6271,17 +8427,31 @@ func FuzzFloat64IntStruct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), int(math.MinInt))
 	f.Add(float64(math.MaxFloat64), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k float64, v int) {
-		vs := struct {
-			Key float64
-			Val int
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 int
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Int8Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), int8(0))
 	f.Add(float64(-math.MaxFloat32), int8(math.MinInt8))
@@ -6293,17 +8463,31 @@ func FuzzFloat64Int8Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), int8(math.MinInt8))
 	f.Add(float64(math.MaxFloat64), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k float64, v int8) {
-		vs := struct {
-			Key float64
-			Val int8
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 int8
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Int16Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), int16(0))
 	f.Add(float64(-math.MaxFloat32), int16(math.MinInt16))
@@ -6315,17 +8499,31 @@ func FuzzFloat64Int16Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), int16(math.MinInt16))
 	f.Add(float64(math.MaxFloat64), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k float64, v int16) {
-		vs := struct {
-			Key float64
-			Val int16
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 int16
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Int32Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), int32(0))
 	f.Add(float64(-math.MaxFloat32), int32(math.MinInt32))
@@ -6337,17 +8535,31 @@ func FuzzFloat64Int32Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), int32(math.MinInt32))
 	f.Add(float64(math.MaxFloat64), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k float64, v int32) {
-		vs := struct {
-			Key float64
-			Val int32
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 int32
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Int64Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), int64(0))
 	f.Add(float64(-math.MaxFloat32), int64(math.MinInt64))
@@ -6359,17 +8571,31 @@ func FuzzFloat64Int64Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), int64(math.MinInt64))
 	f.Add(float64(math.MaxFloat64), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k float64, v int64) {
-		vs := struct {
-			Key float64
-			Val int64
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 int64
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64UintStruct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), uint(0))
 	f.Add(float64(-math.MaxFloat32), uint(math.MaxUint))
@@ -6378,17 +8604,31 @@ func FuzzFloat64UintStruct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), uint(0))
 	f.Add(float64(math.MaxFloat64), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k float64, v uint) {
-		vs := struct {
-			Key float64
-			Val uint
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 uint
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Uint8Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), uint8(0))
 	f.Add(float64(-math.MaxFloat32), uint8(math.MaxUint8))
@@ -6397,17 +8637,31 @@ func FuzzFloat64Uint8Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), uint8(0))
 	f.Add(float64(math.MaxFloat64), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k float64, v uint8) {
-		vs := struct {
-			Key float64
-			Val uint8
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 uint8
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Uint16Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), uint16(0))
 	f.Add(float64(-math.MaxFloat32), uint16(math.MaxUint16))
@@ -6416,17 +8670,31 @@ func FuzzFloat64Uint16Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), uint16(0))
 	f.Add(float64(math.MaxFloat64), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k float64, v uint16) {
-		vs := struct {
-			Key float64
-			Val uint16
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 uint16
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Uint32Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), uint32(0))
 	f.Add(float64(-math.MaxFloat32), uint32(math.MaxUint32))
@@ -6435,17 +8703,31 @@ func FuzzFloat64Uint32Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), uint32(0))
 	f.Add(float64(math.MaxFloat64), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k float64, v uint32) {
-		vs := struct {
-			Key float64
-			Val uint32
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 uint32
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Uint64Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), uint64(0))
 	f.Add(float64(-math.MaxFloat32), uint64(math.MaxInt64))
@@ -6454,17 +8736,31 @@ func FuzzFloat64Uint64Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), uint64(0))
 	f.Add(float64(math.MaxFloat64), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k float64, v uint64) {
-		vs := struct {
-			Key float64
-			Val uint64
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 uint64
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Float32Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), float32(-math.MaxFloat32))
 	f.Add(float64(-math.MaxFloat32), float32(0))
@@ -6476,17 +8772,31 @@ func FuzzFloat64Float32Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), float32(0))
 	f.Add(float64(math.MaxFloat64), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k float64, v float32) {
-		vs := struct {
-			Key float64
-			Val float32
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 float32
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64Float64Struct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), float64(-math.MaxFloat32))
 	f.Add(float64(-math.MaxFloat32), float64(0))
@@ -6498,17 +8808,31 @@ func FuzzFloat64Float64Struct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), float64(0))
 	f.Add(float64(math.MaxFloat64), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k float64, v float64) {
-		vs := struct {
-			Key float64
-			Val float64
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 float64
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64BoolStruct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), bool(true))
 	f.Add(float64(-math.MaxFloat32), bool(false))
@@ -6517,17 +8841,31 @@ func FuzzFloat64BoolStruct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), bool(true))
 	f.Add(float64(math.MaxFloat64), bool(false))
 	f.Fuzz(func(t *testing.T, k float64, v bool) {
-		vs := struct {
-			Key float64
-			Val bool
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 bool
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzFloat64StringStruct(f *testing.F) {
 	f.Add(float64(-math.MaxFloat32), string("x"))
 	f.Add(float64(-math.MaxFloat32), string("xy"))
@@ -6539,17 +8877,31 @@ func FuzzFloat64StringStruct(f *testing.F) {
 	f.Add(float64(math.MaxFloat64), string("xy"))
 	f.Add(float64(math.MaxFloat64), string("xyz"))
 	f.Fuzz(func(t *testing.T, k float64, v string) {
-		vs := struct {
-			Key float64
-			Val string
+		vs1 := struct {
+			Elem1 float64
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 float64
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 float64
+			Elem2 string
+			Elem3 float64
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolIntStruct(f *testing.F) {
 	f.Add(bool(true), int(0))
 	f.Add(bool(true), int(math.MinInt))
@@ -6558,17 +8910,31 @@ func FuzzBoolIntStruct(f *testing.F) {
 	f.Add(bool(false), int(math.MinInt))
 	f.Add(bool(false), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k bool, v int) {
-		vs := struct {
-			Key bool
-			Val int
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 int
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolInt8Struct(f *testing.F) {
 	f.Add(bool(true), int8(0))
 	f.Add(bool(true), int8(math.MinInt8))
@@ -6577,17 +8943,31 @@ func FuzzBoolInt8Struct(f *testing.F) {
 	f.Add(bool(false), int8(math.MinInt8))
 	f.Add(bool(false), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k bool, v int8) {
-		vs := struct {
-			Key bool
-			Val int8
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 int8
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolInt16Struct(f *testing.F) {
 	f.Add(bool(true), int16(0))
 	f.Add(bool(true), int16(math.MinInt16))
@@ -6596,17 +8976,31 @@ func FuzzBoolInt16Struct(f *testing.F) {
 	f.Add(bool(false), int16(math.MinInt16))
 	f.Add(bool(false), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k bool, v int16) {
-		vs := struct {
-			Key bool
-			Val int16
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 int16
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolInt32Struct(f *testing.F) {
 	f.Add(bool(true), int32(0))
 	f.Add(bool(true), int32(math.MinInt32))
@@ -6615,17 +9009,31 @@ func FuzzBoolInt32Struct(f *testing.F) {
 	f.Add(bool(false), int32(math.MinInt32))
 	f.Add(bool(false), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k bool, v int32) {
-		vs := struct {
-			Key bool
-			Val int32
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 int32
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolInt64Struct(f *testing.F) {
 	f.Add(bool(true), int64(0))
 	f.Add(bool(true), int64(math.MinInt64))
@@ -6634,102 +9042,186 @@ func FuzzBoolInt64Struct(f *testing.F) {
 	f.Add(bool(false), int64(math.MinInt64))
 	f.Add(bool(false), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k bool, v int64) {
-		vs := struct {
-			Key bool
-			Val int64
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 int64
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolUintStruct(f *testing.F) {
 	f.Add(bool(true), uint(0))
 	f.Add(bool(true), uint(math.MaxUint))
 	f.Add(bool(false), uint(0))
 	f.Add(bool(false), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k bool, v uint) {
-		vs := struct {
-			Key bool
-			Val uint
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 uint
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolUint8Struct(f *testing.F) {
 	f.Add(bool(true), uint8(0))
 	f.Add(bool(true), uint8(math.MaxUint8))
 	f.Add(bool(false), uint8(0))
 	f.Add(bool(false), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k bool, v uint8) {
-		vs := struct {
-			Key bool
-			Val uint8
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 uint8
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolUint16Struct(f *testing.F) {
 	f.Add(bool(true), uint16(0))
 	f.Add(bool(true), uint16(math.MaxUint16))
 	f.Add(bool(false), uint16(0))
 	f.Add(bool(false), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k bool, v uint16) {
-		vs := struct {
-			Key bool
-			Val uint16
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 uint16
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolUint32Struct(f *testing.F) {
 	f.Add(bool(true), uint32(0))
 	f.Add(bool(true), uint32(math.MaxUint32))
 	f.Add(bool(false), uint32(0))
 	f.Add(bool(false), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k bool, v uint32) {
-		vs := struct {
-			Key bool
-			Val uint32
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 uint32
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolUint64Struct(f *testing.F) {
 	f.Add(bool(true), uint64(0))
 	f.Add(bool(true), uint64(math.MaxInt64))
 	f.Add(bool(false), uint64(0))
 	f.Add(bool(false), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k bool, v uint64) {
-		vs := struct {
-			Key bool
-			Val uint64
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 uint64
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolFloat32Struct(f *testing.F) {
 	f.Add(bool(true), float32(-math.MaxFloat32))
 	f.Add(bool(true), float32(0))
@@ -6738,17 +9230,31 @@ func FuzzBoolFloat32Struct(f *testing.F) {
 	f.Add(bool(false), float32(0))
 	f.Add(bool(false), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k bool, v float32) {
-		vs := struct {
-			Key bool
-			Val float32
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 float32
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolFloat64Struct(f *testing.F) {
 	f.Add(bool(true), float64(-math.MaxFloat32))
 	f.Add(bool(true), float64(0))
@@ -6757,34 +9263,62 @@ func FuzzBoolFloat64Struct(f *testing.F) {
 	f.Add(bool(false), float64(0))
 	f.Add(bool(false), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k bool, v float64) {
-		vs := struct {
-			Key bool
-			Val float64
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 float64
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolBoolStruct(f *testing.F) {
 	f.Add(bool(true), bool(true))
 	f.Add(bool(true), bool(false))
 	f.Add(bool(false), bool(true))
 	f.Add(bool(false), bool(false))
 	f.Fuzz(func(t *testing.T, k bool, v bool) {
-		vs := struct {
-			Key bool
-			Val bool
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 bool
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzBoolStringStruct(f *testing.F) {
 	f.Add(bool(true), string("x"))
 	f.Add(bool(true), string("xy"))
@@ -6793,17 +9327,31 @@ func FuzzBoolStringStruct(f *testing.F) {
 	f.Add(bool(false), string("xy"))
 	f.Add(bool(false), string("xyz"))
 	f.Fuzz(func(t *testing.T, k bool, v string) {
-		vs := struct {
-			Key bool
-			Val string
+		vs1 := struct {
+			Elem1 bool
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 bool
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 bool
+			Elem2 string
+			Elem3 bool
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringIntStruct(f *testing.F) {
 	f.Add(string("x"), int(0))
 	f.Add(string("x"), int(math.MinInt))
@@ -6815,17 +9363,31 @@ func FuzzStringIntStruct(f *testing.F) {
 	f.Add(string("xyz"), int(math.MinInt))
 	f.Add(string("xyz"), int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, k string, v int) {
-		vs := struct {
-			Key string
-			Val int
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 int
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 int
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringInt8Struct(f *testing.F) {
 	f.Add(string("x"), int8(0))
 	f.Add(string("x"), int8(math.MinInt8))
@@ -6837,17 +9399,31 @@ func FuzzStringInt8Struct(f *testing.F) {
 	f.Add(string("xyz"), int8(math.MinInt8))
 	f.Add(string("xyz"), int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, k string, v int8) {
-		vs := struct {
-			Key string
-			Val int8
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 int8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 int8
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringInt16Struct(f *testing.F) {
 	f.Add(string("x"), int16(0))
 	f.Add(string("x"), int16(math.MinInt16))
@@ -6859,17 +9435,31 @@ func FuzzStringInt16Struct(f *testing.F) {
 	f.Add(string("xyz"), int16(math.MinInt16))
 	f.Add(string("xyz"), int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, k string, v int16) {
-		vs := struct {
-			Key string
-			Val int16
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 int16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 int16
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringInt32Struct(f *testing.F) {
 	f.Add(string("x"), int32(0))
 	f.Add(string("x"), int32(math.MinInt32))
@@ -6881,17 +9471,31 @@ func FuzzStringInt32Struct(f *testing.F) {
 	f.Add(string("xyz"), int32(math.MinInt32))
 	f.Add(string("xyz"), int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, k string, v int32) {
-		vs := struct {
-			Key string
-			Val int32
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 int32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 int32
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringInt64Struct(f *testing.F) {
 	f.Add(string("x"), int64(0))
 	f.Add(string("x"), int64(math.MinInt64))
@@ -6903,17 +9507,31 @@ func FuzzStringInt64Struct(f *testing.F) {
 	f.Add(string("xyz"), int64(math.MinInt64))
 	f.Add(string("xyz"), int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k string, v int64) {
-		vs := struct {
-			Key string
-			Val int64
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 int64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 int64
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringUintStruct(f *testing.F) {
 	f.Add(string("x"), uint(0))
 	f.Add(string("x"), uint(math.MaxUint))
@@ -6922,17 +9540,31 @@ func FuzzStringUintStruct(f *testing.F) {
 	f.Add(string("xyz"), uint(0))
 	f.Add(string("xyz"), uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, k string, v uint) {
-		vs := struct {
-			Key string
-			Val uint
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 uint
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 uint
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringUint8Struct(f *testing.F) {
 	f.Add(string("x"), uint8(0))
 	f.Add(string("x"), uint8(math.MaxUint8))
@@ -6941,17 +9573,31 @@ func FuzzStringUint8Struct(f *testing.F) {
 	f.Add(string("xyz"), uint8(0))
 	f.Add(string("xyz"), uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, k string, v uint8) {
-		vs := struct {
-			Key string
-			Val uint8
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 uint8
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 uint8
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringUint16Struct(f *testing.F) {
 	f.Add(string("x"), uint16(0))
 	f.Add(string("x"), uint16(math.MaxUint16))
@@ -6960,17 +9606,31 @@ func FuzzStringUint16Struct(f *testing.F) {
 	f.Add(string("xyz"), uint16(0))
 	f.Add(string("xyz"), uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, k string, v uint16) {
-		vs := struct {
-			Key string
-			Val uint16
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 uint16
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 uint16
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringUint32Struct(f *testing.F) {
 	f.Add(string("x"), uint32(0))
 	f.Add(string("x"), uint32(math.MaxUint32))
@@ -6979,17 +9639,31 @@ func FuzzStringUint32Struct(f *testing.F) {
 	f.Add(string("xyz"), uint32(0))
 	f.Add(string("xyz"), uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, k string, v uint32) {
-		vs := struct {
-			Key string
-			Val uint32
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 uint32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 uint32
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringUint64Struct(f *testing.F) {
 	f.Add(string("x"), uint64(0))
 	f.Add(string("x"), uint64(math.MaxInt64))
@@ -6998,17 +9672,31 @@ func FuzzStringUint64Struct(f *testing.F) {
 	f.Add(string("xyz"), uint64(0))
 	f.Add(string("xyz"), uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, k string, v uint64) {
-		vs := struct {
-			Key string
-			Val uint64
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 uint64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 uint64
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringFloat32Struct(f *testing.F) {
 	f.Add(string("x"), float32(-math.MaxFloat32))
 	f.Add(string("x"), float32(0))
@@ -7020,17 +9708,31 @@ func FuzzStringFloat32Struct(f *testing.F) {
 	f.Add(string("xyz"), float32(0))
 	f.Add(string("xyz"), float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, k string, v float32) {
-		vs := struct {
-			Key string
-			Val float32
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 float32
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 float32
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringFloat64Struct(f *testing.F) {
 	f.Add(string("x"), float64(-math.MaxFloat32))
 	f.Add(string("x"), float64(0))
@@ -7042,17 +9744,31 @@ func FuzzStringFloat64Struct(f *testing.F) {
 	f.Add(string("xyz"), float64(0))
 	f.Add(string("xyz"), float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, k string, v float64) {
-		vs := struct {
-			Key string
-			Val float64
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 float64
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 float64
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringBoolStruct(f *testing.F) {
 	f.Add(string("x"), bool(true))
 	f.Add(string("x"), bool(false))
@@ -7061,17 +9777,31 @@ func FuzzStringBoolStruct(f *testing.F) {
 	f.Add(string("xyz"), bool(true))
 	f.Add(string("xyz"), bool(false))
 	f.Fuzz(func(t *testing.T, k string, v bool) {
-		vs := struct {
-			Key string
-			Val bool
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 bool
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 bool
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }
 
-// nolint: dupl
+// nolint: dupl, maligned
 func FuzzStringStringStruct(f *testing.F) {
 	f.Add(string("x"), string("x"))
 	f.Add(string("x"), string("xy"))
@@ -7083,12 +9813,26 @@ func FuzzStringStringStruct(f *testing.F) {
 	f.Add(string("xyz"), string("xy"))
 	f.Add(string("xyz"), string("xyz"))
 	f.Fuzz(func(t *testing.T, k string, v string) {
-		vs := struct {
-			Key string
-			Val string
+		vs1 := struct {
+			Elem1 string
 		}{
-			Key: k, Val: v,
+			Elem1: k,
 		}
-		fuzzTest(t, vs)
+		fuzzTest(t, vs1)
+		vs2 := struct {
+			Elem1 string
+			Elem2 string
+		}{
+			Elem1: k, Elem2: v,
+		}
+		fuzzTest(t, vs2)
+		vs3 := struct {
+			Elem1 string
+			Elem2 string
+			Elem3 string
+		}{
+			Elem1: k, Elem2: v, Elem3: k,
+		}
+		fuzzTest(t, vs3)
 	})
 }

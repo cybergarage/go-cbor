@@ -136,7 +136,7 @@ for (my $i = 0; $i <= $#types; $i++){
 	printf("\t\tfuzzTest(t, va)\n");
 	printf("\t\tva = []%s{v, v}\n", $type);
 	printf("\t\tfuzzTest(t, va)\n");
-	printf("\t\tva = []%s{v, v, v, v, v}\n", $type);
+	printf("\t\tva = []%s{v, v, v}\n", $type);
 	printf("\t\tfuzzTest(t, va)\n");
 	printf("\t})\n");
 	printf("}\n");
@@ -180,7 +180,7 @@ for (my $i = 0; $i <= $#types; $i++){
 	for (my $j = 0; $j <= $#types; $j++){
 		my $jtype = $types[$j];
 		printf("\n");
-		printf("// nolint: dupl\n");
+		printf("// nolint: dupl, maligned\n");
 		printf("func Fuzz%s%sStruct(f *testing.F) {\n", ucfirst($itype), ucfirst($jtype));
 		for (my $n = 0; $n < @{$seeds[$i]}; $n++) {
 			for (my $m = 0; $m < @{$seeds[$j]}; $m++) {
@@ -188,13 +188,27 @@ for (my $i = 0; $i <= $#types; $i++){
 	    	}
     	}
 		printf("\tf.Fuzz(func(t *testing.T, k %s, v %s) {\n", $itype, $jtype);
-		printf("\t\tvs := struct {\n");
-		printf("\t\t\tKey %s\n", $itype);
-		printf("\t\t\tVal %s\n", $jtype);
+		printf("\t\tvs1 := struct {\n");
+		printf("\t\t\tElem1 %s\n", $itype);
 		printf("\t\t}{\n");
-		printf("\t\t\tKey: k, Val: v,\n");
+		printf("\t\t\tElem1: k,\n");
 		printf("\t\t}\n");
-		printf("\t\tfuzzTest(t, vs)\n");
+		printf("\t\tfuzzTest(t, vs1)\n");
+		printf("\t\tvs2 := struct {\n");
+		printf("\t\t\tElem1 %s\n", $itype);
+		printf("\t\t\tElem2 %s\n", $jtype);
+		printf("\t\t}{\n");
+		printf("\t\t\tElem1: k, Elem2: v,\n");
+		printf("\t\t}\n");
+		printf("\t\tfuzzTest(t, vs2)\n");
+		printf("\t\tvs3 := struct {\n");
+		printf("\t\t\tElem1 %s\n", $itype);
+		printf("\t\t\tElem2 %s\n", $jtype);
+		printf("\t\t\tElem3 %s\n", $itype);
+		printf("\t\t}{\n");
+		printf("\t\t\tElem1: k, Elem2: v, Elem3: k,\n");
+		printf("\t\t}\n");
+		printf("\t\tfuzzTest(t, vs3)\n");
 		printf("\t})\n");
 		printf("}\n");
 	}
