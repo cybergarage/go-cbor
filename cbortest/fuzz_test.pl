@@ -63,7 +63,6 @@ func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
 	fuzzTest(t, v)
 }
 HEADER
-
 # Go Fuzzing - The Go Programming Language
 # https://go.dev/security/fuzz/
 
@@ -82,6 +81,7 @@ my @types = (
 	"float64",
 	"bool",
 	"string",
+	"[]byte",
 	);
 
 my @seeds = (
@@ -98,8 +98,24 @@ my @seeds = (
 	["-math.MaxFloat32", "0", "math.MaxFloat32"],
 	["-math.MaxFloat32", "0", "math.MaxFloat64"],
 	["true", "false"],
+	["\"a\"", "\"ab\"", "\"abc\""],
 	["\"x\"", "\"xy\"", "\"xyz\""],
 	);
+
+sub to_fuzz_name {
+	my ($fuzz_name) = @_;
+	$fuzz_name =~ s/\[\]//g;
+	$fuzz_name = ucfirst($fuzz_name);
+	return $fuzz_name;
+}
+
+sub is_exclude_from_map {
+	my ($type_name) = @_;
+	if ($type_name == "[]byte") {
+		return 1;
+	}
+	return 0;
+}
 
 ########################################
 # Primitive data type tests
@@ -108,12 +124,12 @@ my @seeds = (
 for (my $i = 0; $i <= $#types; $i++){
 	printf("\n");
 	my $type = $types[$i];
-	printf("func Fuzz%sData(f *testing.F) {\n", ucfirst($type));
+	printf("func Fuzz%sData(f *testing.F) {\n", to_fuzz_name($type));
 	for ($j = 0; $j < @{$seeds[$i]}; $j++) {
 		printf("\tf.Add(%s(%s))\n", $type, $seeds[$i]->[$j]);
     }
 	printf("\tf.Fuzz(func(t *testing.T, v %s) {\n", $type);
-	printf("\t\tfuzzPrimitiveTest(t, v)\n");
+	printf("\t\tfuzzTest(t, v)\n");
 	printf("\t})\n");
 	printf("}\n");
 }
@@ -125,7 +141,7 @@ for (my $i = 0; $i <= $#types; $i++){
 for (my $i = 0; $i <= $#types; $i++){
 	printf("\n");
 	my $type = $types[$i];
-	printf("func Fuzz%sArray(f *testing.F) {\n", ucfirst($type));
+	printf("func Fuzz%sArray(f *testing.F) {\n", to_fuzz_name($type));
 	for ($j = 0; $j < @{$seeds[$i]}; $j++) {
 		printf("\tf.Add(%s(%s))\n", $type, $seeds[$i]->[$j]);
     }
@@ -148,11 +164,17 @@ for (my $i = 0; $i <= $#types; $i++){
 
 for (my $i = 0; $i <= $#types; $i++){
 	my $itype = $types[$i];
+	if (is_exclude_from_map($itype)) {
+		next;
+	}
 	for (my $j = 0; $j <= $#types; $j++){
 		my $jtype = $types[$j];
+		if (is_exclude_from_map($jtype)) {
+			next;
+		}
 		printf("\n");
 		printf("// nolint: dupl\n");
-		printf("func Fuzz%s%sMap(f *testing.F) {\n", ucfirst($itype), ucfirst($jtype));
+		printf("func Fuzz%s%sMap(f *testing.F) {\n", to_fuzz_name($itype), to_fuzz_name($jtype));
 		for (my $n = 0; $n < @{$seeds[$i]}; $n++) {
 			for (my $m = 0; $m < @{$seeds[$j]}; $m++) {
 				printf("\tf.Add(%s(%s), %s(%s))\n", $itype, $seeds[$i]->[$n], $jtype, $seeds[$j]->[$m]);
@@ -181,7 +203,7 @@ for (my $i = 0; $i <= $#types; $i++){
 		my $jtype = $types[$j];
 		printf("\n");
 		printf("// nolint: dupl, maligned\n");
-		printf("func Fuzz%s%sStruct(f *testing.F) {\n", ucfirst($itype), ucfirst($jtype));
+		printf("func Fuzz%s%sStruct(f *testing.F) {\n", to_fuzz_name($itype), to_fuzz_name($jtype));
 		for (my $n = 0; $n < @{$seeds[$i]}; $n++) {
 			for (my $m = 0; $m < @{$seeds[$j]}; $m++) {
 				printf("\tf.Add(%s(%s), %s(%s))\n", $itype, $seeds[$i]->[$n], $jtype, $seeds[$j]->[$m]);
