@@ -29,9 +29,10 @@ const (
 	errorUnkonwnNativeType     = "%T (%v) is %w"
 	errorUnkonwnMajorType      = "major type (%d) is %w"
 	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
-	errorUnmarshalDataTypes    = " %w : cound not convert from %v(%T) to %T"
-	errorUnmarshalShortArray   = " %w : short array size (%T[%d] < %T[%d])"
-	errorCastDataTypes         = " %w : cound not convert from %v(%T) to %T"
+	errorUnmarshalDataTypes    = "%w : cound not convert from %v(%T) to %T"
+	errorUnmarshalShortArray   = "%w : short array size (%T[%d] < %T[%d])"
+	errorUnmarshalCastTypes    = "%w : cound not cast from %v(%T) to %T"
+	errorUnmarshalOverflow     = "%w : cound not cast from %v(%T) to %T causing overflow"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -55,5 +56,9 @@ func newErrorUnmarshalArraySize(fromArray []any, toObj any, toArrayVal reflect.V
 }
 
 func newErrorUnmarshalCastTypes(fromItem any, toItem any) error {
-	return fmt.Errorf(errorCastDataTypes, ErrUnmarshal, fromItem, fromItem, toItem)
+	return fmt.Errorf(errorUnmarshalCastTypes, ErrUnmarshal, fromItem, fromItem, toItem)
+}
+
+func newErrorUnmarshalCastOverflow(fromItem any, toItem any) error {
+	return fmt.Errorf(errorUnmarshalOverflow, ErrUnmarshal, fromItem, fromItem, toItem)
 }
