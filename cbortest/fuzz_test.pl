@@ -58,6 +58,26 @@ func fuzzUnmarshalTest(t *testing.T, v any) {
 	}
 }
 
+func fuzzUnmarshalToTest(t *testing.T, v any, to any) {
+	t.Helper()
+	b, err := cbor.Marshal(v)
+	if err != nil {
+		t.Errorf("Marshal(%v) : %s", v, err)
+		return
+	}
+	err = cbor.UnmarshalTo(b, to)
+	if err != nil {
+		t.Errorf("Unmarshal(%v => %T) : %s", v, to, err)
+		return
+	}
+
+	err = deepEqual(v, to)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+}
+
 HEADER
 # Go Fuzzing - The Go Programming Language
 # https://go.dev/security/fuzz/
@@ -113,8 +133,16 @@ sub is_exclude_from_map {
 	return 0;
 }
 
+sub is_exclude_from_unmarshalto {
+	my ($type_name) = @_;
+	if ($type_name == "int") {
+		return 0;
+	}
+	return 1;
+}
+
 ########################################
-# Primitive data type tests
+# Primitive type tests
 ########################################
 
 for (my $i = 0; $i <= $#types; $i++){
@@ -126,6 +154,27 @@ for (my $i = 0; $i <= $#types; $i++){
     }
 	printf("\tf.Fuzz(func(t *testing.T, v %s) {\n", $type);
 	printf("\t\tfuzzUnmarshalTest(t, v)\n");
+	printf("\t})\n");
+	printf("}\n");
+}
+
+########################################
+# Unmarshal tests
+########################################
+
+for (my $i = 0; $i <= $#types; $i++){
+	printf("\n");
+	my $type = $types[$i];
+	if (is_exclude_from_unmarshalto($type)) {
+		next;
+	}
+	printf("func Fuzz%sUnmarshal(f *testing.F) {\n", to_fuzz_name($type));
+	for ($j = 0; $j < @{$seeds[$i]}; $j++) {
+		printf("\tf.Add(%s(%s))\n", $type, $seeds[$i]->[$j]);
+    }
+	printf("\tf.Fuzz(func(t *testing.T, v %s) {\n", $type);
+	printf("\t\tvar to %s\n", $type);
+	printf("\t\tfuzzUnmarshalToTest(t, v, &to)\n");
 	printf("\t})\n");
 	printf("}\n");
 }
