@@ -101,26 +101,42 @@ func ExampleUnmarshal() {
 }
 
 func ExampleDecoder_Unmarshal() {
-	type Record struct {
-		Key   string
-		Value string
+	fromObjs := []any{
+		[]string{"one", "two"},
+		map[string]int{"one": 1, "two": 2},
+		struct {
+			Key   string
+			Value string
+		}{
+			Key: "hello", Value: "world",
+		},
 	}
 
-	from := Record{Key: "hello", Value: "world"}
-	var w bytes.Buffer
-	encoder := cbor.NewEncoder(&w)
-	encoder.Encode(from)
-	cborBytes := w.Bytes()
-	fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
+	toObjs := []any{
+		&[]string{},
+		map[string]int{},
+		&struct {
+			Key   string
+			Value string
+		}{},
+	}
 
-	to := Record{Key: "", Value: ""}
-	decoder := cbor.NewDecoder(bytes.NewReader(cborBytes))
-	decoder.Unmarshal(&to)
-	fmt.Printf("%v\n", to)
+	for n, fromObj := range fromObjs {
+		var w bytes.Buffer
+		encoder := cbor.NewEncoder(&w)
+		encoder.Encode(fromObj)
+		cborBytes := w.Bytes()
+
+		toObj := toObjs[n]
+		decoder := cbor.NewDecoder(bytes.NewReader(cborBytes))
+		decoder.Unmarshal(toObj)
+		fmt.Printf("%v\n", toObj)
+	}
 
 	// Output:
-	// a2634b65796568656c6c6f6556616c756565776f726c64
-	// {hello world}
+	// &[one two]
+	// map[one:1 two:2]
+	// &{hello world}
 }
 
 func ExampleUnmarshalTo() {
