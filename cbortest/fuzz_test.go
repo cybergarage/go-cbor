@@ -22,7 +22,7 @@ import (
 	"github.com/cybergarage/go-cbor/cbor"
 )
 
-func fuzzTest(t *testing.T, v any) {
+func fuzzUnmarshalTest(t *testing.T, v any) {
 	t.Helper()
 	b, err := cbor.Marshal(v)
 	if err != nil {
@@ -42,17 +42,12 @@ func fuzzTest(t *testing.T, v any) {
 	}
 }
 
-func fuzzPrimitiveTest[T comparable](t *testing.T, v T) {
-	t.Helper()
-	fuzzTest(t, v)
-}
-
 func FuzzIntData(f *testing.F) {
 	f.Add(int(0))
 	f.Add(int(math.MinInt))
 	f.Add(int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, v int) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -61,7 +56,7 @@ func FuzzInt8Data(f *testing.F) {
 	f.Add(int8(math.MinInt8))
 	f.Add(int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, v int8) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -70,7 +65,7 @@ func FuzzInt16Data(f *testing.F) {
 	f.Add(int16(math.MinInt16))
 	f.Add(int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, v int16) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -79,7 +74,7 @@ func FuzzInt32Data(f *testing.F) {
 	f.Add(int32(math.MinInt32))
 	f.Add(int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, v int32) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -88,7 +83,7 @@ func FuzzInt64Data(f *testing.F) {
 	f.Add(int64(math.MinInt64))
 	f.Add(int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, v int64) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -96,7 +91,7 @@ func FuzzUintData(f *testing.F) {
 	f.Add(uint(0))
 	f.Add(uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, v uint) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -104,7 +99,7 @@ func FuzzUint8Data(f *testing.F) {
 	f.Add(uint8(0))
 	f.Add(uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, v uint8) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -112,7 +107,7 @@ func FuzzUint16Data(f *testing.F) {
 	f.Add(uint16(0))
 	f.Add(uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, v uint16) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -120,7 +115,7 @@ func FuzzUint32Data(f *testing.F) {
 	f.Add(uint32(0))
 	f.Add(uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, v uint32) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -128,7 +123,7 @@ func FuzzUint64Data(f *testing.F) {
 	f.Add(uint64(0))
 	f.Add(uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, v uint64) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -137,7 +132,7 @@ func FuzzFloat32Data(f *testing.F) {
 	f.Add(float32(0))
 	f.Add(float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, v float32) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -146,7 +141,7 @@ func FuzzFloat64Data(f *testing.F) {
 	f.Add(float64(0))
 	f.Add(float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, v float64) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -154,7 +149,7 @@ func FuzzBoolData(f *testing.F) {
 	f.Add(bool(true))
 	f.Add(bool(false))
 	f.Fuzz(func(t *testing.T, v bool) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -163,7 +158,7 @@ func FuzzStringData(f *testing.F) {
 	f.Add(string("ab"))
 	f.Add(string("abc"))
 	f.Fuzz(func(t *testing.T, v string) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -172,7 +167,7 @@ func FuzzByteData(f *testing.F) {
 	f.Add([]byte("xy"))
 	f.Add([]byte("xyz"))
 	f.Fuzz(func(t *testing.T, v []byte) {
-		fuzzTest(t, v)
+		fuzzUnmarshalTest(t, v)
 	})
 }
 
@@ -182,13 +177,13 @@ func FuzzIntArray(f *testing.F) {
 	f.Add(int(math.MaxInt))
 	f.Fuzz(func(t *testing.T, v int) {
 		va := []int{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -198,13 +193,13 @@ func FuzzInt8Array(f *testing.F) {
 	f.Add(int8(math.MaxInt8))
 	f.Fuzz(func(t *testing.T, v int8) {
 		va := []int8{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int8{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int8{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int8{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -214,13 +209,13 @@ func FuzzInt16Array(f *testing.F) {
 	f.Add(int16(math.MaxInt16))
 	f.Fuzz(func(t *testing.T, v int16) {
 		va := []int16{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int16{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int16{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int16{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -230,13 +225,13 @@ func FuzzInt32Array(f *testing.F) {
 	f.Add(int32(math.MaxInt32))
 	f.Fuzz(func(t *testing.T, v int32) {
 		va := []int32{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int32{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int32{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int32{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -246,13 +241,13 @@ func FuzzInt64Array(f *testing.F) {
 	f.Add(int64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, v int64) {
 		va := []int64{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int64{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int64{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []int64{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -261,13 +256,13 @@ func FuzzUintArray(f *testing.F) {
 	f.Add(uint(math.MaxUint))
 	f.Fuzz(func(t *testing.T, v uint) {
 		va := []uint{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -276,13 +271,13 @@ func FuzzUint8Array(f *testing.F) {
 	f.Add(uint8(math.MaxUint8))
 	f.Fuzz(func(t *testing.T, v uint8) {
 		va := []uint8{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint8{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint8{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint8{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -291,13 +286,13 @@ func FuzzUint16Array(f *testing.F) {
 	f.Add(uint16(math.MaxUint16))
 	f.Fuzz(func(t *testing.T, v uint16) {
 		va := []uint16{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint16{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint16{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint16{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -306,13 +301,13 @@ func FuzzUint32Array(f *testing.F) {
 	f.Add(uint32(math.MaxUint32))
 	f.Fuzz(func(t *testing.T, v uint32) {
 		va := []uint32{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint32{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint32{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint32{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -321,13 +316,13 @@ func FuzzUint64Array(f *testing.F) {
 	f.Add(uint64(math.MaxInt64))
 	f.Fuzz(func(t *testing.T, v uint64) {
 		va := []uint64{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint64{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint64{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []uint64{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -337,13 +332,13 @@ func FuzzFloat32Array(f *testing.F) {
 	f.Add(float32(math.MaxFloat32))
 	f.Fuzz(func(t *testing.T, v float32) {
 		va := []float32{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []float32{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []float32{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []float32{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -353,13 +348,13 @@ func FuzzFloat64Array(f *testing.F) {
 	f.Add(float64(math.MaxFloat64))
 	f.Fuzz(func(t *testing.T, v float64) {
 		va := []float64{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []float64{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []float64{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []float64{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -368,13 +363,13 @@ func FuzzBoolArray(f *testing.F) {
 	f.Add(bool(false))
 	f.Fuzz(func(t *testing.T, v bool) {
 		va := []bool{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []bool{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []bool{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []bool{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -384,13 +379,13 @@ func FuzzStringArray(f *testing.F) {
 	f.Add(string("abc"))
 	f.Fuzz(func(t *testing.T, v string) {
 		va := []string{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []string{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []string{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = []string{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -400,13 +395,13 @@ func FuzzByteArray(f *testing.F) {
 	f.Add([]byte("xyz"))
 	f.Fuzz(func(t *testing.T, v []byte) {
 		va := [][]byte{}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = [][]byte{v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = [][]byte{v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 		va = [][]byte{v, v, v}
-		fuzzTest(t, va)
+		fuzzUnmarshalTest(t, va)
 	})
 }
 
@@ -427,14 +422,14 @@ func FuzzIntIntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 int
@@ -442,7 +437,7 @@ func FuzzIntIntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -463,14 +458,14 @@ func FuzzIntInt8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 int8
@@ -478,7 +473,7 @@ func FuzzIntInt8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -499,14 +494,14 @@ func FuzzIntInt16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 int16
@@ -514,7 +509,7 @@ func FuzzIntInt16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -535,14 +530,14 @@ func FuzzIntInt32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 int32
@@ -550,7 +545,7 @@ func FuzzIntInt32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -571,14 +566,14 @@ func FuzzIntInt64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 int64
@@ -586,7 +581,7 @@ func FuzzIntInt64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -604,14 +599,14 @@ func FuzzIntUintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 uint
@@ -619,7 +614,7 @@ func FuzzIntUintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -637,14 +632,14 @@ func FuzzIntUint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 uint8
@@ -652,7 +647,7 @@ func FuzzIntUint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -670,14 +665,14 @@ func FuzzIntUint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 uint16
@@ -685,7 +680,7 @@ func FuzzIntUint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -703,14 +698,14 @@ func FuzzIntUint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 uint32
@@ -718,7 +713,7 @@ func FuzzIntUint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -736,14 +731,14 @@ func FuzzIntUint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 uint64
@@ -751,7 +746,7 @@ func FuzzIntUint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -772,14 +767,14 @@ func FuzzIntFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 float32
@@ -787,7 +782,7 @@ func FuzzIntFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -808,14 +803,14 @@ func FuzzIntFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 float64
@@ -823,7 +818,7 @@ func FuzzIntFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -841,14 +836,14 @@ func FuzzIntBoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 bool
@@ -856,7 +851,7 @@ func FuzzIntBoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -877,14 +872,14 @@ func FuzzIntStringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 string
@@ -892,7 +887,7 @@ func FuzzIntStringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -913,14 +908,14 @@ func FuzzIntByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int
 			Elem2 []byte
@@ -928,7 +923,7 @@ func FuzzIntByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -949,14 +944,14 @@ func FuzzInt8IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 int
@@ -964,7 +959,7 @@ func FuzzInt8IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -985,14 +980,14 @@ func FuzzInt8Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 int8
@@ -1000,7 +995,7 @@ func FuzzInt8Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1021,14 +1016,14 @@ func FuzzInt8Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 int16
@@ -1036,7 +1031,7 @@ func FuzzInt8Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1057,14 +1052,14 @@ func FuzzInt8Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 int32
@@ -1072,7 +1067,7 @@ func FuzzInt8Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1093,14 +1088,14 @@ func FuzzInt8Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 int64
@@ -1108,7 +1103,7 @@ func FuzzInt8Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1126,14 +1121,14 @@ func FuzzInt8UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 uint
@@ -1141,7 +1136,7 @@ func FuzzInt8UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1159,14 +1154,14 @@ func FuzzInt8Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 uint8
@@ -1174,7 +1169,7 @@ func FuzzInt8Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1192,14 +1187,14 @@ func FuzzInt8Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 uint16
@@ -1207,7 +1202,7 @@ func FuzzInt8Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1225,14 +1220,14 @@ func FuzzInt8Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 uint32
@@ -1240,7 +1235,7 @@ func FuzzInt8Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1258,14 +1253,14 @@ func FuzzInt8Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 uint64
@@ -1273,7 +1268,7 @@ func FuzzInt8Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1294,14 +1289,14 @@ func FuzzInt8Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 float32
@@ -1309,7 +1304,7 @@ func FuzzInt8Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1330,14 +1325,14 @@ func FuzzInt8Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 float64
@@ -1345,7 +1340,7 @@ func FuzzInt8Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1363,14 +1358,14 @@ func FuzzInt8BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 bool
@@ -1378,7 +1373,7 @@ func FuzzInt8BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1399,14 +1394,14 @@ func FuzzInt8StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 string
@@ -1414,7 +1409,7 @@ func FuzzInt8StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1435,14 +1430,14 @@ func FuzzInt8ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int8
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int8
 			Elem2 []byte
@@ -1450,7 +1445,7 @@ func FuzzInt8ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1471,14 +1466,14 @@ func FuzzInt16IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 int
@@ -1486,7 +1481,7 @@ func FuzzInt16IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1507,14 +1502,14 @@ func FuzzInt16Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 int8
@@ -1522,7 +1517,7 @@ func FuzzInt16Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1543,14 +1538,14 @@ func FuzzInt16Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 int16
@@ -1558,7 +1553,7 @@ func FuzzInt16Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1579,14 +1574,14 @@ func FuzzInt16Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 int32
@@ -1594,7 +1589,7 @@ func FuzzInt16Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1615,14 +1610,14 @@ func FuzzInt16Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 int64
@@ -1630,7 +1625,7 @@ func FuzzInt16Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1648,14 +1643,14 @@ func FuzzInt16UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 uint
@@ -1663,7 +1658,7 @@ func FuzzInt16UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1681,14 +1676,14 @@ func FuzzInt16Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 uint8
@@ -1696,7 +1691,7 @@ func FuzzInt16Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1714,14 +1709,14 @@ func FuzzInt16Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 uint16
@@ -1729,7 +1724,7 @@ func FuzzInt16Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1747,14 +1742,14 @@ func FuzzInt16Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 uint32
@@ -1762,7 +1757,7 @@ func FuzzInt16Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1780,14 +1775,14 @@ func FuzzInt16Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 uint64
@@ -1795,7 +1790,7 @@ func FuzzInt16Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1816,14 +1811,14 @@ func FuzzInt16Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 float32
@@ -1831,7 +1826,7 @@ func FuzzInt16Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1852,14 +1847,14 @@ func FuzzInt16Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 float64
@@ -1867,7 +1862,7 @@ func FuzzInt16Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1885,14 +1880,14 @@ func FuzzInt16BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 bool
@@ -1900,7 +1895,7 @@ func FuzzInt16BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1921,14 +1916,14 @@ func FuzzInt16StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 string
@@ -1936,7 +1931,7 @@ func FuzzInt16StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1957,14 +1952,14 @@ func FuzzInt16ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int16
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int16
 			Elem2 []byte
@@ -1972,7 +1967,7 @@ func FuzzInt16ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -1993,14 +1988,14 @@ func FuzzInt32IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 int
@@ -2008,7 +2003,7 @@ func FuzzInt32IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2029,14 +2024,14 @@ func FuzzInt32Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 int8
@@ -2044,7 +2039,7 @@ func FuzzInt32Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2065,14 +2060,14 @@ func FuzzInt32Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 int16
@@ -2080,7 +2075,7 @@ func FuzzInt32Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2101,14 +2096,14 @@ func FuzzInt32Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 int32
@@ -2116,7 +2111,7 @@ func FuzzInt32Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2137,14 +2132,14 @@ func FuzzInt32Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 int64
@@ -2152,7 +2147,7 @@ func FuzzInt32Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2170,14 +2165,14 @@ func FuzzInt32UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 uint
@@ -2185,7 +2180,7 @@ func FuzzInt32UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2203,14 +2198,14 @@ func FuzzInt32Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 uint8
@@ -2218,7 +2213,7 @@ func FuzzInt32Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2236,14 +2231,14 @@ func FuzzInt32Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 uint16
@@ -2251,7 +2246,7 @@ func FuzzInt32Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2269,14 +2264,14 @@ func FuzzInt32Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 uint32
@@ -2284,7 +2279,7 @@ func FuzzInt32Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2302,14 +2297,14 @@ func FuzzInt32Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 uint64
@@ -2317,7 +2312,7 @@ func FuzzInt32Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2338,14 +2333,14 @@ func FuzzInt32Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 float32
@@ -2353,7 +2348,7 @@ func FuzzInt32Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2374,14 +2369,14 @@ func FuzzInt32Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 float64
@@ -2389,7 +2384,7 @@ func FuzzInt32Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2407,14 +2402,14 @@ func FuzzInt32BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 bool
@@ -2422,7 +2417,7 @@ func FuzzInt32BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2443,14 +2438,14 @@ func FuzzInt32StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 string
@@ -2458,7 +2453,7 @@ func FuzzInt32StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2479,14 +2474,14 @@ func FuzzInt32ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int32
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int32
 			Elem2 []byte
@@ -2494,7 +2489,7 @@ func FuzzInt32ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2515,14 +2510,14 @@ func FuzzInt64IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 int
@@ -2530,7 +2525,7 @@ func FuzzInt64IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2551,14 +2546,14 @@ func FuzzInt64Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 int8
@@ -2566,7 +2561,7 @@ func FuzzInt64Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2587,14 +2582,14 @@ func FuzzInt64Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 int16
@@ -2602,7 +2597,7 @@ func FuzzInt64Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2623,14 +2618,14 @@ func FuzzInt64Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 int32
@@ -2638,7 +2633,7 @@ func FuzzInt64Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2659,14 +2654,14 @@ func FuzzInt64Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 int64
@@ -2674,7 +2669,7 @@ func FuzzInt64Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2692,14 +2687,14 @@ func FuzzInt64UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 uint
@@ -2707,7 +2702,7 @@ func FuzzInt64UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2725,14 +2720,14 @@ func FuzzInt64Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 uint8
@@ -2740,7 +2735,7 @@ func FuzzInt64Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2758,14 +2753,14 @@ func FuzzInt64Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 uint16
@@ -2773,7 +2768,7 @@ func FuzzInt64Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2791,14 +2786,14 @@ func FuzzInt64Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 uint32
@@ -2806,7 +2801,7 @@ func FuzzInt64Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2824,14 +2819,14 @@ func FuzzInt64Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 uint64
@@ -2839,7 +2834,7 @@ func FuzzInt64Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2860,14 +2855,14 @@ func FuzzInt64Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 float32
@@ -2875,7 +2870,7 @@ func FuzzInt64Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2896,14 +2891,14 @@ func FuzzInt64Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 float64
@@ -2911,7 +2906,7 @@ func FuzzInt64Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2929,14 +2924,14 @@ func FuzzInt64BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 bool
@@ -2944,7 +2939,7 @@ func FuzzInt64BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -2965,14 +2960,14 @@ func FuzzInt64StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 string
@@ -2980,7 +2975,7 @@ func FuzzInt64StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3001,14 +2996,14 @@ func FuzzInt64ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 int64
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 int64
 			Elem2 []byte
@@ -3016,7 +3011,7 @@ func FuzzInt64ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3034,14 +3029,14 @@ func FuzzUintIntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 int
@@ -3049,7 +3044,7 @@ func FuzzUintIntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3067,14 +3062,14 @@ func FuzzUintInt8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 int8
@@ -3082,7 +3077,7 @@ func FuzzUintInt8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3100,14 +3095,14 @@ func FuzzUintInt16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 int16
@@ -3115,7 +3110,7 @@ func FuzzUintInt16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3133,14 +3128,14 @@ func FuzzUintInt32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 int32
@@ -3148,7 +3143,7 @@ func FuzzUintInt32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3166,14 +3161,14 @@ func FuzzUintInt64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 int64
@@ -3181,7 +3176,7 @@ func FuzzUintInt64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3197,14 +3192,14 @@ func FuzzUintUintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 uint
@@ -3212,7 +3207,7 @@ func FuzzUintUintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3228,14 +3223,14 @@ func FuzzUintUint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 uint8
@@ -3243,7 +3238,7 @@ func FuzzUintUint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3259,14 +3254,14 @@ func FuzzUintUint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 uint16
@@ -3274,7 +3269,7 @@ func FuzzUintUint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3290,14 +3285,14 @@ func FuzzUintUint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 uint32
@@ -3305,7 +3300,7 @@ func FuzzUintUint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3321,14 +3316,14 @@ func FuzzUintUint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 uint64
@@ -3336,7 +3331,7 @@ func FuzzUintUint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3354,14 +3349,14 @@ func FuzzUintFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 float32
@@ -3369,7 +3364,7 @@ func FuzzUintFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3387,14 +3382,14 @@ func FuzzUintFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 float64
@@ -3402,7 +3397,7 @@ func FuzzUintFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3418,14 +3413,14 @@ func FuzzUintBoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 bool
@@ -3433,7 +3428,7 @@ func FuzzUintBoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3451,14 +3446,14 @@ func FuzzUintStringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 string
@@ -3466,7 +3461,7 @@ func FuzzUintStringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3484,14 +3479,14 @@ func FuzzUintByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint
 			Elem2 []byte
@@ -3499,7 +3494,7 @@ func FuzzUintByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3517,14 +3512,14 @@ func FuzzUint8IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 int
@@ -3532,7 +3527,7 @@ func FuzzUint8IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3550,14 +3545,14 @@ func FuzzUint8Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 int8
@@ -3565,7 +3560,7 @@ func FuzzUint8Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3583,14 +3578,14 @@ func FuzzUint8Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 int16
@@ -3598,7 +3593,7 @@ func FuzzUint8Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3616,14 +3611,14 @@ func FuzzUint8Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 int32
@@ -3631,7 +3626,7 @@ func FuzzUint8Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3649,14 +3644,14 @@ func FuzzUint8Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 int64
@@ -3664,7 +3659,7 @@ func FuzzUint8Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3680,14 +3675,14 @@ func FuzzUint8UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 uint
@@ -3695,7 +3690,7 @@ func FuzzUint8UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3711,14 +3706,14 @@ func FuzzUint8Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 uint8
@@ -3726,7 +3721,7 @@ func FuzzUint8Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3742,14 +3737,14 @@ func FuzzUint8Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 uint16
@@ -3757,7 +3752,7 @@ func FuzzUint8Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3773,14 +3768,14 @@ func FuzzUint8Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 uint32
@@ -3788,7 +3783,7 @@ func FuzzUint8Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3804,14 +3799,14 @@ func FuzzUint8Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 uint64
@@ -3819,7 +3814,7 @@ func FuzzUint8Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3837,14 +3832,14 @@ func FuzzUint8Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 float32
@@ -3852,7 +3847,7 @@ func FuzzUint8Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3870,14 +3865,14 @@ func FuzzUint8Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 float64
@@ -3885,7 +3880,7 @@ func FuzzUint8Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3901,14 +3896,14 @@ func FuzzUint8BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 bool
@@ -3916,7 +3911,7 @@ func FuzzUint8BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3934,14 +3929,14 @@ func FuzzUint8StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 string
@@ -3949,7 +3944,7 @@ func FuzzUint8StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -3967,14 +3962,14 @@ func FuzzUint8ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint8
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint8
 			Elem2 []byte
@@ -3982,7 +3977,7 @@ func FuzzUint8ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4000,14 +3995,14 @@ func FuzzUint16IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 int
@@ -4015,7 +4010,7 @@ func FuzzUint16IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4033,14 +4028,14 @@ func FuzzUint16Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 int8
@@ -4048,7 +4043,7 @@ func FuzzUint16Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4066,14 +4061,14 @@ func FuzzUint16Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 int16
@@ -4081,7 +4076,7 @@ func FuzzUint16Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4099,14 +4094,14 @@ func FuzzUint16Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 int32
@@ -4114,7 +4109,7 @@ func FuzzUint16Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4132,14 +4127,14 @@ func FuzzUint16Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 int64
@@ -4147,7 +4142,7 @@ func FuzzUint16Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4163,14 +4158,14 @@ func FuzzUint16UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 uint
@@ -4178,7 +4173,7 @@ func FuzzUint16UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4194,14 +4189,14 @@ func FuzzUint16Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 uint8
@@ -4209,7 +4204,7 @@ func FuzzUint16Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4225,14 +4220,14 @@ func FuzzUint16Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 uint16
@@ -4240,7 +4235,7 @@ func FuzzUint16Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4256,14 +4251,14 @@ func FuzzUint16Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 uint32
@@ -4271,7 +4266,7 @@ func FuzzUint16Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4287,14 +4282,14 @@ func FuzzUint16Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 uint64
@@ -4302,7 +4297,7 @@ func FuzzUint16Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4320,14 +4315,14 @@ func FuzzUint16Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 float32
@@ -4335,7 +4330,7 @@ func FuzzUint16Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4353,14 +4348,14 @@ func FuzzUint16Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 float64
@@ -4368,7 +4363,7 @@ func FuzzUint16Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4384,14 +4379,14 @@ func FuzzUint16BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 bool
@@ -4399,7 +4394,7 @@ func FuzzUint16BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4417,14 +4412,14 @@ func FuzzUint16StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 string
@@ -4432,7 +4427,7 @@ func FuzzUint16StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4450,14 +4445,14 @@ func FuzzUint16ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint16
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint16
 			Elem2 []byte
@@ -4465,7 +4460,7 @@ func FuzzUint16ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4483,14 +4478,14 @@ func FuzzUint32IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 int
@@ -4498,7 +4493,7 @@ func FuzzUint32IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4516,14 +4511,14 @@ func FuzzUint32Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 int8
@@ -4531,7 +4526,7 @@ func FuzzUint32Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4549,14 +4544,14 @@ func FuzzUint32Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 int16
@@ -4564,7 +4559,7 @@ func FuzzUint32Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4582,14 +4577,14 @@ func FuzzUint32Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 int32
@@ -4597,7 +4592,7 @@ func FuzzUint32Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4615,14 +4610,14 @@ func FuzzUint32Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 int64
@@ -4630,7 +4625,7 @@ func FuzzUint32Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4646,14 +4641,14 @@ func FuzzUint32UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 uint
@@ -4661,7 +4656,7 @@ func FuzzUint32UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4677,14 +4672,14 @@ func FuzzUint32Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 uint8
@@ -4692,7 +4687,7 @@ func FuzzUint32Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4708,14 +4703,14 @@ func FuzzUint32Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 uint16
@@ -4723,7 +4718,7 @@ func FuzzUint32Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4739,14 +4734,14 @@ func FuzzUint32Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 uint32
@@ -4754,7 +4749,7 @@ func FuzzUint32Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4770,14 +4765,14 @@ func FuzzUint32Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 uint64
@@ -4785,7 +4780,7 @@ func FuzzUint32Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4803,14 +4798,14 @@ func FuzzUint32Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 float32
@@ -4818,7 +4813,7 @@ func FuzzUint32Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4836,14 +4831,14 @@ func FuzzUint32Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 float64
@@ -4851,7 +4846,7 @@ func FuzzUint32Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4867,14 +4862,14 @@ func FuzzUint32BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 bool
@@ -4882,7 +4877,7 @@ func FuzzUint32BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4900,14 +4895,14 @@ func FuzzUint32StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 string
@@ -4915,7 +4910,7 @@ func FuzzUint32StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4933,14 +4928,14 @@ func FuzzUint32ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint32
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint32
 			Elem2 []byte
@@ -4948,7 +4943,7 @@ func FuzzUint32ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4966,14 +4961,14 @@ func FuzzUint64IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 int
@@ -4981,7 +4976,7 @@ func FuzzUint64IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -4999,14 +4994,14 @@ func FuzzUint64Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 int8
@@ -5014,7 +5009,7 @@ func FuzzUint64Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5032,14 +5027,14 @@ func FuzzUint64Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 int16
@@ -5047,7 +5042,7 @@ func FuzzUint64Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5065,14 +5060,14 @@ func FuzzUint64Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 int32
@@ -5080,7 +5075,7 @@ func FuzzUint64Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5098,14 +5093,14 @@ func FuzzUint64Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 int64
@@ -5113,7 +5108,7 @@ func FuzzUint64Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5129,14 +5124,14 @@ func FuzzUint64UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 uint
@@ -5144,7 +5139,7 @@ func FuzzUint64UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5160,14 +5155,14 @@ func FuzzUint64Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 uint8
@@ -5175,7 +5170,7 @@ func FuzzUint64Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5191,14 +5186,14 @@ func FuzzUint64Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 uint16
@@ -5206,7 +5201,7 @@ func FuzzUint64Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5222,14 +5217,14 @@ func FuzzUint64Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 uint32
@@ -5237,7 +5232,7 @@ func FuzzUint64Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5253,14 +5248,14 @@ func FuzzUint64Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 uint64
@@ -5268,7 +5263,7 @@ func FuzzUint64Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5286,14 +5281,14 @@ func FuzzUint64Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 float32
@@ -5301,7 +5296,7 @@ func FuzzUint64Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5319,14 +5314,14 @@ func FuzzUint64Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 float64
@@ -5334,7 +5329,7 @@ func FuzzUint64Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5350,14 +5345,14 @@ func FuzzUint64BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 bool
@@ -5365,7 +5360,7 @@ func FuzzUint64BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5383,14 +5378,14 @@ func FuzzUint64StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 string
@@ -5398,7 +5393,7 @@ func FuzzUint64StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5416,14 +5411,14 @@ func FuzzUint64ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 uint64
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 uint64
 			Elem2 []byte
@@ -5431,7 +5426,7 @@ func FuzzUint64ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5452,14 +5447,14 @@ func FuzzFloat32IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 int
@@ -5467,7 +5462,7 @@ func FuzzFloat32IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5488,14 +5483,14 @@ func FuzzFloat32Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 int8
@@ -5503,7 +5498,7 @@ func FuzzFloat32Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5524,14 +5519,14 @@ func FuzzFloat32Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 int16
@@ -5539,7 +5534,7 @@ func FuzzFloat32Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5560,14 +5555,14 @@ func FuzzFloat32Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 int32
@@ -5575,7 +5570,7 @@ func FuzzFloat32Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5596,14 +5591,14 @@ func FuzzFloat32Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 int64
@@ -5611,7 +5606,7 @@ func FuzzFloat32Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5629,14 +5624,14 @@ func FuzzFloat32UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 uint
@@ -5644,7 +5639,7 @@ func FuzzFloat32UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5662,14 +5657,14 @@ func FuzzFloat32Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 uint8
@@ -5677,7 +5672,7 @@ func FuzzFloat32Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5695,14 +5690,14 @@ func FuzzFloat32Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 uint16
@@ -5710,7 +5705,7 @@ func FuzzFloat32Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5728,14 +5723,14 @@ func FuzzFloat32Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 uint32
@@ -5743,7 +5738,7 @@ func FuzzFloat32Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5761,14 +5756,14 @@ func FuzzFloat32Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 uint64
@@ -5776,7 +5771,7 @@ func FuzzFloat32Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5797,14 +5792,14 @@ func FuzzFloat32Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 float32
@@ -5812,7 +5807,7 @@ func FuzzFloat32Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5833,14 +5828,14 @@ func FuzzFloat32Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 float64
@@ -5848,7 +5843,7 @@ func FuzzFloat32Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5866,14 +5861,14 @@ func FuzzFloat32BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 bool
@@ -5881,7 +5876,7 @@ func FuzzFloat32BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5902,14 +5897,14 @@ func FuzzFloat32StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 string
@@ -5917,7 +5912,7 @@ func FuzzFloat32StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5938,14 +5933,14 @@ func FuzzFloat32ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float32
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float32
 			Elem2 []byte
@@ -5953,7 +5948,7 @@ func FuzzFloat32ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -5974,14 +5969,14 @@ func FuzzFloat64IntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 int
@@ -5989,7 +5984,7 @@ func FuzzFloat64IntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6010,14 +6005,14 @@ func FuzzFloat64Int8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 int8
@@ -6025,7 +6020,7 @@ func FuzzFloat64Int8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6046,14 +6041,14 @@ func FuzzFloat64Int16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 int16
@@ -6061,7 +6056,7 @@ func FuzzFloat64Int16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6082,14 +6077,14 @@ func FuzzFloat64Int32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 int32
@@ -6097,7 +6092,7 @@ func FuzzFloat64Int32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6118,14 +6113,14 @@ func FuzzFloat64Int64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 int64
@@ -6133,7 +6128,7 @@ func FuzzFloat64Int64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6151,14 +6146,14 @@ func FuzzFloat64UintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 uint
@@ -6166,7 +6161,7 @@ func FuzzFloat64UintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6184,14 +6179,14 @@ func FuzzFloat64Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 uint8
@@ -6199,7 +6194,7 @@ func FuzzFloat64Uint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6217,14 +6212,14 @@ func FuzzFloat64Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 uint16
@@ -6232,7 +6227,7 @@ func FuzzFloat64Uint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6250,14 +6245,14 @@ func FuzzFloat64Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 uint32
@@ -6265,7 +6260,7 @@ func FuzzFloat64Uint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6283,14 +6278,14 @@ func FuzzFloat64Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 uint64
@@ -6298,7 +6293,7 @@ func FuzzFloat64Uint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6319,14 +6314,14 @@ func FuzzFloat64Float32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 float32
@@ -6334,7 +6329,7 @@ func FuzzFloat64Float32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6355,14 +6350,14 @@ func FuzzFloat64Float64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 float64
@@ -6370,7 +6365,7 @@ func FuzzFloat64Float64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6388,14 +6383,14 @@ func FuzzFloat64BoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 bool
@@ -6403,7 +6398,7 @@ func FuzzFloat64BoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6424,14 +6419,14 @@ func FuzzFloat64StringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 string
@@ -6439,7 +6434,7 @@ func FuzzFloat64StringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6460,14 +6455,14 @@ func FuzzFloat64ByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 float64
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 float64
 			Elem2 []byte
@@ -6475,7 +6470,7 @@ func FuzzFloat64ByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6493,14 +6488,14 @@ func FuzzBoolIntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 int
@@ -6508,7 +6503,7 @@ func FuzzBoolIntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6526,14 +6521,14 @@ func FuzzBoolInt8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 int8
@@ -6541,7 +6536,7 @@ func FuzzBoolInt8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6559,14 +6554,14 @@ func FuzzBoolInt16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 int16
@@ -6574,7 +6569,7 @@ func FuzzBoolInt16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6592,14 +6587,14 @@ func FuzzBoolInt32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 int32
@@ -6607,7 +6602,7 @@ func FuzzBoolInt32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6625,14 +6620,14 @@ func FuzzBoolInt64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 int64
@@ -6640,7 +6635,7 @@ func FuzzBoolInt64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6656,14 +6651,14 @@ func FuzzBoolUintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 uint
@@ -6671,7 +6666,7 @@ func FuzzBoolUintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6687,14 +6682,14 @@ func FuzzBoolUint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 uint8
@@ -6702,7 +6697,7 @@ func FuzzBoolUint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6718,14 +6713,14 @@ func FuzzBoolUint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 uint16
@@ -6733,7 +6728,7 @@ func FuzzBoolUint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6749,14 +6744,14 @@ func FuzzBoolUint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 uint32
@@ -6764,7 +6759,7 @@ func FuzzBoolUint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6780,14 +6775,14 @@ func FuzzBoolUint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 uint64
@@ -6795,7 +6790,7 @@ func FuzzBoolUint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6813,14 +6808,14 @@ func FuzzBoolFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 float32
@@ -6828,7 +6823,7 @@ func FuzzBoolFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6846,14 +6841,14 @@ func FuzzBoolFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 float64
@@ -6861,7 +6856,7 @@ func FuzzBoolFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6877,14 +6872,14 @@ func FuzzBoolBoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 bool
@@ -6892,7 +6887,7 @@ func FuzzBoolBoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6910,14 +6905,14 @@ func FuzzBoolStringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 string
@@ -6925,7 +6920,7 @@ func FuzzBoolStringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6943,14 +6938,14 @@ func FuzzBoolByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 bool
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 bool
 			Elem2 []byte
@@ -6958,7 +6953,7 @@ func FuzzBoolByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -6979,14 +6974,14 @@ func FuzzStringIntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 int
@@ -6994,7 +6989,7 @@ func FuzzStringIntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7015,14 +7010,14 @@ func FuzzStringInt8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 int8
@@ -7030,7 +7025,7 @@ func FuzzStringInt8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7051,14 +7046,14 @@ func FuzzStringInt16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 int16
@@ -7066,7 +7061,7 @@ func FuzzStringInt16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7087,14 +7082,14 @@ func FuzzStringInt32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 int32
@@ -7102,7 +7097,7 @@ func FuzzStringInt32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7123,14 +7118,14 @@ func FuzzStringInt64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 int64
@@ -7138,7 +7133,7 @@ func FuzzStringInt64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7156,14 +7151,14 @@ func FuzzStringUintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 uint
@@ -7171,7 +7166,7 @@ func FuzzStringUintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7189,14 +7184,14 @@ func FuzzStringUint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 uint8
@@ -7204,7 +7199,7 @@ func FuzzStringUint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7222,14 +7217,14 @@ func FuzzStringUint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 uint16
@@ -7237,7 +7232,7 @@ func FuzzStringUint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7255,14 +7250,14 @@ func FuzzStringUint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 uint32
@@ -7270,7 +7265,7 @@ func FuzzStringUint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7288,14 +7283,14 @@ func FuzzStringUint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 uint64
@@ -7303,7 +7298,7 @@ func FuzzStringUint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7324,14 +7319,14 @@ func FuzzStringFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 float32
@@ -7339,7 +7334,7 @@ func FuzzStringFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7360,14 +7355,14 @@ func FuzzStringFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 float64
@@ -7375,7 +7370,7 @@ func FuzzStringFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7393,14 +7388,14 @@ func FuzzStringBoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 bool
@@ -7408,7 +7403,7 @@ func FuzzStringBoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7429,14 +7424,14 @@ func FuzzStringStringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 string
@@ -7444,7 +7439,7 @@ func FuzzStringStringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7465,14 +7460,14 @@ func FuzzStringByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 string
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 string
 			Elem2 []byte
@@ -7480,7 +7475,7 @@ func FuzzStringByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7501,14 +7496,14 @@ func FuzzByteIntStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 int
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 int
@@ -7516,7 +7511,7 @@ func FuzzByteIntStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7537,14 +7532,14 @@ func FuzzByteInt8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 int8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 int8
@@ -7552,7 +7547,7 @@ func FuzzByteInt8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7573,14 +7568,14 @@ func FuzzByteInt16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 int16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 int16
@@ -7588,7 +7583,7 @@ func FuzzByteInt16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7609,14 +7604,14 @@ func FuzzByteInt32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 int32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 int32
@@ -7624,7 +7619,7 @@ func FuzzByteInt32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7645,14 +7640,14 @@ func FuzzByteInt64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 int64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 int64
@@ -7660,7 +7655,7 @@ func FuzzByteInt64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7678,14 +7673,14 @@ func FuzzByteUintStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 uint
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 uint
@@ -7693,7 +7688,7 @@ func FuzzByteUintStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7711,14 +7706,14 @@ func FuzzByteUint8Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 uint8
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 uint8
@@ -7726,7 +7721,7 @@ func FuzzByteUint8Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7744,14 +7739,14 @@ func FuzzByteUint16Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 uint16
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 uint16
@@ -7759,7 +7754,7 @@ func FuzzByteUint16Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7777,14 +7772,14 @@ func FuzzByteUint32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 uint32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 uint32
@@ -7792,7 +7787,7 @@ func FuzzByteUint32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7810,14 +7805,14 @@ func FuzzByteUint64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 uint64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 uint64
@@ -7825,7 +7820,7 @@ func FuzzByteUint64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7846,14 +7841,14 @@ func FuzzByteFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 float32
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 float32
@@ -7861,7 +7856,7 @@ func FuzzByteFloat32Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7882,14 +7877,14 @@ func FuzzByteFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 float64
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 float64
@@ -7897,7 +7892,7 @@ func FuzzByteFloat64Struct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7915,14 +7910,14 @@ func FuzzByteBoolStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 bool
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 bool
@@ -7930,7 +7925,7 @@ func FuzzByteBoolStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7951,14 +7946,14 @@ func FuzzByteStringStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 string
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 string
@@ -7966,7 +7961,7 @@ func FuzzByteStringStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
 
@@ -7987,14 +7982,14 @@ func FuzzByteByteStruct(f *testing.F) {
 		}{
 			Elem1: k,
 		}
-		fuzzTest(t, vs1)
+		fuzzUnmarshalTest(t, vs1)
 		vs2 := struct {
 			Elem1 []byte
 			Elem2 []byte
 		}{
 			Elem1: k, Elem2: v,
 		}
-		fuzzTest(t, vs2)
+		fuzzUnmarshalTest(t, vs2)
 		vs3 := struct {
 			Elem1 []byte
 			Elem2 []byte
@@ -8002,6 +7997,6 @@ func FuzzByteByteStruct(f *testing.F) {
 		}{
 			Elem1: k, Elem2: v, Elem3: k,
 		}
-		fuzzTest(t, vs3)
+		fuzzUnmarshalTest(t, vs3)
 	})
 }
