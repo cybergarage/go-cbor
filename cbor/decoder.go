@@ -273,6 +273,53 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 			return dec.unmarshalArrayTo(from, toObj)
 		}
 		return newErrorUnmarshalDataTypes(fromObj, toObj)
+	case int:
+		switch to := toObj.(type) {
+		case *int:
+			*to = from
+		case *int8:
+			if math.MaxInt8 < from {
+				return newErrorUnmarshalCastOverflow(from, toObj)
+			}
+			*to = int8(from)
+		case *int16:
+			if math.MaxInt16 < from {
+				return newErrorUnmarshalCastOverflow(from, toObj)
+			}
+			*to = int16(from)
+		case *int32:
+			if math.MaxInt32 < from {
+				return newErrorUnmarshalCastOverflow(from, toObj)
+			}
+			*to = int32(from)
+		case *int64:
+			*to = int64(from)
+		}
+	case int64:
+		switch to := toObj.(type) {
+		case *int:
+			if math.MaxInt < from {
+				return newErrorUnmarshalCastOverflow(from, toObj)
+			}
+			*to = int(from)
+		case *int8:
+			if math.MaxInt8 < from {
+				return newErrorUnmarshalCastOverflow(from, toObj)
+			}
+			*to = int8(from)
+		case *int16:
+			if math.MaxInt16 < from {
+				return newErrorUnmarshalCastOverflow(from, toObj)
+			}
+			*to = int16(from)
+		case *int32:
+			if math.MaxInt32 < from {
+				return newErrorUnmarshalCastOverflow(from, toObj)
+			}
+			*to = int32(from)
+		case *int64:
+			*to = from
+		}
 	}
 
 	return newErrorUnmarshalDataTypes(fromObj, toObj)

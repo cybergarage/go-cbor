@@ -1,7 +1,7 @@
 # Changelog
 
 ## v1.2.0 (2022-xx-xx)
-- Updated Decoder::Unmarshal() and UnmarshalTo() to unmarshal decoded objects into standard data types.
+- Updated Decoder::Unmarshal() and UnmarshalTo() to unmarshal decoded objects into standard primitive data types.
 
 ## v1.1.1 (2022-11-18)
 - Improved performance of Decoder::Unmarshal() when a map is specified as the unmarshal object.
