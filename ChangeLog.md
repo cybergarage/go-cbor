@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.1.1 (2022-11-xx)
+## v1.1.1 (2022-11-18)
 - Improved performance of Decoder::Unmarshal() when a map is specified as the unmarshal object.
 - Improved Decoder::Unmarshal() to expand the slice capacity automatically if the specified array is shorter than the decorded array.
 
