@@ -29,11 +29,11 @@ const (
 	errorUnkonwnNativeType     = "%T (%v) is %w"
 	errorUnkonwnMajorType      = "major type (%d) is %w"
 	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
-	errorUnmarshalDataTypes    = "%w : cound not convert from %v(%T) to %T"
-	errorUnmarshalShortArray   = "%w : short array size (%T[%d] < %T[%d])"
-	errorUnmarshalCastTypes    = "%w : cound not cast from %v(%T) to %T"
-	errorUnmarshalOverflow     = "%w : cound not cast from %v(%T) to %T causing overflow"
-	errorUnmarshalUnderflow    = "%w : cound not cast from %v(%T) to %T causing underflow"
+	errorUnmarshalDataTypes    = "%w : cound not convert from %v (%T) to %T"
+	errorUnmarshalShortArray   = "%w : short array size ([%d]%T < [%d]%T)"
+	errorUnmarshalCastTypes    = "%w : cound not cast from %v (%T) to %T"
+	errorUnmarshalOverflow     = "%w : cound not cast from %v (%T) to %T causing overflow"
+	errorUnmarshalUnderflow    = "%w : cound not cast from %v (%T) to %T causing underflow"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
