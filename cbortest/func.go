@@ -21,43 +21,43 @@ import (
 )
 
 func DeepEqual(fromObj any, toObj any) error {
+	replaceUnmatchedStrs := func(v string) string {
+		// Map string comparisons
+		// fromObj:    "{Key:0 Val:-3.4028234663852886e+38}"
+		// toObj  : "map[Key:0 Val:-3.4028234663852886e+38]"
+		// Struct string comparisons
+		// fromObj: {Elem1:{120 121 122}}
+		// toObj  : {Elem1:[120 121 122]}
+		v = strings.ReplaceAll(v, "[", "{")
+		v = strings.ReplaceAll(v, "]", "}")
+		v = strings.ReplaceAll(v, "map", "")
+
+		// Array string comparisons
+		// fromObj: "[one two]"
+		// toObj  : "&[one two]"
+		// fromObj: "{Key:32767 Val:&} != "{Key:32767 Val:}""
+		// toObj  :{Key:32767 Val:} != {Key:32767 Val:&}
+		v = strings.ReplaceAll(v, "&", "")
+
+		return v
+	}
+
+	// reflect comparisons
+
 	if reflect.DeepEqual(fromObj, toObj) {
 		return nil
 	}
 
 	// String comparisons
+
 	fromObjStr := fmt.Sprintf("%+v", fromObj)
 	toObjStr := fmt.Sprintf("%+v", toObj)
 	if toObjStr == fromObjStr {
 		return nil
 	}
 
-	// Array string comparisons
-	// fromObj: "[one two]"
-	// toObj  : "&[one two]"
-	// NOTE: (}`): error parsing regexp: missing closing )
-	// re := regexp.MustCompile(fmt.Sprintf("[&]?%s", fromObjStr))
-	// if re.MatchString(toObjStr) {
-	// 	return nil
-	// }
-	toObjStr = strings.ReplaceAll(toObjStr, "&", "")
-	if toObjStr == fromObjStr {
-		return nil
-	}
-
-	// Map string comparisons
-	// fromObj:    "{Key:0 Val:-3.4028234663852886e+38}"
-	// toObj  : "map[Key:0 Val:-3.4028234663852886e+38]"
-	toObjStr = strings.ReplaceAll(toObjStr, "[", "{")
-	toObjStr = strings.ReplaceAll(toObjStr, "]", "}")
-	toObjStr = strings.ReplaceAll(toObjStr, "map", "")
-	if toObjStr == fromObjStr {
-		return nil
-	}
-	// "{Key:32767 Val:&} != "{Key:32767 Val:}""
-	// {Key:32767 Val:} != {Key:32767 Val:&}
-	fromObjStr = strings.ReplaceAll(fromObjStr, "&", "")
-	toObjStr = strings.ReplaceAll(toObjStr, "&", "")
+	fromObjStr = replaceUnmatchedStrs(fromObjStr)
+	toObjStr = replaceUnmatchedStrs(toObjStr)
 	if toObjStr == fromObjStr {
 		return nil
 	}
