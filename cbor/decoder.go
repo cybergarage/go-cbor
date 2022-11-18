@@ -251,31 +251,31 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 		return err
 	}
 
-	switch v := fromObj.(type) {
+	switch from := fromObj.(type) {
 	case map[any]any:
 		switch reflect.ValueOf(toObj).Type().Kind() {
 		case reflect.Struct:
-			return dec.unmarshalMapToStrct(v, reflect.ValueOf(toObj))
+			return dec.unmarshalMapToStrct(from, reflect.ValueOf(toObj))
 		case reflect.Map:
-			return dec.unmarshalMapToMap(v, toObj)
+			return dec.unmarshalMapToMap(from, toObj)
 		case reflect.Pointer:
 			elem := reflect.ValueOf(toObj).Elem()
 			if elem.Type().Kind() != reflect.Struct {
-				return newErrorNotSupportedNativeType(toObj)
+				return newErrorUnmarshalDataTypes(fromObj, toObj)
 			}
-			return dec.unmarshalMapToStrct(v, elem)
+			return dec.unmarshalMapToStrct(from, elem)
 		default:
-			return newErrorNotSupportedNativeType(toObj)
+			return newErrorUnmarshalDataTypes(fromObj, toObj)
 		}
 	case []any:
 		switch reflect.ValueOf(toObj).Type().Kind() {
 		case reflect.Array, reflect.Slice, reflect.Pointer:
-			return dec.unmarshalArrayTo(v, toObj)
+			return dec.unmarshalArrayTo(from, toObj)
 		}
-		return newErrorNotSupportedNativeType(toObj)
+		return newErrorUnmarshalDataTypes(fromObj, toObj)
 	}
 
-	return newErrorNotSupportedNativeType(toObj)
+	return newErrorUnmarshalDataTypes(fromObj, toObj)
 }
 
 // nolint: exhaustive

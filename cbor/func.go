@@ -328,7 +328,7 @@ func arrayToAnyArray(fromArray any) ([]any, error) {
 	case reflect.Array:
 	case reflect.Slice:
 	default:
-		return nil, newErrorCastTypes(fromArray, make([]any, 0))
+		return nil, newErrorUnmarshalCastTypes(fromArray, make([]any, 0))
 	}
 
 	fromArrayLen := fromArrayVal.Len()
@@ -356,7 +356,7 @@ func mapToAnyMap(fromMap any) (map[any]any, error) {
 	fromMapVal := reflect.ValueOf(fromMap)
 	fromMapType := fromMapVal.Type()
 	if fromMapType.Kind() != reflect.Map {
-		return nil, newErrorCastTypes(fromMap, toMap)
+		return nil, newErrorUnmarshalCastTypes(fromMap, toMap)
 	}
 
 	toMapVal := reflect.ValueOf(toMap)
@@ -368,11 +368,11 @@ func mapToAnyMap(fromMap any) (map[any]any, error) {
 	for fromMapIter.Next() {
 		fromMapKeyVal := fromMapIter.Key()
 		if !fromMapKeyVal.CanConvert(toMapKeyType) {
-			return nil, newErrorCastTypes(fromMap, toMap)
+			return nil, newErrorUnmarshalCastTypes(fromMap, toMap)
 		}
 		fromMapElemVal := fromMapIter.Value()
 		if !fromMapElemVal.CanConvert(toMapElemType) {
-			return nil, newErrorCastTypes(fromMap, toMap)
+			return nil, newErrorUnmarshalCastTypes(fromMap, toMap)
 		}
 		toMapVal.SetMapIndex(fromMapKeyVal.Convert(toMapKeyType), fromMapElemVal.Convert(toMapElemType))
 	}
