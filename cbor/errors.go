@@ -24,7 +24,6 @@ var ErrNotSupported = errors.New("not supported")
 var ErrUnmarshal = errors.New("unmarshal error")
 var ErrDecode = errors.New("decode error")
 var ErrEncode = errors.New("encode error")
-var ErrCastType = errors.New("cast error")
 
 const (
 	errorUnkonwnNativeType     = "%T (%v) is %w"
@@ -55,6 +54,6 @@ func newErrorUnmarshalArraySize(fromArray []any, toObj any, toArrayVal reflect.V
 	return fmt.Errorf(errorUnmarshalShortArray, ErrUnmarshal, fromArray, len(fromArray), toObj, toArrayVal.Cap())
 }
 
-func newErrorCastTypes(fromItem any, toItem any) error {
+func newErrorUnmarshalCastTypes(fromItem any, toItem any) error {
 	return fmt.Errorf(errorCastDataTypes, ErrUnmarshal, fromItem, fromItem, toItem)
 }
