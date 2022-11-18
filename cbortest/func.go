@@ -20,7 +20,7 @@ import (
 	"strings"
 )
 
-func DeepEqual(fromObj any, toObj any) error {
+func deepEqual(fromObj any, toObj any) error {
 	replaceUnmatchedStrs := func(v string) string {
 		// Map string comparisons
 		// fromObj:    "{Key:0 Val:-3.4028234663852886e+38}"

@@ -35,7 +35,7 @@ func fuzzUnmarshalTest(t *testing.T, v any) {
 		return
 	}
 
-	err = DeepEqual(v, r)
+	err = deepEqual(v, r)
 	if err != nil {
 		t.Error(err)
 		return

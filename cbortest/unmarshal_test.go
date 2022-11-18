@@ -68,7 +68,7 @@ func TestUnmarshalTo(t *testing.T) {
 				return
 			}
 
-			err = DeepEqual(fromObj, toObj)
+			err = deepEqual(fromObj, toObj)
 			if err != nil {
 				t.Error(err)
 				return
