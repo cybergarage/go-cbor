@@ -16,7 +16,6 @@ package cbor
 
 import (
 	"bytes"
-	"errors"
 	"reflect"
 	"time"
 
@@ -65,14 +64,11 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 			return dec.unmarshalArrayTo(from, toObj)
 		}
 		return newErrorUnmarshalDataTypes(fromObj, toObj)
+	case time.Time:
+		return dec.unmarshalToSpecialStruct(fromObj, toObj)
 	}
 
-	err = dec.unmarshalToBasicType(fromObj, toObj)
-	if err == nil || !errors.Is(err, ErrNotSupported) {
-		return err
-	}
-
-	return dec.unmarshalToSpecialStruct(fromObj, toObj)
+	return dec.unmarshalToBasicType(fromObj, toObj)
 }
 
 // nolint: exhaustive
@@ -213,12 +209,12 @@ func (dec *Decoder) unmarshalToBasicType(fromObj any, toObj any) error {
 		case *[]byte:
 			*to = from
 		}
+		return nil
 	case string:
 		return safecast.FromString(from, toObj)
 	default:
-		return newErrorUnmarshalDataTypes(fromObj, toObj)
 	}
-	return nil
+	return newErrorUnmarshalDataTypes(fromObj, toObj)
 }
 
 func (dec *Decoder) unmarshalToSpecialStruct(fromObj any, toObj any) error {
