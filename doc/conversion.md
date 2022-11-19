@@ -26,6 +26,6 @@ To unmarshal to a user-defined struct, `go-cbor` offers `Decoder::Unmarshal()` a
 
 ![](img/unmarshal_table_to_basic.png)
 
-In addition to the basic standard data types of Go, The unmarshal functions support any user-defined maps and structs, and the standard struct such as time.Time as the following.
+In addition to the basic standard data types of Go, The unmarshal functions support any user-defined maps and structs, as well as the standard struct such as time.Time as the following.
 
 ![](img/unmarshal_table_to_special.png)
