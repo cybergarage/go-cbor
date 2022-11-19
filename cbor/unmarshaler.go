@@ -214,9 +214,9 @@ func (dec *Decoder) unmarshalToBasicType(fromObj any, toObj any) error {
 			*to = from
 		}
 	case string:
-		safecast.FromString(from, toObj)
-		return newErrorUnmarshalDataTypes(fromObj, toObj)
+		return safecast.FromString(from, toObj)
 	default:
+		return newErrorUnmarshalDataTypes(fromObj, toObj)
 	}
 	return nil
 }
