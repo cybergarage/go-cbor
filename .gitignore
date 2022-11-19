@@ -22,3 +22,6 @@ cbortest/testdata/
 
 # Coverage
 coverage.*
+
+# Benchmarking
+*.prof
