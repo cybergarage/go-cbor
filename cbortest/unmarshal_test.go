@@ -17,6 +17,7 @@ package cbortest
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/cybergarage/go-cbor/cbor"
 )
@@ -43,12 +44,39 @@ func TestUnmarshalTo(t *testing.T) {
 	}
 
 	t.Run("basicTypes", func(t *testing.T) {
-		var i8 int8
+		t20120321, err := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		var vi int
+		var vi8 int8
+		var vi16 int16
+		var vi32 int32
+		var vi64 int64
+		var uvi uint
+		var uvi8 uint8
+		var uvi16 uint16
+		var uvi32 uint32
+		var uvi64 uint64
+		var vt time.Time
+
 		tests := []struct {
 			from any
 			to   any
 		}{
-			{from: 1, to: &i8},
+			{from: t20120321, to: &vt},
+			{from: int(1), to: &vi},
+			{from: int(1), to: &vi8},
+			{from: int(1), to: &vi16},
+			{from: int(1), to: &vi32},
+			{from: int(1), to: &vi64},
+			{from: int(1), to: &uvi},
+			{from: int(1), to: &uvi8},
+			{from: int(1), to: &uvi16},
+			{from: int(1), to: &uvi32},
+			{from: int(1), to: &uvi64},
 		}
 
 		for _, test := range tests {
