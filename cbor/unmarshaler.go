@@ -16,8 +16,9 @@ package cbor
 
 import (
 	"bytes"
-	"math"
 	"reflect"
+
+	"github.com/cybergarage/go-safecast/safecast"
 )
 
 // Unmarshal decodes the specified CBOR-encoded bytes and returns the data representation of Go. Unmarshal is a sugar function of Decoder::Decode().
@@ -172,57 +173,26 @@ func (dec *Decoder) unmarshalMapToMap(fromMap map[any]any, toMap any) error {
 
 func (dec *Decoder) unmarshalToBasicType(fromObj any, toObj any) error {
 	switch from := fromObj.(type) {
-	////////////////////////////////////////////////////////////
-	// int
-	////////////////////////////////////////////////////////////
 	case int:
-		switch to := toObj.(type) {
-		case *int:
-			*to = from
-		case *int8:
-			if math.MaxInt8 < from {
-				return newErrorUnmarshalCastOverflow(from, toObj)
-			}
-			*to = int8(from)
-		case *int16:
-			if math.MaxInt16 < from {
-				return newErrorUnmarshalCastOverflow(from, toObj)
-			}
-			*to = int16(from)
-		case *int32:
-			if math.MaxInt32 < from {
-				return newErrorUnmarshalCastOverflow(from, toObj)
-			}
-			*to = int32(from)
-		case *int64:
-			*to = int64(from)
-		}
+		safecast.FromInt(from, toObj)
+	case int8:
+		safecast.FromInt8(from, toObj)
+	case int16:
+		safecast.FromInt16(from, toObj)
+	case int32:
+		safecast.FromInt32(from, toObj)
 	case int64:
-		switch to := toObj.(type) {
-		case *int:
-			if math.MaxInt < from {
-				return newErrorUnmarshalCastOverflow(from, toObj)
-			}
-			*to = int(from)
-		case *int8:
-			if math.MaxInt8 < from {
-				return newErrorUnmarshalCastOverflow(from, toObj)
-			}
-			*to = int8(from)
-		case *int16:
-			if math.MaxInt16 < from {
-				return newErrorUnmarshalCastOverflow(from, toObj)
-			}
-			*to = int16(from)
-		case *int32:
-			if math.MaxInt32 < from {
-				return newErrorUnmarshalCastOverflow(from, toObj)
-			}
-			*to = int32(from)
-		case *int64:
-			*to = from
-		}
+		safecast.FromInt64(from, toObj)
+	case uint:
+		safecast.FromUint(from, toObj)
+	case uint8:
+		safecast.FromUint8(from, toObj)
+	case uint16:
+		safecast.FromUint16(from, toObj)
+	case uint32:
+		safecast.FromUint32(from, toObj)
+	case uint64:
+		safecast.FromUint64(from, toObj)
 	}
-
 	return newErrorUnmarshalDataTypes(fromObj, toObj)
 }
