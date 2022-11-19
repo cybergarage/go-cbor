@@ -22,7 +22,8 @@ Although CBOR is designed for very small code size and fairly small message size
 
 ## Unmarshaling from CBOR to Go
 
-To unmarshal to a user-defined struct, `go-cbor` offers `Decoder::Unmarshal()` and `UnmarshalTo()`. The functions try to convert from an encoded bytes of CBOR into the specified user-defined struct. In addition to the basic CBOR measure types, `go-cbor` supports additional tag major types such as datetime.
+To unmarshal to a user-defined struct, `go-cbor` offers `Decoder::Unmarshal()` and `UnmarshalTo()`. The functions try to convert from an encoded bytes of CBOR into the specified user-defined struct as the following.
 
 ![](img/unmarshal_table_to.png)
 
+In addition to the basic CBOR measure types, `go-cbor` supports additional tag major types such as datetime.
