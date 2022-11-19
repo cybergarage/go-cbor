@@ -32,8 +32,6 @@ const (
 	errorUnmarshalDataTypes    = "%w : cound not convert from %v (%T) to %T"
 	errorUnmarshalShortArray   = "%w : short array size ([%d]%T < [%d]%T)"
 	errorUnmarshalCastTypes    = "%w : cound not cast from %v (%T) to %T"
-	errorUnmarshalOverflow     = "%w : cound not cast from %v (%T) to %T causing overflow"
-	errorUnmarshalUnderflow    = "%w : cound not cast from %v (%T) to %T causing underflow"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -58,12 +56,4 @@ func newErrorUnmarshalArraySize(fromArray []any, toObj any, toArrayVal reflect.V
 
 func newErrorUnmarshalCastTypes(fromItem any, toItem any) error {
 	return fmt.Errorf(errorUnmarshalCastTypes, ErrUnmarshal, fromItem, fromItem, toItem)
-}
-
-func newErrorUnmarshalCastOverflow(fromItem any, toItem any) error {
-	return fmt.Errorf(errorUnmarshalOverflow, ErrUnmarshal, fromItem, fromItem, toItem)
-}
-
-func newErrorUnmarshalCastUnderflow(fromItem any, toItem any) error {
-	return fmt.Errorf(errorUnmarshalUnderflow, ErrUnmarshal, fromItem, fromItem, toItem)
 }

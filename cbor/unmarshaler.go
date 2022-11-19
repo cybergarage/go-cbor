@@ -193,6 +193,14 @@ func (dec *Decoder) unmarshalToBasicType(fromObj any, toObj any) error {
 		safecast.FromUint32(from, toObj)
 	case uint64:
 		safecast.FromUint64(from, toObj)
+	case float32:
+		safecast.FromFloat32(from, toObj)
+	case float64:
+		safecast.FromFloat64(from, toObj)
+	case bool:
+		safecast.FromBool(from, toObj)
+	case string:
+		safecast.FromString(from, toObj)
 	}
 	return newErrorUnmarshalDataTypes(fromObj, toObj)
 }
