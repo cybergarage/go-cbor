@@ -1,0 +1,2 @@
+#!/bin/bash
+grep Benchmark prof_test.go | grep "func " | awk -F'[ ()]+' '{print $2}' | xargs -L 1 -Iname sh -c 'echo name; go test -bench=name -cpuprofile cpu.prof -memprofile mem.prof -count 100 .'
