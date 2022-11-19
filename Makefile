@@ -56,6 +56,9 @@ test: lint
 fuzz: test
 	pushd ${TEST_PKG_DIR} && ./fuzz && popd
 
+prof:
+	pushd ${TEST_PKG_DIR} && ./prof && popd
+
 cover: test
 	go tool cover -html=${COVER_PROF} -o coverage.html
 
