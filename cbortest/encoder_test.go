@@ -25,6 +25,23 @@ import (
 )
 
 func TestEncoder(t *testing.T) {
+	encoderTest := func(t *testing.T, value any, expected string) {
+		t.Helper()
+		var writer bytes.Buffer
+		encoder := cbor.NewEncoder(&writer)
+		err := encoder.Encode(value)
+		if err != nil {
+			t.Errorf("%v (%s)", value, err.Error())
+			return
+		}
+		encoded := hex.EncodeToString(writer.Bytes())
+		err = deepEqual(encoded, expected)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
 	t.Run("RFC-8949", func(t *testing.T) {
 		t.Run("AppendixA", func(t *testing.T) {
 			t20120321, err := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
@@ -98,22 +115,7 @@ func TestEncoder(t *testing.T) {
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%v=>%s", test.value, test.value, test.expected), func(t *testing.T) {
-					var writer bytes.Buffer
-					encoder := cbor.NewEncoder(&writer)
-					err := encoder.Encode(test.value)
-					if err != nil {
-						t.Errorf("%v (%s)", test.value, err.Error())
-						return
-					}
-					encoded := hex.EncodeToString(writer.Bytes())
-					if encoded != test.expected {
-						switch test.value.(type) {
-						case map[any]any:
-							t.Skipf("%v (%T) != %v (%T)", encoded, encoded, test.expected, test.expected)
-						default:
-							t.Errorf("%v (%T) != %v (%T)", encoded, encoded, test.expected, test.expected)
-						}
-					}
+					encoderTest(t, test.value, test.expected)
 				})
 			}
 		})
@@ -129,17 +131,7 @@ func TestEncoder(t *testing.T) {
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%v=>%s", test.value, test.value, test.expected), func(t *testing.T) {
-					var writer bytes.Buffer
-					encoder := cbor.NewEncoder(&writer)
-					err := encoder.Encode(test.value)
-					if err != nil {
-						t.Errorf("%v (%s)", test.value, err.Error())
-						return
-					}
-					encoded := hex.EncodeToString(writer.Bytes())
-					if encoded != test.expected {
-						t.Errorf("%v (%T) != %v (%T)", encoded, encoded, test.expected, test.expected)
-					}
+					encoderTest(t, test.value, test.expected)
 				})
 			}
 		})
