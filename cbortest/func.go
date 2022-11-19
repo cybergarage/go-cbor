@@ -21,6 +21,13 @@ import (
 )
 
 func deepEqual(fromObj any, toObj any) error {
+	tostring := func(v any) string {
+		if reflect.TypeOf(v).Kind() == reflect.Pointer {
+			return fmt.Sprintf("%+v", reflect.ValueOf(v).Elem())
+		}
+		return fmt.Sprintf("%+v", v)
+	}
+
 	replaceUnmatchedStrs := func(v string) string {
 		// Map string comparisons
 		// fromObj:    "{Key:0 Val:-3.4028234663852886e+38}"
@@ -50,8 +57,8 @@ func deepEqual(fromObj any, toObj any) error {
 
 	// String comparisons
 
-	fromObjStr := fmt.Sprintf("%+v", fromObj)
-	toObjStr := fmt.Sprintf("%+v", toObj)
+	fromObjStr := tostring(fromObj)
+	toObjStr := tostring(toObj)
 	if toObjStr == fromObjStr {
 		return nil
 	}

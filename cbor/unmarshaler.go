@@ -68,7 +68,7 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 	}
 
 	err = dec.unmarshalToBasicType(fromObj, toObj)
-	if !errors.Is(err, ErrNotSupported) {
+	if err == nil || !errors.Is(err, ErrNotSupported) {
 		return err
 	}
 
@@ -181,58 +181,57 @@ func (dec *Decoder) unmarshalMapToMap(fromMap map[any]any, toMap any) error {
 func (dec *Decoder) unmarshalToBasicType(fromObj any, toObj any) error {
 	switch from := fromObj.(type) {
 	case int:
-		safecast.FromInt(from, toObj)
+		return safecast.FromInt(from, toObj)
 	case int8:
-		safecast.FromInt8(from, toObj)
+		return safecast.FromInt8(from, toObj)
 	case int16:
-		safecast.FromInt16(from, toObj)
+		return safecast.FromInt16(from, toObj)
 	case int32:
-		safecast.FromInt32(from, toObj)
+		return safecast.FromInt32(from, toObj)
 	case int64:
-		safecast.FromInt64(from, toObj)
+		return safecast.FromInt64(from, toObj)
 	case uint:
-		safecast.FromUint(from, toObj)
+		return safecast.FromUint(from, toObj)
 	case uint8:
-		safecast.FromUint8(from, toObj)
+		return safecast.FromUint8(from, toObj)
 	case uint16:
-		safecast.FromUint16(from, toObj)
+		return safecast.FromUint16(from, toObj)
 	case uint32:
-		safecast.FromUint32(from, toObj)
+		return safecast.FromUint32(from, toObj)
 	case uint64:
-		safecast.FromUint64(from, toObj)
+		return safecast.FromUint64(from, toObj)
 	case float32:
-		safecast.FromFloat32(from, toObj)
+		return safecast.FromFloat32(from, toObj)
 	case float64:
-		safecast.FromFloat64(from, toObj)
+		return safecast.FromFloat64(from, toObj)
 	case bool:
-		safecast.FromBool(from, toObj)
+		return safecast.FromBool(from, toObj)
 	case []byte:
 		switch to := toObj.(type) {
 		case *string:
 			*to = string(from)
-			return nil
 		case *[]byte:
 			*to = from
-			return nil
 		}
 	case string:
 		safecast.FromString(from, toObj)
+		return newErrorUnmarshalDataTypes(fromObj, toObj)
+	default:
 	}
-	return newErrorUnmarshalDataTypes(fromObj, toObj)
+	return nil
 }
 
-// nolint: gocritic
 func (dec *Decoder) unmarshalToSpecialStruct(fromObj any, toObj any) error {
 	switch from := fromObj.(type) {
 	case time.Time:
 		switch to := toObj.(type) {
 		case *string:
 			*to = from.Format(time.RFC3339)
-			return nil
 		case *time.Time:
 			*to = from
-			return nil
 		}
+	default:
+		return newErrorUnmarshalDataTypes(fromObj, toObj)
 	}
-	return newErrorUnmarshalDataTypes(fromObj, toObj)
+	return nil
 }
