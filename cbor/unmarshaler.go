@@ -16,7 +16,9 @@ package cbor
 
 import (
 	"bytes"
+	"errors"
 	"reflect"
+	"time"
 
 	"github.com/cybergarage/go-safecast/safecast"
 )
@@ -65,7 +67,12 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 		return newErrorUnmarshalDataTypes(fromObj, toObj)
 	}
 
-	return dec.unmarshalToBasicType(fromObj, toObj)
+	err = dec.unmarshalToBasicType(fromObj, toObj)
+	if !errors.Is(err, ErrNotSupported) {
+		return err
+	}
+
+	return dec.unmarshalToSpecialStruct(fromObj, toObj)
 }
 
 // nolint: exhaustive
@@ -199,8 +206,33 @@ func (dec *Decoder) unmarshalToBasicType(fromObj any, toObj any) error {
 		safecast.FromFloat64(from, toObj)
 	case bool:
 		safecast.FromBool(from, toObj)
+	case []byte:
+		switch to := toObj.(type) {
+		case *string:
+			*to = string(from)
+			return nil
+		case *[]byte:
+			*to = from
+			return nil
+		}
 	case string:
 		safecast.FromString(from, toObj)
+	}
+	return newErrorUnmarshalDataTypes(fromObj, toObj)
+}
+
+// nolint: gocritic
+func (dec *Decoder) unmarshalToSpecialStruct(fromObj any, toObj any) error {
+	switch from := fromObj.(type) {
+	case time.Time:
+		switch to := toObj.(type) {
+		case *string:
+			*to = from.Format(time.RFC3339)
+			return nil
+		case *time.Time:
+			*to = from
+			return nil
+		}
 	}
 	return newErrorUnmarshalDataTypes(fromObj, toObj)
 }
