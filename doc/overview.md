@@ -10,7 +10,7 @@ Although CBOR is designed for very small code size and fairly small message size
 
 ## Table of Contents
 
-- [Quick Start](overview.md)
+- [Quick Start](quick_start.md)
 - Inside of go-cbor
   - [Converting Data between Go and CBOR](conversion.md)
 
