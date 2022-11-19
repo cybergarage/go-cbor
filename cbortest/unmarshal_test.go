@@ -22,57 +22,97 @@ import (
 )
 
 func TestUnmarshalTo(t *testing.T) {
-	fromObjs := []any{
-		&struct {
-			Key   string
-			Value string
+	unmarshalToTest := func(t *testing.T, from any, to any) {
+		t.Helper()
+		encBytes, err := cbor.Marshal(from)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		err = cbor.UnmarshalTo(encBytes, to)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		err = deepEqual(from, to)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
+	t.Run("basicTypes", func(t *testing.T) {
+		var i8 int8
+		tests := []struct {
+			from any
+			to   any
 		}{
-			Key: "hello", Value: "world",
-		},
-		[]string{"one", "two"},
-		[]string{"one", "two"},
-		map[string]int{"one": 1, "two": 2},
-		map[any]any{"one": 1, "two": 2},
-		map[string]int{"one": 1, "two": 2},
-		map[int]string{1: "one", 2: "two"},
-		map[any]any{1: "one", 2: "two"},
-		map[int]string{1: "one", 2: "two"},
-	}
+			{from: 1, to: &i8},
+		}
 
-	toObjs := []any{
-		&struct {
-			Key   string
-			Value string
-		}{},
-		&[]string{},
-		make([]string, 2),
-		map[string]int{},
-		map[string]int{},
-		map[any]any{},
-		map[int]string{},
-		map[int]string{},
-		map[any]any{},
-	}
+		for _, test := range tests {
+			t.Run(fmt.Sprintf("%T=>%T", test.from, test.to), func(t *testing.T) {
+				unmarshalToTest(t, test.from, test.to)
+			})
+		}
+	})
 
-	for n, fromObj := range fromObjs {
-		toObj := toObjs[n]
-		t.Run(fmt.Sprintf("%T=>%T", fromObj, toObj), func(t *testing.T) {
-			encBytes, err := cbor.Marshal(fromObj)
-			if err != nil {
-				t.Error(err)
-				return
-			}
-			err = cbor.UnmarshalTo(encBytes, toObj)
-			if err != nil {
-				t.Error(err)
-				return
-			}
+	t.Run("map/array/struct", func(t *testing.T) {
+		tests := []struct {
+			from any
+			to   any
+		}{
+			{
+				from: &struct {
+					Key   string
+					Value string
+				}{
+					Key: "hello", Value: "world",
+				},
+				to: &struct {
+					Key   string
+					Value string
+				}{},
+			},
+			{
+				from: []string{"one", "two"},
+				to:   &[]string{},
+			},
+			{
+				from: []string{"one", "two"},
+				to:   make([]string, 2),
+			},
+			{
+				from: map[string]int{"one": 1, "two": 2},
+				to:   map[string]int{},
+			},
+			{
+				from: map[any]any{"one": 1, "two": 2},
+				to:   map[string]int{},
+			},
+			{
+				from: map[string]int{"one": 1, "two": 2},
+				to:   map[any]any{},
+			},
+			{
+				from: map[int]string{1: "one", 2: "two"},
+				to:   map[int]string{},
+			},
+			{
+				from: map[any]any{1: "one", 2: "two"},
+				to:   map[int]string{},
+			},
+			{
+				from: map[int]string{1: "one", 2: "two"},
+				to:   map[any]any{},
+			},
+		}
 
-			err = deepEqual(fromObj, toObj)
-			if err != nil {
-				t.Error(err)
-				return
-			}
-		})
-	}
+		for _, test := range tests {
+			t.Run(fmt.Sprintf("%T=>%T", test.from, test.to), func(t *testing.T) {
+				unmarshalToTest(t, test.from, test.to)
+			})
+		}
+	})
 }
