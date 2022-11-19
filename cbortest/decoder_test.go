@@ -27,6 +27,26 @@ import (
 )
 
 func TestDecoder(t *testing.T) {
+	dencoderTest := func(t *testing.T, encoded string, expected any) {
+		t.Helper()
+		testBytes, err := hex.DecodeString(encoded)
+		if err != nil {
+			t.Errorf("%v (%s)", encoded, err.Error())
+			return
+		}
+		decoder := cbor.NewDecoder(bytes.NewReader(testBytes))
+		v, err := decoder.Decode()
+		if err != nil {
+			t.Errorf("%v (%s)", encoded, err.Error())
+			return
+		}
+		err = deepEqual(v, expected)
+		if err != nil {
+			t.Errorf("%v (%T) != %v (%T)", v, v, expected, expected)
+			return
+		}
+	}
+
 	t.Run("RFC-8949", func(t *testing.T) {
 		t.Run("AppendixA", func(t *testing.T) {
 			t20120321, err := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
@@ -146,24 +166,7 @@ func TestDecoder(t *testing.T) {
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%s=>%v", test.expected, test.encoded, test.expected), func(t *testing.T) {
-					testBytes, err := hex.DecodeString(test.encoded)
-					if err != nil {
-						t.Errorf("%v (%s)", test.encoded, err.Error())
-						return
-					}
-					decoder := cbor.NewDecoder(bytes.NewReader(testBytes))
-					v, err := decoder.Decode()
-					if err != nil {
-						if errors.Is(err, cbor.ErrNotSupported) {
-							t.Skipf("%v (%s)", test.encoded, err.Error())
-						} else {
-							t.Errorf("%v (%s)", test.encoded, err.Error())
-						}
-						return
-					}
-					if !reflect.DeepEqual(v, test.expected) {
-						t.Errorf("%v (%T) != %v (%T)", v, v, test.expected, test.expected)
-					}
+					dencoderTest(t, test.encoded, test.expected)
 				})
 			}
 		})
