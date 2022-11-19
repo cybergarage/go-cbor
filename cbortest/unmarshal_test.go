@@ -60,23 +60,28 @@ func TestUnmarshalTo(t *testing.T) {
 		var uvi16 uint16
 		var uvi32 uint32
 		var uvi64 uint64
+		var vf32 float32
+		var vf64 float64
+		var vs string
 		var vt time.Time
 
 		tests := []struct {
 			from any
 			to   any
 		}{
-			{from: int(1), to: &vi},
-			{from: int(1), to: &vi8},
-			{from: int(1), to: &vi16},
-			{from: int(1), to: &vi32},
-			{from: int(1), to: &vi64},
-			{from: int(1), to: &uvi},
-			{from: int(1), to: &uvi8},
-			{from: int(1), to: &uvi16},
-			{from: int(1), to: &uvi32},
-			{from: int(1), to: &uvi64},
 			{from: t20120321, to: &vt},
+		}
+
+		froms := []any{int(1), int8(1), int16(1), int32(1), int64(1), uint(1), uint8(1), uint16(1), uint32(1), uint64(1), float32(1), float64(1)}
+		toTypes := []any{&vi, &vi8, &vi16, &vi32, &vi64, &uvi, &uvi8, &uvi16, &uvi32, &uvi64, &vf32, &vf64, &vs}
+		for _, from := range froms {
+			for _, toType := range toTypes {
+				test := struct {
+					from any
+					to   any
+				}{from: from, to: toType}
+				tests = append(tests, test)
+			}
 		}
 
 		for _, test := range tests {
