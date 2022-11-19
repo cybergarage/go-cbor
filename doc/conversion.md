@@ -24,8 +24,6 @@ Although CBOR is designed for very small code size and fairly small message size
 
 To unmarshal to a user-defined struct, `go-cbor` offers `Decoder::Unmarshal()` and `UnmarshalTo()`. The unmarshal functions try to convert from an encoded bytes of CBOR into the specified standard data types of Go as the following.
 
-user-defined struct as the following.
-
 ![](img/unmarshal_table_to_basic.png)
 
 In addition to the specified standard data types of Go, The unmarshal functions support any user-defined maps and structs as the following.
