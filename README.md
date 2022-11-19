@@ -8,15 +8,21 @@
 
 `go-cobor` was developed as a seamless serializer for the memory representation of any data types in Go like `encodiong/json`. `go-cobor` provides the optimized encoder and decoder to convert between CBOR and Go data models easily.
 
-![](doc/img/concept.png)
-
 Although CBOR is designed for very small code size and fairly small message size, `go-cobor` encodes the specified data model without downgrading the data type to ensure seamless data model compatibility when decoding the encoded data.
 
-## Quick Start
+## Converting Data between Go and CBOR
 
-The section briefly describes how to converte data between Go and CBOR using `go-cbor`.
+`go-cobor` was developed as a seamless serializer for the memory representation of any data types in Go like `encodiong/json`. `go-cobor` provides the optimized encoder and decoder to convert between CBOR and Go data models easily.
 
-### Encoding
+![](doc/img/concept.png)
+
+This section describes how go-cobor` converts data model between Go and CBOR in more detail.
+
+### Converting from Go to CBOR
+
+`Decoder::Decode()` and `Marshal()` convert from the specified data model of Go into the equivalent data model of CBOR as the following.
+
+![](doc/img/conv_table_from.png)
 
 To convert data from Go to CBOR, `go-cbor` offers `Marshal()`. `Marshal()` converts from the specified data model of Go into the equivalent data model of CBOR as the following.
 
@@ -48,7 +54,11 @@ cborBytes, _ := cbor.Marshal(goObj)
 fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
 ```
 
-### Decoding
+### Converting from CBOR to Go
+
+`Decoder::Decode()` and `Unmarshal()` convert from the specified data model of CBOR into the equivalent data model of Go as the following.
+
+![](doc/img/conv_table_to.png)
 
 To convert data from CBOR to Go, `go-cbor` offers `Unmarshal()`. `Unmarshal()` converts from an encoded bytes of CBOR into the equivalent data model of Go as the following.
 
@@ -74,6 +84,16 @@ for _, cborObj := range cborObjs {
     fmt.Printf("%s => %v\n", cborObj, goObj)
 }
 ```
+
+### Unmarshaling from CBOR to Go
+
+To unmarshal to a user-defined struct, `go-cbor` offers `Decoder::Unmarshal()` and `UnmarshalTo()`. The unmarshal functions try to convert from an encoded bytes of CBOR into the specified basic data types of Go as the following.
+
+![](doc/img/unmarshal_table_to_basic.png)
+
+In addition to the basic standard data types of Go, The unmarshal functions support any user-defined maps and structs, as well as the standard struct such as time.Time as the following.
+
+![](doc/img/unmarshal_table_to_special.png)
 
 To unmarshal to a user-defined struct, `go-cbor` offers `UnmarshalTo()`. `Unmarshal()To` tries to convert from an encoded bytes of CBOR into the specified user-defined struct or map as the following.
 
@@ -102,38 +122,6 @@ for n, fromObj := range fromObjs {
     cbor.UnmarshalTo(encBytes, toObj)
 }
 ```
-
-## Converting Data between Go and CBOR
-
-`go-cobor` was developed as a seamless serializer for the memory representation of any data types in Go like `encodiong/json`. `go-cobor` provides the optimized encoder and decoder to convert between CBOR and Go data models easily.
-
-![](doc/img/concept.png)
-
-This section describes how go-cobor` converts data model between Go and CBOR in more detail.
-
-### Converting from Go to CBOR
-
-`Decoder::Decode()` and `Marshal()` convert from the specified data model of Go into the equivalent data model of CBOR as the following.
-
-![](doc/img/conv_table_from.png)
-
-Although CBOR is designed for very small code size and fairly small message size, `go-cobor` encodes the specified data model without downgrading the data type to ensure seamless data model compatibility when decoding the encoded data.
-
-### Converting from CBOR to Go
-
-`Decoder::Decode()` and `Unmarshal()` convert from the specified data model of CBOR into the equivalent data model of Go as the following.
-
-![](doc/img/conv_table_to.png)
-
-### Unmarshaling from CBOR to Go
-
-To unmarshal to a user-defined struct, `go-cbor` offers `Decoder::Unmarshal()` and `UnmarshalTo()`. The unmarshal functions try to convert from an encoded bytes of CBOR into the specified basic data types of Go as the following.
-
-![](doc/img/unmarshal_table_to_basic.png)
-
-In addition to the basic standard data types of Go, The unmarshal functions support any user-defined maps and structs, as well as the standard struct such as time.Time as the following.
-
-![](doc/img/unmarshal_table_to_special.png)
 
 ## Examples
 
