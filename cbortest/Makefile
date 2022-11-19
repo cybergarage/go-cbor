@@ -14,10 +14,13 @@
 
 SHELL := bash
 
+.SUFFIXES: .pl .go
+
 SOURCE_FILES= \
-	fuzz_test.go
+	fuzz_test.go \
+	prof_test.go
 
 all: ${SOURCE_FILES}
 
-fuzz_test.go: fuzz_test.pl
+.pl.go:
 	@./$< > $@
