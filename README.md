@@ -18,7 +18,7 @@ Although CBOR is designed for very small code size and fairly small message size
 
 This section describes how go-cobor` converts data model between Go and CBOR in more detail.
 
-### Converting from Go to CBOR
+### Encoding - Converting from Go to CBOR
 
 `Decoder::Decode()` and `Marshal()` convert from the specified data model of Go into the equivalent data model of CBOR as the following.
 
@@ -54,7 +54,7 @@ cborBytes, _ := cbor.Marshal(goObj)
 fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
 ```
 
-### Converting from CBOR to Go
+### Decoding - Converting from CBOR to Go
 
 `Decoder::Decode()` and `Unmarshal()` convert from the specified data model of CBOR into the equivalent data model of Go as the following.
 
