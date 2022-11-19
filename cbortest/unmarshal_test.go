@@ -66,7 +66,6 @@ func TestUnmarshalTo(t *testing.T) {
 			from any
 			to   any
 		}{
-			{from: t20120321, to: &vt},
 			{from: int(1), to: &vi},
 			{from: int(1), to: &vi8},
 			{from: int(1), to: &vi16},
@@ -77,6 +76,7 @@ func TestUnmarshalTo(t *testing.T) {
 			{from: int(1), to: &uvi16},
 			{from: int(1), to: &uvi32},
 			{from: int(1), to: &uvi64},
+			{from: t20120321, to: &vt},
 		}
 
 		for _, test := range tests {
