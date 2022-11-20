@@ -55,8 +55,9 @@ func unmarshalToProfile(v any, to any) error {
 	return nil
 }
 
-func BenchmarkData(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+
+func BenchmarkIntData(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v int
 		v = int(0)
 		unmarshalProfile(v)
@@ -65,7 +66,10 @@ func BenchmarkData(b *testing.B) {
 		v = int(math.MaxInt)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkInt8Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v int8
 		v = int8(0)
 		unmarshalProfile(v)
@@ -74,7 +78,10 @@ func BenchmarkData(b *testing.B) {
 		v = int8(math.MaxInt8)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkInt16Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v int16
 		v = int16(0)
 		unmarshalProfile(v)
@@ -83,7 +90,10 @@ func BenchmarkData(b *testing.B) {
 		v = int16(math.MaxInt16)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkInt32Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v int32
 		v = int32(0)
 		unmarshalProfile(v)
@@ -92,7 +102,10 @@ func BenchmarkData(b *testing.B) {
 		v = int32(math.MaxInt32)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkInt64Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v int64
 		v = int64(0)
 		unmarshalProfile(v)
@@ -101,42 +114,60 @@ func BenchmarkData(b *testing.B) {
 		v = int64(math.MaxInt64)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkUintData(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v uint
 		v = uint(0)
 		unmarshalProfile(v)
 		v = uint(math.MaxUint)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkUint8Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v uint8
 		v = uint8(0)
 		unmarshalProfile(v)
 		v = uint8(math.MaxUint8)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkUint16Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v uint16
 		v = uint16(0)
 		unmarshalProfile(v)
 		v = uint16(math.MaxUint16)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkUint32Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v uint32
 		v = uint32(0)
 		unmarshalProfile(v)
 		v = uint32(math.MaxUint32)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkUint64Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v uint64
 		v = uint64(0)
 		unmarshalProfile(v)
 		v = uint64(math.MaxInt64)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkFloat32Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v float32
 		v = float32(-math.MaxFloat32)
 		unmarshalProfile(v)
@@ -145,7 +176,10 @@ func BenchmarkData(b *testing.B) {
 		v = float32(math.MaxFloat32)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkFloat64Data(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v float64
 		v = float64(-math.MaxFloat32)
 		unmarshalProfile(v)
@@ -154,14 +188,20 @@ func BenchmarkData(b *testing.B) {
 		v = float64(math.MaxFloat64)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkBoolData(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v bool
 		v = bool(true)
 		unmarshalProfile(v)
 		v = bool(false)
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkStringData(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v string
 		v = string("a")
 		unmarshalProfile(v)
@@ -170,7 +210,10 @@ func BenchmarkData(b *testing.B) {
 		v = string("abc")
 		unmarshalProfile(v)
 	}
-	for n := 0; n < b.N; n++ {
+}
+
+func BenchmarkByteData(b *testing.B) {
+	for n:= 0; n < b.N; n++ {
 		var v []byte
 		v = []byte("x")
 		unmarshalProfile(v)

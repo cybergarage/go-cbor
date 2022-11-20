@@ -138,9 +138,10 @@ sub is_exclude_from_unmarshalto {
 # Primitive benchmarking
 ########################################
 
-printf("func Benchmark%sData(b *testing.B) {\n", to_fuzz_name($type));
 for (my $i = 0; $i <= $#types; $i++){
 	my $type = $types[$i];
+	printf("\n");
+	printf("func Benchmark%sData(b *testing.B) {\n", to_fuzz_name($type));
 	printf("\tfor n:= 0; n < b.N; n++ {\n");
 	printf("\t\tvar v %s\n", $type);
 	for ($j = 0; $j < @{$seeds[$i]}; $j++) {
@@ -148,5 +149,5 @@ for (my $i = 0; $i <= $#types; $i++){
 	printf("\t\tunmarshalProfile(v)\n");
     }
 	printf("\t}\n");
+	printf("}\n");
 }
-printf("}\n");
