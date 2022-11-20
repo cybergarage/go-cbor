@@ -7,6 +7,7 @@ The section briefly describes how to converte data between Go and CBOR using `go
 To convert data from Go to CBOR, `go-cbor` offers `Marshal()`. `Marshal()` converts from the specified data model of Go into the equivalent data model of CBOR as the following.
 
 ```
+goTimeObj, _ := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
 goObjs := []any{
     uint(1000),
     int(-1000),
@@ -17,12 +18,19 @@ goObjs := []any{
     nil,
     []byte("IETF"),
     "IETF",
+    goTimeObj,
     []int{1, 2, 3},
-    map[any]any{"a": "A", "b": "B", "c": "C"},
+    map[any]any{"a": "A"},
+    struct {
+        Key   string
+        Value string
+    }{
+        Key: "hello", Value: "world",
+    },
 }
 for _, goObj := range goObjs {
     cborBytes, _ := cbor.Marshal(goObj)
-    fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
+    fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
 }
 ```
 
