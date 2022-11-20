@@ -132,10 +132,7 @@ for _, e := range examples {
 }
 ```
 
-## Examples
-
-- [go-cbor module - github.com/cybergarage/go-cbor - Go Packages](https://pkg.go.dev/github.com/cybergarage/go-cbor)
-
 ## References
 
 - [CBOR — Concise Binary Object Representation](http://cbor.io)
+- [go-cbor module - github.com/cybergarage/go-cbor - Go Packages](https://pkg.go.dev/github.com/cybergarage/go-cbor)
