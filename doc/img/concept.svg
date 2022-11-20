@@ -843,8 +843,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.25"
-     inkscape:cx="423.52941"
-     inkscape:cy="88.117647"
+     inkscape:cx="164.94118"
+     inkscape:cy="88.352941"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="true"
@@ -852,7 +852,7 @@
      inkscape:window-width="2379"
      inkscape:window-height="1513"
      inkscape:window-x="3237"
-     inkscape:window-y="68"
+     inkscape:window-y="40"
      inkscape:window-maximized="0"
      inkscape:snap-global="true"
      fit-margin-top="0"
@@ -1129,8 +1129,8 @@
        id="rect19092"
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
     <rect
-       y="144.07764"
-       x="-220.62822"
+       y="135.37175"
+       x="-215.92233"
        height="18.609409"
        width="60.021225"
        id="rect19374"
@@ -1542,26 +1542,26 @@
          id="tspan19094">bool</tspan></text>
     <text
        id="text19378"
-       y="354.83279"
-       x="-4.7058706"
+       y="346.12692"
+       x="1.1724585e-05"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
        xml:space="preserve"><tspan
-         y="354.83279"
-         x="-4.7058706"
+         y="346.12692"
+         x="1.1724585e-05"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
          id="tspan19376">Time</tspan></text>
     <text
        id="text19384"
-       y="376.71512"
+       y="379.77396"
        x="-0.23528257"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
        xml:space="preserve"><tspan
-         y="376.71512"
+         y="379.77396"
          x="-0.23528257"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
-         id="tspan19382">.....</tspan></text>
+         id="tspan19382">struct</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
