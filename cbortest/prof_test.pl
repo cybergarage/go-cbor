@@ -142,7 +142,7 @@ for (my $i = 0; $i <= $#types; $i++){
 	my $type = $types[$i];
 	printf("\n");
 	printf("func Benchmark%sData(b *testing.B) {\n", to_fuzz_name($type));
-	printf("\tfor n:= 0; n < b.N; n++ {\n");
+	printf("\tfor n := 0; n < b.N; n++ {\n");
 	printf("\t\tvar v %s\n", $type);
 	for ($j = 0; $j < @{$seeds[$i]}; $j++) {
 		printf("\t\tv = %s(%s)\n", $type, $seeds[$i]->[$j]);
