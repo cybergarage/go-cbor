@@ -140,31 +140,36 @@ func ExampleDecoder_Unmarshal() {
 }
 
 func ExampleUnmarshalTo() {
-	fromObjs := []any{
-		[]string{"one", "two"},
-		map[string]int{"one": 1, "two": 2},
-		struct {
-			Key   string
-			Value string
-		}{
-			Key: "hello", Value: "world",
+	examples := []struct {
+		from any
+		to   any
+	}{
+		{
+			from: []string{"one", "two"},
+			to:   &[]string{},
+		},
+		{
+			from: map[string]int{"one": 1, "two": 2},
+			to:   map[string]int{},
+		},
+		{
+			from: struct {
+				Key   string
+				Value string
+			}{
+				Key: "hello", Value: "world",
+			},
+			to: &struct {
+				Key   string
+				Value string
+			}{},
 		},
 	}
 
-	toObjs := []any{
-		&[]string{},
-		map[string]int{},
-		&struct {
-			Key   string
-			Value string
-		}{},
-	}
-
-	for n, fromObj := range fromObjs {
-		toObj := toObjs[n]
-		encBytes, _ := cbor.Marshal(fromObj)
-		cbor.UnmarshalTo(encBytes, toObj)
-		fmt.Printf("%v\n", toObj)
+	for _, e := range examples {
+		encBytes, _ := cbor.Marshal(e.from)
+		cbor.UnmarshalTo(encBytes, e.to)
+		fmt.Printf("%v\n", e.to)
 	}
 
 	// Output:
