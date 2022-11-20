@@ -64,27 +64,35 @@ for _, cborObj := range cborObjs {
 To unmarshal to a user-defined struct, `go-cbor` offers `UnmarshalTo()`. `Unmarshal()To` tries to convert from an encoded bytes of CBOR into the specified user-defined struct or map as the following.
 
 ```
-fromObjs := []any{
-    struct {
-        Key   string
-        Value string
-    }{
-        Key: "hello", Value: "world",
+examples := []struct {
+    from any
+    to   any
+}{
+    {
+        from: []string{"one", "two"},
+        to:   &[]string{},
     },
-    map[string]int{"one": 1, "two": 2},
+    {
+        from: map[string]int{"one": 1, "two": 2},
+        to:   map[string]int{},
+    },
+    {
+        from: struct {
+            Key   string
+            Value string
+        }{
+            Key: "hello", Value: "world",
+        },
+        to: &struct {
+            Key   string
+            Value string
+        }{},
+    },
 }
 
-toObjs := []any{
-    &struct {
-        Key   string
-        Value string
-    }{},
-    map[string]int{},
-}
-
-for n, fromObj := range fromObjs {
-    toObj := toObjs[n]
-    encBytes, _ := cbor.Marshal(fromObj)
-    cbor.UnmarshalTo(encBytes, toObj)
+for _, e := range examples {
+    encBytes, _ := cbor.Marshal(e.from)
+    cbor.UnmarshalTo(encBytes, e.to)
+    fmt.Printf("%v\n", e.to)
 }
 ```
