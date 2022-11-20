@@ -16,8 +16,6 @@ Although CBOR is designed for very small code size and fairly small message size
 
 ![](doc/img/concept.png)
 
-This section describes how go-cobor` converts data model between Go and CBOR in more detail.
-
 ### Encoding - Converting from Go to CBOR
 
 `Decoder::Decode()` and `Marshal()` convert from the specified data model of Go into the equivalent data model of CBOR as the following.
