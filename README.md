@@ -22,7 +22,7 @@ Although CBOR is designed for very small code size and fairly small message size
 
 ![](doc/img/conv_table_from.png)
 
-To convert data from Go to CBOR, `go-cbor` offers `Marshal()`. `Marshal()` converts from the specified data model of Go into the equivalent data model of CBOR as the following.
+To convert data from Go to CBOR, `go-cbor` offers `Marshal()`. `Marshal()` converts from the specified data model of Go into the equivalent data model of CBOR. In addition to the basic Go data types, `go-cbor` supports additional tag major types such as `time.Time` as the following.
 
 - [Examples - Marshal](https://pkg.go.dev/github.com/cybergarage/go-cbor/cbor#example-Marshal)
 ```
@@ -52,8 +52,6 @@ for _, goObj := range goObjs {
     fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
 }
 ```
-
-In addition to the basic Go data types, `go-cbor` supports additional tag major types such as `time.Time` as the following.
 
 ### Decoding - Converting from CBOR to Go
 
