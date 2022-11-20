@@ -232,6 +232,12 @@ func ExampleMarshal() {
 		goTimeObj,
 		[]int{1, 2, 3},
 		map[any]any{"a": "A"},
+		struct {
+			Key   string
+			Value string
+		}{
+			Key: "hello", Value: "world",
+		},
 	}
 	for _, goObj := range goObjs {
 		cborBytes, _ := cbor.Marshal(goObj)
@@ -251,4 +257,5 @@ func ExampleMarshal() {
 	// c074323031332d30332d32315432303a30343a30305a
 	// 831b00000000000000011b00000000000000021b0000000000000003
 	// a161616141
+	// a2634b65796568656c6c6f6556616c756565776f726c64
 }
