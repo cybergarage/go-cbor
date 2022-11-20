@@ -55,12 +55,6 @@ for _, goObj := range goObjs {
 
 In addition to the basic Go data types, `go-cbor` supports additional tag major types such as `time.Time` as the following.
 
-```
-goObj, _ := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
-cborBytes, _ := cbor.Marshal(goObj)
-fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
-```
-
 ### Decoding - Converting from CBOR to Go
 
 `Decoder::Decode()` and `Unmarshal()` convert from the specified data model of CBOR into the equivalent data model of Go as the following.
