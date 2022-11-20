@@ -100,27 +100,30 @@ To unmarshal to a user-defined struct, `go-cbor` offers `UnmarshalTo()`. `Unmars
 - [Examples -UnmarshalTo](https://pkg.go.dev/github.com/cybergarage/go-cbor/cbor#example-UnmarshalTo)
 ```
 fromObjs := []any{
+    []string{"one", "two"},
+    map[string]int{"one": 1, "two": 2},
     struct {
         Key   string
         Value string
     }{
         Key: "hello", Value: "world",
     },
-    map[string]int{"one": 1, "two": 2},
 }
 
 toObjs := []any{
+    &[]string{},
+    map[string]int{},
     &struct {
         Key   string
         Value string
     }{},
-    map[string]int{},
 }
 
 for n, fromObj := range fromObjs {
     toObj := toObjs[n]
     encBytes, _ := cbor.Marshal(fromObj)
     cbor.UnmarshalTo(encBytes, toObj)
+    fmt.Printf("%v\n", toObj)
 }
 ```
 
