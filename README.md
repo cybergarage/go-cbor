@@ -24,6 +24,7 @@ Although CBOR is designed for very small code size and fairly small message size
 
 To convert data from Go to CBOR, `go-cbor` offers `Marshal()`. `Marshal()` converts from the specified data model of Go into the equivalent data model of CBOR as the following.
 
+- [Examples - Marshal](https://pkg.go.dev/github.com/cybergarage/go-cbor/cbor#example-Marshal)
 ```
 goObjs := []any{
     uint(1000),
@@ -60,6 +61,7 @@ fmt.Printf("%v => %s\n", goObj, hex.EncodeToString(cborBytes))
 
 To convert data from CBOR to Go, `go-cbor` offers `Unmarshal()`. `Unmarshal()` converts from an encoded bytes of CBOR into the equivalent data model of Go as the following.
 
+- [Examples - Unmarshal](https://pkg.go.dev/github.com/cybergarage/go-cbor/cbor#example-Unmarshal)
 ```
 cborObjs := []string{
     "0a",
@@ -95,7 +97,7 @@ In addition to the basic standard data types of Go, The unmarshal functions supp
 
 To unmarshal to a user-defined struct, `go-cbor` offers `UnmarshalTo()`. `Unmarshal()To` tries to convert from an encoded bytes of CBOR into the specified user-defined struct or map as the following.
 
-- [Examples -UnmarshalTo ](https://pkg.go.dev/github.com/cybergarage/go-cbor/cbor#example-UnmarshalTo)
+- [Examples -UnmarshalTo](https://pkg.go.dev/github.com/cybergarage/go-cbor/cbor#example-UnmarshalTo)
 ```
 fromObjs := []any{
     struct {
