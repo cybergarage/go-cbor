@@ -95,6 +95,7 @@ In addition to the basic standard data types of Go, The unmarshal functions supp
 
 To unmarshal to a user-defined struct, `go-cbor` offers `UnmarshalTo()`. `Unmarshal()To` tries to convert from an encoded bytes of CBOR into the specified user-defined struct or map as the following.
 
+- [Examples -UnmarshalTo ](https://pkg.go.dev/github.com/cybergarage/go-cbor/cbor#example-UnmarshalTo)
 ```
 fromObjs := []any{
     struct {
