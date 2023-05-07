@@ -55,7 +55,6 @@ func unmarshalToProfile(v any, to any) error {
 	return nil
 }
 
-
 func BenchmarkIntData(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		var v int
