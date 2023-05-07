@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.1 (2023-05-xx)
+- Added Config for Encoder and Decoder
+
 ## v1.2.0 (2022-11-20)
 - Updated Decoder::Unmarshal() and UnmarshalTo() to unmarshal decoded objects into basic primitive data types.
 
