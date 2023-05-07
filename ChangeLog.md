@@ -3,6 +3,7 @@
 ## v1.2.1 (2023-05-xx)
 - Added Config for Encoder and Decoder
 - Added MapSortEnabled config for testing
+- Update go version to 1.20
 
 ## v1.2.0 (2022-11-20)
 - Updated Decoder::Unmarshal() and UnmarshalTo() to unmarshal decoded objects into basic primitive data types.
