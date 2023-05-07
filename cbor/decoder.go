@@ -22,6 +22,7 @@ import (
 
 // An Decoder reads CBOR values from an output stream.
 type Decoder struct {
+	*Config
 	reader io.Reader
 	header []byte
 }
@@ -29,6 +30,7 @@ type Decoder struct {
 // NewDecoder returns a new decoder that reads from the specified writer.
 func NewDecoder(r io.Reader) *Decoder {
 	return &Decoder{
+		Config: NewConfig(),
 		reader: r,
 		header: make([]byte, 1),
 	}
