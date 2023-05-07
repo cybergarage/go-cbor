@@ -18,17 +18,20 @@ import (
 	"io"
 	"math"
 	"reflect"
+	"sort"
 	"time"
 )
 
 // An Encoder writes CBOR values to an output stream.
 type Encoder struct {
+	*Config
 	writer io.Writer
 }
 
 // NewEncoder returns a new encoder that writes to the specified writer.
 func NewEncoder(w io.Writer) *Encoder {
 	return &Encoder{
+		Config: NewConfig(),
 		writer: w,
 	}
 }
@@ -298,6 +301,36 @@ func (enc *Encoder) encodeMap(item any) error {
 		if err := enc.encodeNumberOfBytes(mtMap, len(m)); err != nil {
 			return err
 		}
+
+		sortMapKeys := func(m map[any]any) ([]string, error) {
+			keys := make([]string, 0, len(m))
+			for k := range m {
+				ks, ok := k.(string)
+				if !ok {
+					return nil, newErrorSortedMapEncode(k)
+				}
+				keys = append(keys, ks)
+			}
+			sort.Strings(keys)
+			return keys, nil
+		}
+
+		if enc.MapSortEnabled {
+			keys, err := sortMapKeys(m)
+			if err == nil {
+				for _, k := range keys {
+					if err := enc.Encode(k); err != nil {
+						return err
+					}
+					v := m[k]
+					if err := enc.Encode(v); err != nil {
+						return err
+					}
+				}
+				return nil
+			}
+		}
+
 		for k, v := range m {
 			if err := enc.Encode(k); err != nil {
 				return err
@@ -306,6 +339,7 @@ func (enc *Encoder) encodeMap(item any) error {
 				return err
 			}
 		}
+
 		return nil
 	}
 
