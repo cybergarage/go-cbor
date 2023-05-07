@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.2.1 (2023-05-xx)
+## v1.2.1 (2023-05-08)
 - Added Config for Encoder and Decoder
 - Added MapSortEnabled config for testing
 - Update go version to 1.20
