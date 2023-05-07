@@ -29,6 +29,7 @@ func TestEncoder(t *testing.T) {
 		t.Helper()
 		var writer bytes.Buffer
 		encoder := cbor.NewEncoder(&writer)
+		encoder.SetMapSortEnabled(true)
 		err := encoder.Encode(value)
 		if err != nil {
 			t.Errorf("%v (%s)", value, err.Error())
@@ -111,8 +112,7 @@ func TestEncoder(t *testing.T) {
 				{value: []int8{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}, expected: "98190102030405060708090a0b0c0d0e0f101112131415161718181819"},
 				{value: map[any]any{}, expected: "a0"},
 				{value: map[any]any{uint8(1): uint8(2), uint8(3): uint8(4)}, expected: "a201020304"},
-				// NOTE: Map iteration order is random
-				// {value: map[any]any{"a": "A", "b": "B", "c": "C", "d": "D", "e": "E"}, expected: "a56161614161626142616361436164614461656145"},
+				{value: map[any]any{"a": "A", "b": "B", "c": "C", "d": "D", "e": "E"}, expected: "a56161614161626142616361436164614461656145"},
 			}
 			for _, test := range tests {
 				t.Run(fmt.Sprintf("%T/%v=>%s", test.value, test.value, test.expected), func(t *testing.T) {
