@@ -15,6 +15,7 @@
 package cbor
 
 import (
+	"fmt"
 	"io"
 	"math"
 	"reflect"
@@ -296,39 +297,34 @@ func (enc *Encoder) encodeArray(item any) error {
 	return writeAnyArray(v)
 }
 
+func encodeMapWithSort[K comparable, V any](enc *Encoder, m map[K]V) error {
+	keys := make([]K, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Slice(keys, func(i, j int) bool {
+		return fmt.Sprintf("%v", keys[i]) < fmt.Sprintf("%v", keys[j])
+	})
+	for _, k := range keys {
+		if err := enc.Encode(k); err != nil {
+			return err
+		}
+		v := m[k]
+		if err := enc.Encode(v); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (enc *Encoder) encodeMap(item any) error {
 	writeAnyMap := func(m map[any]any) error {
 		if err := enc.encodeNumberOfBytes(mtMap, len(m)); err != nil {
 			return err
 		}
 
-		sortMapKeys := func(m map[any]any) ([]string, error) {
-			keys := make([]string, 0, len(m))
-			for k := range m {
-				ks, ok := k.(string)
-				if !ok {
-					return nil, newErrorSortedMapEncode(k)
-				}
-				keys = append(keys, ks)
-			}
-			sort.Strings(keys)
-			return keys, nil
-		}
-
 		if enc.MapSortEnabled {
-			keys, err := sortMapKeys(m)
-			if err == nil {
-				for _, k := range keys {
-					if err := enc.Encode(k); err != nil {
-						return err
-					}
-					v := m[k]
-					if err := enc.Encode(v); err != nil {
-						return err
-					}
-				}
-				return nil
-			}
+			return encodeMapWithSort(enc, m)
 		}
 
 		for k, v := range m {
