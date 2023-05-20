@@ -43,7 +43,7 @@ func TestUnmarshalTo(t *testing.T) {
 		}
 	}
 
-	t.Run("basicTypes", func(t *testing.T) {
+	t.Run("basic_types", func(t *testing.T) {
 		t20120321, err := time.Parse(time.RFC3339, "2013-03-21T20:04:00Z")
 		if err != nil {
 			t.Error(err)
@@ -96,6 +96,22 @@ func TestUnmarshalTo(t *testing.T) {
 			from any
 			to   any
 		}{
+			{
+				from: &struct {
+					Name    string
+					Address struct {
+						Code uint
+					}
+				}{
+					Name: "hello", Address: struct{ Code uint }{Code: 1},
+				},
+				to: &struct {
+					Name    string
+					Address struct {
+						Code uint
+					}
+				}{},
+			},
 			{
 				from: &struct {
 					Key   string
