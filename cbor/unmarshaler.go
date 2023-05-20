@@ -150,18 +150,22 @@ func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStructVal reflect
 			toStructField.Set(fromMapElemVal)
 			continue
 		}
-		if fromMapElemKind != reflect.Map {
-			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
-		}
-		switch toStructFieldKind { //nolint:exhaustive
+		switch fromMapElemKind { //nolint:exhaustive
 		case reflect.Map:
-			toStructField.Set(fromMapElemVal)
-		case reflect.Struct:
-			fromMapElemMap, ok := fromMapElem.(map[any]any)
-			if !ok {
+			switch toStructFieldKind { //nolint:exhaustive
+			case reflect.Map:
+				toStructField.Set(fromMapElemVal)
+			case reflect.Struct:
+				fromMapElemMap, ok := fromMapElem.(map[any]any)
+				if !ok {
+					return newErrorUnmarshalDataTypes(fromMap, toStructVal)
+				}
+				if err := dec.unmarshalMapToStrct(fromMapElemMap, toStructField); err != nil {
+					return err
+				}
+			default:
 				return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 			}
-			return dec.unmarshalMapToStrct(fromMapElemMap, toStructVal)
 		default:
 			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 		}
