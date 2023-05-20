@@ -100,15 +100,15 @@ func TestUnmarshalTo(t *testing.T) {
 				from: &struct {
 					Name    string
 					Address struct {
-						Code uint
+						Code string
 					}
 				}{
-					Name: "hello", Address: struct{ Code uint }{Code: 1},
+					Name: "hello", Address: struct{ Code string }{Code: "1"},
 				},
 				to: &struct {
 					Name    string
 					Address struct {
-						Code uint
+						Code string
 					}
 				}{},
 			},
