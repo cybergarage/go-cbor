@@ -26,13 +26,14 @@ var ErrDecode = errors.New("decode error")
 var ErrEncode = errors.New("encode error")
 
 const (
-	errorUnkonwnNativeType     = "%T (%v) is %w"
-	errorUnkonwnMajorType      = "major type (%d) is %w"
-	errorUnkonwnAdditionalInfo = "major type (%d:%d) is %w"
-	errorUnmarshalDataTypes    = "%w : cound not convert from %v (%T) to %T"
-	errorUnmarshalShortArray   = "%w : short array size ([%d]%T < [%d]%T)"
-	errorUnmarshalCastTypes    = "%w : cound not cast from %v (%T) to %T"
-	errorSortedMapEncode       = "%w : map key (%v:%T) could not be sorted"
+	errorUnkonwnNativeType      = "%T (%v) is %w"
+	errorUnkonwnMajorType       = "major type (%d) is %w"
+	errorUnkonwnAdditionalInfo  = "major type (%d:%d) is %w"
+	errorUnmarshalDataTypes     = "%w : cound not convert from %v (%T) to %T"
+	errorUnmarshalShortArray    = "%w : short array size ([%d]%T < [%d]%T)"
+	errorUnmarshalCastTypes     = "%w : cound not cast from %v (%T) to %T"
+	errorSortedMapEncode        = "%w : map key (%v:%T) could not be sorted"
+	errorUnmarshalReflectValues = "%w : cound not convert from %v to %T"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -47,18 +48,22 @@ func newErrorNotSupportedNativeType(item any) error {
 	return fmt.Errorf(errorUnkonwnNativeType, item, item, ErrNotSupported)
 }
 
-func newErrorUnmarshalDataTypes(fromItem any, toItem any) error {
-	return fmt.Errorf(errorUnmarshalDataTypes, ErrUnmarshal, fromItem, fromItem, toItem)
+func newErrorUnmarshalDataTypes(from any, to any) error {
+	return fmt.Errorf(errorUnmarshalDataTypes, ErrUnmarshal, from, from, to)
 }
 
 func newErrorUnmarshalArraySize(fromArray []any, toObj any, toArrayVal reflect.Value) error {
 	return fmt.Errorf(errorUnmarshalShortArray, ErrUnmarshal, fromArray, len(fromArray), toObj, toArrayVal.Cap())
 }
 
-func newErrorUnmarshalCastTypes(fromItem any, toItem any) error {
-	return fmt.Errorf(errorUnmarshalCastTypes, ErrUnmarshal, fromItem, fromItem, toItem)
+func newErrorUnmarshalCastTypes(from any, to any) error {
+	return fmt.Errorf(errorUnmarshalCastTypes, ErrUnmarshal, from, from, to)
 }
 
 func newErrorSortedMapEncode(key any) error {
 	return fmt.Errorf(errorSortedMapEncode, ErrEncode, key, key)
+}
+
+func newErrorUnmarshalReflectValues(from reflect.Value, to reflect.Value) error {
+	return fmt.Errorf(errorUnmarshalReflectValues, ErrUnmarshal, from.Kind().String(), to.Kind().String())
 }
