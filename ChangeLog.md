@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.2 (2023-05-xx)
+- Fixed Decoder::Unmarshal() and UnmarshalTo() to not panic when an invalid destination struct is passed
+
 ## v1.2.1 (2023-05-08)
 - Added Config for Encoder and Decoder
 - Added MapSortEnabled config for testing
