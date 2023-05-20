@@ -1,6 +1,8 @@
 # Changelog
 
-## v1.2.2 (2023-05-xx)
+## v1.3.0 (2023-05-20)
+- Updated Decoder::Unmarshal() and UnmarshalTo() to support nested destination structures
+- Updated Decoder::Unmarshal() and UnmarshalTo() to convert as flexibly as possible to destination structures
 - Fixed Decoder::Unmarshal() and UnmarshalTo() to not panic when an invalid destination struct is passed
 
 ## v1.2.1 (2023-05-08)
