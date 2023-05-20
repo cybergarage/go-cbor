@@ -130,14 +130,100 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 	return nil
 }
 
-func (dec *Decoder) unmarshalMapElemToStrctField(from reflect.Value, to reflect.Value) error {
-	fromKind := from.Type().Kind()
-	toKind := to.Type().Kind()
+func (dec *Decoder) unmarshalMapElemToStrctField(from any, fromVal reflect.Value, toVal reflect.Value) error {
+	fromKind := fromVal.Type().Kind()
+	toKind := toVal.Type().Kind()
 	if fromKind == toKind {
-		to.Set(from)
+		toVal.Set(fromVal)
 		return nil
 	}
-	return newErrorUnmarshalDataTypes(from, to)
+	switch toKind { // nolint: exhaustive
+	case reflect.Int:
+		var v int
+		if err := safecast.ToInt(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Int8:
+		var v int8
+		if err := safecast.ToInt8(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Int16:
+		var v int16
+		if err := safecast.ToInt16(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Int32:
+		var v int32
+		if err := safecast.ToInt32(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Int64:
+		var v int64
+		if err := safecast.ToInt64(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Uint:
+		var v uint
+		if err := safecast.ToUint(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Uint8:
+		var v uint8
+		if err := safecast.ToUint8(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Uint16:
+		var v uint16
+		if err := safecast.ToUint16(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Uint32:
+		var v uint32
+		if err := safecast.ToUint32(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Uint64:
+		var v uint64
+		if err := safecast.ToUint64(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Float32:
+		var v float32
+		if err := safecast.ToFloat32(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Float64:
+		var v float64
+		if err := safecast.ToFloat64(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.Bool:
+		var v bool
+		if err := safecast.ToBool(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	case reflect.String:
+		var v string
+		if err := safecast.ToString(from, &v); err == nil {
+			toVal.Set(reflect.ValueOf(v))
+			return nil
+		}
+	}
+	return newErrorUnmarshalReflectValues(fromVal, toVal)
 }
 
 func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStructVal reflect.Value) error {
@@ -170,7 +256,7 @@ func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStructVal reflect
 				return err
 			}
 		default:
-			return dec.unmarshalMapElemToStrctField(fromMapElemVal, toStructField)
+			return dec.unmarshalMapElemToStrctField(fromMapElem, fromMapElemVal, toStructField)
 		}
 	}
 	return nil
