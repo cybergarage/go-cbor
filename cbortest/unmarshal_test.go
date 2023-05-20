@@ -99,13 +99,13 @@ func TestUnmarshalTo(t *testing.T) {
 			{
 				from: &struct {
 					Key   string
-					Value int
+					Value string
 				}{
-					Key: "hello", Value: 1,
+					Key: "hello", Value: "world",
 				},
 				to: &struct {
 					Key   string
-					Value int
+					Value string
 				}{},
 			},
 			{
@@ -127,13 +127,29 @@ func TestUnmarshalTo(t *testing.T) {
 			{
 				from: &struct {
 					Key   string
-					Value string
+					Value int
 				}{
-					Key: "hello", Value: "world",
+					Key: "hello", Value: 1,
 				},
 				to: &struct {
 					Key   string
-					Value string
+					Value int
+				}{},
+			},
+			{
+				from: &struct {
+					Name    string
+					Address struct {
+						Code int
+					}
+				}{
+					Name: "John Doe", Address: struct{ Code int }{Code: 999},
+				},
+				to: &struct {
+					Name    string
+					Address struct {
+						Code int
+					}
 				}{},
 			},
 			{
