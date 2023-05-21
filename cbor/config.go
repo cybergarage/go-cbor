@@ -16,13 +16,15 @@ package cbor
 
 // Config represents a configuration for CBOR encoder and decoder.
 type Config struct {
-	MapSortEnabled bool
+	MapSortEnabled       bool
+	TypeRetentionEnabled bool
 }
 
 // NewConfig returns a new config instance.
 func NewConfig() *Config {
 	return &Config{
-		MapSortEnabled: false,
+		MapSortEnabled:       false,
+		TypeRetentionEnabled: true,
 	}
 }
 
@@ -34,4 +36,14 @@ func (config *Config) SetMapSortEnabled(flag bool) {
 // IsMapSortEnabled returns true whether the map keys are sorted.
 func (config *Config) IsMapSortEnabled() bool {
 	return config.MapSortEnabled
+}
+
+// SetTypeRetentionEnabled sets a flag to retain the type information.
+func (config *Config) SetTypeRetentionEnabled(flag bool) {
+	config.TypeRetentionEnabled = flag
+}
+
+// IsTypeRetentionEnabled returns true whether the type information is retained.
+func (config *Config) IsTypeRetentionEnabled() bool {
+	return config.TypeRetentionEnabled
 }
