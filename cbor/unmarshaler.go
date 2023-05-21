@@ -221,6 +221,8 @@ func (dec *Decoder) unmarshalMapElemToStrctField(from any, fromVal reflect.Value
 			toVal.Set(reflect.ValueOf(v))
 			return nil
 		}
+	case reflect.Array, reflect.Slice:
+		return dec.unmarshalArrayTo(fromVal, toVal)
 	}
 	return newErrorUnmarshalReflectValues(fromVal, toVal)
 }
