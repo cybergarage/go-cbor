@@ -115,12 +115,13 @@ func (dec *Decoder) unmarshalArrayTo(fromArrayVal reflect.Value, toArrayVal refl
 		return newErrorUnmarshalDataTypes(fromArrayVal.Interface(), toArrayVal.Interface())
 	}
 
-	toObjType := toArrayType.Elem().Kind()
 	for n := 0; n < fromArrayLen; n++ {
+		toObj := toArrayVal.Index(n).Interface()
+		toObjType := reflect.TypeOf(toObj).Kind()
 		fromObj := fromArrayVal.Index(n).Interface()
 		fromObjType := reflect.TypeOf(fromObj).Kind()
 		if fromObjType != toObjType {
-			return newErrorUnmarshalDataTypes(fromObjType, toObjType)
+			return newErrorUnmarshalDataTypes(fromObj, toObj)
 		}
 		toArrayIndex := toArrayVal.Index(n)
 		toArrayIndex.Set(reflect.ValueOf(fromObj))
