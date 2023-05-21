@@ -129,7 +129,8 @@ func (dec *Decoder) unmarshalArrayTo(fromArrayVal reflect.Value, toArrayVal refl
 	return nil
 }
 
-func (dec *Decoder) unmarshalMapElemToStrctField(from any, fromVal reflect.Value, toVal reflect.Value) error {
+func (dec *Decoder) unmarshalMapElemToStrctField(fromVal reflect.Value, toVal reflect.Value) error {
+	from := fromVal.Interface()
 	fromKind := fromVal.Type().Kind()
 	toKind := toVal.Type().Kind()
 	if fromKind == toKind {
@@ -257,7 +258,7 @@ func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStructVal reflect
 				return err
 			}
 		default:
-			return dec.unmarshalMapElemToStrctField(fromMapElem, fromMapElemVal, toStructField)
+			return dec.unmarshalMapElemToStrctField(fromMapElemVal, toStructField)
 		}
 	}
 	return nil
