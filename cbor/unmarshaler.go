@@ -109,10 +109,10 @@ func (dec *Decoder) unmarshalArrayTo(fromArrayVal reflect.Value, toArrayVal refl
 				toArrayVal = elem
 			}
 		default:
-			return newErrorUnmarshalDataTypes(fromArrayVal, toArrayVal)
+			return newErrorUnmarshalDataTypes(fromArrayVal.Interface(), toArrayVal.Interface())
 		}
 	default:
-		return newErrorUnmarshalDataTypes(fromArrayVal, toArrayVal)
+		return newErrorUnmarshalDataTypes(fromArrayVal.Interface(), toArrayVal.Interface())
 	}
 
 	toObjType := toArrayType.Elem().Kind()
