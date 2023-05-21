@@ -1,7 +1,7 @@
 # Changelog
 
-## v1.3.1 (2023-05-xx)
-- Fix Decoder::Unmarshal() and UnmarshalTo() to decoder for UUID
+## v1.3.1 (2023-05-22)
+- Updated Decoder::Unmarshal() and UnmarshalTo() to unmarshal map fields to structure fields when conversion is possible
 
 ## v1.3.0 (2023-05-20)
 - Updated Decoder::Unmarshal() and UnmarshalTo() to support nested destination structures
