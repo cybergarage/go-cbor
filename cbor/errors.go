@@ -30,7 +30,7 @@ const (
 	errorUnkonwnMajorType       = "major type (%d) is %w"
 	errorUnkonwnAdditionalInfo  = "major type (%d:%d) is %w"
 	errorUnmarshalDataTypes     = "%w : cound not convert from %v (%T) to %T"
-	errorUnmarshalShortArray    = "%w : short array size ([%d]%T < [%d]%T)"
+	errorUnmarshalShortArray    = "%w : short array size (%T(%d) < %T(%d))"
 	errorUnmarshalCastTypes     = "%w : cound not cast from %v (%T) to %T"
 	errorSortedMapEncode        = "%w : map key (%v:%T) could not be sorted"
 	errorUnmarshalReflectValues = "%w : cound not convert from %v to %T"
@@ -52,8 +52,8 @@ func newErrorUnmarshalDataTypes(from any, to any) error {
 	return fmt.Errorf(errorUnmarshalDataTypes, ErrUnmarshal, from, from, to)
 }
 
-func newErrorUnmarshalArraySize(fromArray []any, toObj any, toArrayVal reflect.Value) error {
-	return fmt.Errorf(errorUnmarshalShortArray, ErrUnmarshal, fromArray, len(fromArray), toObj, toArrayVal.Cap())
+func newErrorUnmarshalArraySize(fromArrayVal reflect.Value, toArrayVal reflect.Value) error {
+	return fmt.Errorf(errorUnmarshalShortArray, ErrUnmarshal, fromArrayVal, fromArrayVal.Len(), toArrayVal, toArrayVal.Cap())
 }
 
 func newErrorUnmarshalCastTypes(from any, to any) error {
