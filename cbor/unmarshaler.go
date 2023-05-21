@@ -46,7 +46,7 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 	case map[any]any:
 		switch reflect.ValueOf(toObj).Type().Kind() {
 		case reflect.Struct:
-			return dec.unmarshalMapToStrct(from, reflect.ValueOf(toObj))
+			return dec.unmarshalMapToStruct(from, reflect.ValueOf(toObj))
 		case reflect.Map:
 			return dec.unmarshalMapToMap(from, toObj)
 		case reflect.Pointer:
@@ -54,7 +54,7 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 			if elem.Type().Kind() != reflect.Struct {
 				return newErrorUnmarshalDataTypes(fromObj, toObj)
 			}
-			return dec.unmarshalMapToStrct(from, elem)
+			return dec.unmarshalMapToStruct(from, elem)
 		default:
 			return newErrorUnmarshalDataTypes(fromObj, toObj)
 		}
@@ -138,12 +138,18 @@ func (dec *Decoder) unmarshalArrayTo(fromArrayVal reflect.Value, toArrayVal refl
 	return nil
 }
 
-func (dec *Decoder) unmarshalMapElemToStrctField(fromVal reflect.Value, toVal reflect.Value) error {
+func (dec *Decoder) unmarshalMapElemToStructField(fromVal reflect.Value, toVal reflect.Value) error {
 	from := fromVal.Interface()
-	fromKind := fromVal.Type().Kind()
-	toKind := toVal.Type().Kind()
+	fromType := fromVal.Type()
+	fromKind := fromType.Kind()
+	toType := toVal.Type()
+	toKind := toType.Kind()
 	if fromKind == toKind {
 		toVal.Set(fromVal)
+		return nil
+	}
+	if fromVal.CanConvert(toType) {
+		toVal.Set(fromVal.Convert(toType))
 		return nil
 	}
 	switch toKind { // nolint: exhaustive
@@ -237,7 +243,7 @@ func (dec *Decoder) unmarshalMapElemToStrctField(fromVal reflect.Value, toVal re
 	return newErrorUnmarshalReflectValues(fromVal, toVal)
 }
 
-func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStructVal reflect.Value) error {
+func (dec *Decoder) unmarshalMapToStruct(fromMap map[any]any, toStructVal reflect.Value) error {
 	if toStructVal.Type().Kind() != reflect.Struct {
 		return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 	}
@@ -263,11 +269,11 @@ func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStructVal reflect
 			if !ok {
 				return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 			}
-			if err := dec.unmarshalMapToStrct(fromMapElemMap, toStructField); err != nil {
+			if err := dec.unmarshalMapToStruct(fromMapElemMap, toStructField); err != nil {
 				return err
 			}
 		default:
-			if err := dec.unmarshalMapElemToStrctField(fromMapElemVal, toStructField); err != nil {
+			if err := dec.unmarshalMapElemToStructField(fromMapElemVal, toStructField); err != nil {
 				return err
 			}
 		}
