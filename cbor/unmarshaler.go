@@ -61,7 +61,7 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 	case []any:
 		switch reflect.ValueOf(toObj).Type().Kind() {
 		case reflect.Array, reflect.Slice, reflect.Pointer:
-			return dec.unmarshalArrayTo(from, toObj)
+			return dec.unmarshalArrayTo(reflect.ValueOf(fromObj), reflect.ValueOf(toObj))
 		}
 		return newErrorUnmarshalDataTypes(fromObj, toObj)
 	case time.Time:
@@ -72,24 +72,22 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 }
 
 // nolint: exhaustive
-func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
+func (dec *Decoder) unmarshalArrayTo(fromArrayVal reflect.Value, toArrayVal reflect.Value) error {
 	// NOTE: The Laws of Reflection - The Go Programming Language
 	// https://go.dev/blog/laws-of-reflection
 
-	fromArrayVal := reflect.ValueOf(fromArray)
 	fromArrayType := fromArrayVal.Type()
-	toArrayVal := reflect.ValueOf(toObj)
-	fromArrayLen := len(fromArray)
+	fromArrayLen := fromArrayVal.Len()
 	toArrayType := toArrayVal.Type()
 	switch toArrayType.Kind() {
 	case reflect.Array:
 		if toArrayVal.Len() < fromArrayLen {
-			return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+			return newErrorUnmarshalArraySize(fromArrayVal, toArrayVal)
 		}
 	case reflect.Slice:
 		if toArrayVal.Len() < fromArrayLen {
 			if !toArrayVal.CanSet() {
-				return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+				return newErrorUnmarshalArraySize(fromArrayVal, toArrayVal)
 			}
 			toArrayVal.Set(reflect.MakeSlice(fromArrayType, fromArrayLen, fromArrayLen))
 		}
@@ -98,12 +96,12 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 		switch elem.Type().Kind() {
 		case reflect.Array:
 			if elem.Len() < fromArrayLen {
-				return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+				return newErrorUnmarshalArraySize(fromArrayVal, toArrayVal)
 			}
 		case reflect.Slice:
 			if elem.Len() < fromArrayLen {
 				if !elem.CanSet() {
-					return newErrorUnmarshalArraySize(fromArray, toObj, toArrayVal)
+					return newErrorUnmarshalArraySize(fromArrayVal, toArrayVal)
 				}
 				toArrayType = elem.Type()
 				appendLen := fromArrayLen - elem.Len()
@@ -111,17 +109,18 @@ func (dec *Decoder) unmarshalArrayTo(fromArray []any, toObj any) error {
 				toArrayVal = elem
 			}
 		default:
-			return newErrorUnmarshalDataTypes(fromArray, toObj)
+			return newErrorUnmarshalDataTypes(fromArrayVal, toArrayVal)
 		}
 	default:
-		return newErrorUnmarshalDataTypes(fromArray, toObj)
+		return newErrorUnmarshalDataTypes(fromArrayVal, toArrayVal)
 	}
 
 	toObjType := toArrayType.Elem().Kind()
-	for n, fromObj := range fromArray {
+	for n := 0; n < fromArrayLen; n++ {
+		fromObj := fromArrayVal.Index(n).Interface()
 		fromObjType := reflect.TypeOf(fromObj).Kind()
 		if fromObjType != toObjType {
-			return newErrorUnmarshalDataTypes(fromObj, toObj)
+			return newErrorUnmarshalDataTypes(fromObjType, toObjType)
 		}
 		toArrayIndex := toArrayVal.Index(n)
 		toArrayIndex.Set(reflect.ValueOf(fromObj))
