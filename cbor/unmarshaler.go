@@ -117,23 +117,11 @@ func (dec *Decoder) unmarshalArrayTo(fromArrayVal reflect.Value, toArrayVal refl
 
 	for n := 0; n < fromArrayLen; n++ {
 		fromVal := fromArrayVal.Index(n)
-		fromObj := fromVal.Interface()
-		fromObjType := reflect.TypeOf(fromObj)
-		fromObjKind := fromObjType.Kind()
-		toObj := toArrayVal.Index(n).Interface()
-		toObjType := reflect.TypeOf(toObj)
-		toObjKind := toObjType.Kind()
-		if fromObjKind == toObjKind {
-			toArrayIndex := toArrayVal.Index(n)
-			toArrayIndex.Set(reflect.ValueOf(fromObj))
-			continue
+		toVal := toArrayVal.Index(n)
+		err := dec.unmarshalMapElemToStructField(fromVal, toVal)
+		if err != nil {
+			return err
 		}
-		if fromVal.CanConvert(toObjType) {
-			toArrayIndex := toArrayVal.Index(n)
-			toArrayIndex.Set(fromVal.Convert(toObjType))
-			continue
-		}
-		return newErrorUnmarshalDataTypes(fromObj, toObj)
 	}
 	return nil
 }
