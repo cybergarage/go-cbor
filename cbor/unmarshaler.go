@@ -61,18 +61,18 @@ func (dec *Decoder) Unmarshal(toObj any) error {
 	case []any:
 		switch reflect.ValueOf(toObj).Type().Kind() {
 		case reflect.Array, reflect.Slice, reflect.Pointer:
-			return dec.unmarshalArrayTo(reflect.ValueOf(fromObj), reflect.ValueOf(toObj))
+			return dec.unmarshalArrayToArray(reflect.ValueOf(fromObj), reflect.ValueOf(toObj))
 		}
 		return newErrorUnmarshalDataTypes(fromObj, toObj)
 	case time.Time:
-		return dec.unmarshalToSpecialStruct(fromObj, toObj)
+		return dec.unmarshalEmbedTypeTo(fromObj, toObj)
 	}
 
-	return dec.unmarshalToBasicType(fromObj, toObj)
+	return dec.unmarshalBasicTypeTo(fromObj, toObj)
 }
 
 // nolint: exhaustive
-func (dec *Decoder) unmarshalArrayTo(fromArrayVal reflect.Value, toArrayVal reflect.Value) error {
+func (dec *Decoder) unmarshalArrayToArray(fromArrayVal reflect.Value, toArrayVal reflect.Value) error {
 	// NOTE: The Laws of Reflection - The Go Programming Language
 	// https://go.dev/blog/laws-of-reflection
 
@@ -118,7 +118,7 @@ func (dec *Decoder) unmarshalArrayTo(fromArrayVal reflect.Value, toArrayVal refl
 	for n := 0; n < fromArrayLen; n++ {
 		fromVal := fromArrayVal.Index(n)
 		toVal := toArrayVal.Index(n)
-		err := dec.unmarshalMapElemToStructField(fromVal, toVal)
+		err := dec.unmarshalValueToValue(fromVal, toVal)
 		if err != nil {
 			return err
 		}
@@ -126,7 +126,67 @@ func (dec *Decoder) unmarshalArrayTo(fromArrayVal reflect.Value, toArrayVal refl
 	return nil
 }
 
-func (dec *Decoder) unmarshalMapElemToStructField(fromVal reflect.Value, toVal reflect.Value) error {
+func (dec *Decoder) unmarshalMapToMap(fromMap map[any]any, toMap any) error {
+	toMapVal := reflect.ValueOf(toMap)
+	toMapType := toMapVal.Type()
+	if toMapType.Kind() != reflect.Map {
+		return newErrorUnmarshalDataTypes(fromMap, toMap)
+	}
+	toMapKeyType := toMapType.Key()
+	toMapElemType := toMapType.Elem()
+	for fromMapKey, fromMapValue := range fromMap {
+		fromMapKeyVal := reflect.ValueOf(fromMapKey)
+		if !fromMapKeyVal.CanConvert(toMapKeyType) {
+			return newErrorUnmarshalDataTypes(fromMapKey, toMapVal)
+		}
+		fromMapElemVal := reflect.ValueOf(fromMapValue)
+		if !fromMapElemVal.CanConvert(toMapElemType) {
+			return newErrorUnmarshalDataTypes(fromMapKey, toMapVal)
+		}
+		toMapVal.SetMapIndex(fromMapKeyVal.Convert(toMapKeyType), fromMapElemVal.Convert(toMapElemType))
+	}
+	return nil
+}
+
+func (dec *Decoder) unmarshalMapToStruct(fromMap map[any]any, toStructVal reflect.Value) error {
+	if toStructVal.Type().Kind() != reflect.Struct {
+		return newErrorUnmarshalDataTypes(fromMap, toStructVal)
+	}
+	for fromMapKey, fromMapElem := range fromMap {
+		key, ok := fromMapKey.(string)
+		if !ok {
+			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
+		}
+		toStructField := toStructVal.FieldByName(key)
+		if !toStructField.IsValid() {
+			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
+		}
+		fromMapElemVal := reflect.ValueOf(fromMapElem)
+		fromMapElemKind := fromMapElemVal.Type().Kind()
+		toStructFieldKind := toStructField.Type().Kind()
+		if fromMapElemKind == toStructFieldKind {
+			toStructField.Set(fromMapElemVal)
+			continue
+		}
+		switch toStructFieldKind { //nolint:exhaustive
+		case reflect.Struct:
+			fromMapElemMap, ok := fromMapElem.(map[any]any)
+			if !ok {
+				return newErrorUnmarshalDataTypes(fromMap, toStructVal)
+			}
+			if err := dec.unmarshalMapToStruct(fromMapElemMap, toStructField); err != nil {
+				return err
+			}
+		default:
+			if err := dec.unmarshalValueToValue(fromMapElemVal, toStructField); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (dec *Decoder) unmarshalValueToValue(fromVal reflect.Value, toVal reflect.Value) error {
 	from := fromVal.Interface()
 	fromType := fromVal.Type()
 	fromKind := fromType.Kind()
@@ -226,72 +286,12 @@ func (dec *Decoder) unmarshalMapElemToStructField(fromVal reflect.Value, toVal r
 			return nil
 		}
 	case reflect.Array, reflect.Slice:
-		return dec.unmarshalArrayTo(fromVal, toVal)
+		return dec.unmarshalArrayToArray(fromVal, toVal)
 	}
 	return newErrorUnmarshalReflectValues(fromVal, toVal)
 }
 
-func (dec *Decoder) unmarshalMapToStruct(fromMap map[any]any, toStructVal reflect.Value) error {
-	if toStructVal.Type().Kind() != reflect.Struct {
-		return newErrorUnmarshalDataTypes(fromMap, toStructVal)
-	}
-	for fromMapKey, fromMapElem := range fromMap {
-		key, ok := fromMapKey.(string)
-		if !ok {
-			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
-		}
-		toStructField := toStructVal.FieldByName(key)
-		if !toStructField.IsValid() {
-			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
-		}
-		fromMapElemVal := reflect.ValueOf(fromMapElem)
-		fromMapElemKind := fromMapElemVal.Type().Kind()
-		toStructFieldKind := toStructField.Type().Kind()
-		if fromMapElemKind == toStructFieldKind {
-			toStructField.Set(fromMapElemVal)
-			continue
-		}
-		switch toStructFieldKind { //nolint:exhaustive
-		case reflect.Struct:
-			fromMapElemMap, ok := fromMapElem.(map[any]any)
-			if !ok {
-				return newErrorUnmarshalDataTypes(fromMap, toStructVal)
-			}
-			if err := dec.unmarshalMapToStruct(fromMapElemMap, toStructField); err != nil {
-				return err
-			}
-		default:
-			if err := dec.unmarshalMapElemToStructField(fromMapElemVal, toStructField); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
-func (dec *Decoder) unmarshalMapToMap(fromMap map[any]any, toMap any) error {
-	toMapVal := reflect.ValueOf(toMap)
-	toMapType := toMapVal.Type()
-	if toMapType.Kind() != reflect.Map {
-		return newErrorUnmarshalDataTypes(fromMap, toMap)
-	}
-	toMapKeyType := toMapType.Key()
-	toMapElemType := toMapType.Elem()
-	for fromMapKey, fromMapValue := range fromMap {
-		fromMapKeyVal := reflect.ValueOf(fromMapKey)
-		if !fromMapKeyVal.CanConvert(toMapKeyType) {
-			return newErrorUnmarshalDataTypes(fromMapKey, toMapVal)
-		}
-		fromMapElemVal := reflect.ValueOf(fromMapValue)
-		if !fromMapElemVal.CanConvert(toMapElemType) {
-			return newErrorUnmarshalDataTypes(fromMapKey, toMapVal)
-		}
-		toMapVal.SetMapIndex(fromMapKeyVal.Convert(toMapKeyType), fromMapElemVal.Convert(toMapElemType))
-	}
-	return nil
-}
-
-func (dec *Decoder) unmarshalToBasicType(fromObj any, toObj any) error {
+func (dec *Decoder) unmarshalBasicTypeTo(fromObj any, toObj any) error {
 	switch from := fromObj.(type) {
 	case int:
 		return safecast.FromInt(from, toObj)
@@ -334,7 +334,7 @@ func (dec *Decoder) unmarshalToBasicType(fromObj any, toObj any) error {
 	return newErrorUnmarshalDataTypes(fromObj, toObj)
 }
 
-func (dec *Decoder) unmarshalToSpecialStruct(fromObj any, toObj any) error {
+func (dec *Decoder) unmarshalEmbedTypeTo(fromObj any, toObj any) error {
 	switch from := fromObj.(type) {
 	case time.Time:
 		switch to := toObj.(type) {
