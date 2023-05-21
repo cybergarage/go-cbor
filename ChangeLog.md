@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.3.1 (2023-05-xx)
+- Fix Decoder::Unmarshal() and UnmarshalTo() to decoder for UUID
+
 ## v1.3.0 (2023-05-20)
 - Updated Decoder::Unmarshal() and UnmarshalTo() to support nested destination structures
 - Updated Decoder::Unmarshal() and UnmarshalTo() to convert as flexibly as possible to destination structures
