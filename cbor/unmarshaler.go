@@ -259,7 +259,9 @@ func (dec *Decoder) unmarshalMapToStrct(fromMap map[any]any, toStructVal reflect
 				return err
 			}
 		default:
-			return dec.unmarshalMapElemToStrctField(fromMapElemVal, toStructField)
+			if err := dec.unmarshalMapElemToStrctField(fromMapElemVal, toStructField); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
