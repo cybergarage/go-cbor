@@ -1,6 +1,7 @@
 # Changelog
 
 ## v1.3.1 (2023-05-xx)
+- Add type retention option to config
 - Fix Decoder::Unmarshal() and UnmarshalTo() to decoder for UUID
 
 ## v1.3.0 (2023-05-20)
