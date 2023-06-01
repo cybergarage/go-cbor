@@ -17,6 +17,7 @@ SHELL := bash
 MODULE_ROOT=github.com/cybergarage/go-cbor
 
 PKG_NAME=cbor
+PKG_COVER=${PKG_NAME}-cover
 PKG_ID=${MODULE_ROOT}/${PKG_NAME}
 PKG_SRC_DIR=${PKG_NAME}
 PKG_SRCS=\
@@ -31,8 +32,6 @@ TEST_PKG_SRCS=\
 	${TEST_PKG_DIR}
 TEST_PKGS=\
 	${TEST_PKG_ID}
-
-COVER_PROF=coverage.out
 
 .PHONY: format vet lint cover clean
 
@@ -51,7 +50,7 @@ build: fuzz
 	go build -v ${PKGS}
 
 test: lint
-	go test -v -cover -coverpkg=${PKG_ID} -coverprofile=${COVER_PROF} -timeout 60s ${PKGS} ${TEST_PKGS}
+	go test -v -timeout 60s ${PKGS} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out ${TEST_PKGS}
 
 fuzz: test
 	pushd ${TEST_PKG_DIR} && ./fuzz && popd
@@ -60,7 +59,7 @@ prof:
 	pushd ${TEST_PKG_DIR} && ./prof && popd
 
 cover: test
-	go tool cover -html=${COVER_PROF} -o coverage.html
+	go tool cover -html=${PKG_COVER}.out -o ${PKG_COVER}.html
 
 clean:
 	go clean -i ${PKGS}
