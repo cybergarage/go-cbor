@@ -26,3 +26,9 @@ jobs:
 
     - name: Test
       run: make
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: cbor-cover.out
