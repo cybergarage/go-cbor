@@ -1,6 +1,14 @@
+issues:
+  fix: true
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - goconst
+        - gosec
 linters:
   enable-all: true
   disable:
+    - exhaustruct
     - deadcode
     - paralleltest
     - testpackage
@@ -28,8 +36,20 @@ linters:
     - gochecknoglobals
     - scopelint
     - typecheck
-    - exhaustruct
-    - nilerr
+    - dupl
+    - exhaustive
+    - forbidigo
+    - maligned
+    - revive
+    - depguard
+    - inamedparam
+    - interfacer
     - ifshort
+    - structcheck
     - nosnakecase
-    - gocyclo
+    - exhaustivestruct
+    - golint
+    - musttag
+linters-settings:
+  staticcheck:
+    checks: ["all", "-SA5008", "-SA1008"]
