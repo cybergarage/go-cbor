@@ -27,3 +27,4 @@ cbortest/testdata/
 
 # Coverage
 cbor-cover.*
+*.html
