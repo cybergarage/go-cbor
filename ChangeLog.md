@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.2 (2025-08-08)
+- Fix golangci-lint issues
+- Improved test coverage
+
 ## v1.3.1 (2023-05-22)
 - Updated Decoder::Unmarshal() and UnmarshalTo() to unmarshal map fields to structure fields when conversion is possible
 
