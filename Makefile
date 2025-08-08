@@ -52,15 +52,16 @@ build: fuzz
 
 test: lint
 	go test -v -timeout 60s ${PKGS} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out ${TEST_PKGS}
+	go tool cover -html=${PKG_COVER}.out -o ${PKG_COVER}.html
+
+cover: test
+	open ${PKG_COVER}.html || xdg-open ${PKG_COVER}.html || gnome-open ${PKG_COVER}.html
 
 fuzz: test
 	pushd ${TEST_PKG_DIR} && ./fuzz && popd
 
 prof:
 	pushd ${TEST_PKG_DIR} && ./prof && popd
-
-cover: test
-	go tool cover -html=${PKG_COVER}.out -o ${PKG_COVER}.html
 
 clean:
 	go clean -i ${PKGS}
