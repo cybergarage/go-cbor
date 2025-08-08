@@ -25,4 +25,15 @@ func TestConfig(t *testing.T) {
 	if config.IsMapSortEnabled() {
 		t.Error("config.IsMapSortEnabled() must be false")
 	}
+
+	// Test SetMapSortEnabled and IsMapSortEnabled
+	config.SetMapSortEnabled(true)
+	if !config.IsMapSortEnabled() {
+		t.Error("config.IsMapSortEnabled() must be true after setting to true")
+	}
+
+	config.SetMapSortEnabled(false)
+	if config.IsMapSortEnabled() {
+		t.Error("config.IsMapSortEnabled() must be false after setting to false")
+	}
 }
