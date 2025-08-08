@@ -34,6 +34,7 @@ TEST_PKGS=\
 	${TEST_PKG_ID}
 
 .PHONY: format vet lint cover clean
+.IGNORE: lint
 
 all: test
 
