@@ -1,6 +1,7 @@
 # Changelog
 
 ## v1.3.2 (2025-08-08)
+- Updated go-safecast package from v1.3.3 to v1.3.4
 - Fix golangci-lint issues
 - Improved test coverage
 
