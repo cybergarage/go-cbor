@@ -26,6 +26,7 @@ import (
 // An Encoder writes CBOR values to an output stream.
 type Encoder struct {
 	*Config
+
 	writer io.Writer
 }
 
@@ -275,7 +276,7 @@ func (enc *Encoder) encodeArray(item any) error {
 		if err := enc.encodeNumberOfBytes(mtArray, cnt); err != nil {
 			return err
 		}
-		for n := 0; n < cnt; n++ {
+		for n := range cnt {
 			if err := enc.Encode(v[n]); err != nil {
 				return err
 			}
@@ -381,7 +382,8 @@ func (enc *Encoder) encodeStruct(item any) error {
 	}
 
 	structMap := map[any]any{}
-	for n := 0; n < itemStruct.NumField(); n++ {
+	numField := itemStruct.NumField()
+	for n := range numField {
 		typeField := itemStruct.Type().Field(n)
 		structMap[typeField.Name] = itemStruct.Field(n).Interface()
 	}

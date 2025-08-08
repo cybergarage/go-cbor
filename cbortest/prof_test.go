@@ -56,7 +56,7 @@ func unmarshalToProfile(v any, to any) error {
 }
 
 func BenchmarkIntData(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v int
 		v = int(0)
 		unmarshalProfile(v)
@@ -68,7 +68,7 @@ func BenchmarkIntData(b *testing.B) {
 }
 
 func BenchmarkInt8Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v int8
 		v = int8(0)
 		unmarshalProfile(v)
@@ -80,7 +80,7 @@ func BenchmarkInt8Data(b *testing.B) {
 }
 
 func BenchmarkInt16Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v int16
 		v = int16(0)
 		unmarshalProfile(v)
@@ -92,7 +92,7 @@ func BenchmarkInt16Data(b *testing.B) {
 }
 
 func BenchmarkInt32Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v int32
 		v = int32(0)
 		unmarshalProfile(v)
@@ -104,7 +104,7 @@ func BenchmarkInt32Data(b *testing.B) {
 }
 
 func BenchmarkInt64Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v int64
 		v = int64(0)
 		unmarshalProfile(v)
@@ -116,7 +116,7 @@ func BenchmarkInt64Data(b *testing.B) {
 }
 
 func BenchmarkUintData(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v uint
 		v = uint(0)
 		unmarshalProfile(v)
@@ -126,7 +126,7 @@ func BenchmarkUintData(b *testing.B) {
 }
 
 func BenchmarkUint8Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v uint8
 		v = uint8(0)
 		unmarshalProfile(v)
@@ -136,7 +136,7 @@ func BenchmarkUint8Data(b *testing.B) {
 }
 
 func BenchmarkUint16Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v uint16
 		v = uint16(0)
 		unmarshalProfile(v)
@@ -146,7 +146,7 @@ func BenchmarkUint16Data(b *testing.B) {
 }
 
 func BenchmarkUint32Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v uint32
 		v = uint32(0)
 		unmarshalProfile(v)
@@ -156,7 +156,7 @@ func BenchmarkUint32Data(b *testing.B) {
 }
 
 func BenchmarkUint64Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v uint64
 		v = uint64(0)
 		unmarshalProfile(v)
@@ -166,7 +166,7 @@ func BenchmarkUint64Data(b *testing.B) {
 }
 
 func BenchmarkFloat32Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v float32
 		v = float32(-math.MaxFloat32)
 		unmarshalProfile(v)
@@ -178,7 +178,7 @@ func BenchmarkFloat32Data(b *testing.B) {
 }
 
 func BenchmarkFloat64Data(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v float64
 		v = float64(-math.MaxFloat32)
 		unmarshalProfile(v)
@@ -190,7 +190,7 @@ func BenchmarkFloat64Data(b *testing.B) {
 }
 
 func BenchmarkBoolData(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v bool
 		v = bool(true)
 		unmarshalProfile(v)
@@ -200,7 +200,7 @@ func BenchmarkBoolData(b *testing.B) {
 }
 
 func BenchmarkStringData(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v string
 		v = string("a")
 		unmarshalProfile(v)
@@ -212,7 +212,7 @@ func BenchmarkStringData(b *testing.B) {
 }
 
 func BenchmarkByteData(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		var v []byte
 		v = []byte("x")
 		unmarshalProfile(v)

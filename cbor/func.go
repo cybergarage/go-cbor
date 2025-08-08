@@ -337,7 +337,7 @@ func arrayToAnyArray(fromArray any) ([]any, error) {
 	toArrayVal := reflect.ValueOf(toArray)
 	toArrayType := toArrayVal.Type()
 	toArrayElemType := toArrayType.Elem()
-	for n := 0; n < fromArrayLen; n++ {
+	for n := range fromArrayLen {
 		fromArrayIndex := fromArrayVal.Index(n)
 		toArrayIndex := toArrayVal.Index(n)
 		toArrayIndex.Set(fromArrayIndex.Convert(toArrayElemType))

@@ -23,6 +23,7 @@ import (
 // An Decoder reads CBOR values from an output stream.
 type Decoder struct {
 	*Config
+
 	reader io.Reader
 	header []byte
 }
@@ -182,7 +183,7 @@ func (dec *Decoder) Decode() (any, error) {
 			return nil, err
 		}
 		itemArray := make([]any, 0)
-		for n := 0; n < itemCount; n++ {
+		for range itemCount {
 			item, err := dec.Decode()
 			if err != nil {
 				return nil, err
@@ -196,7 +197,7 @@ func (dec *Decoder) Decode() (any, error) {
 			return nil, err
 		}
 		itemMap := map[any]any{}
-		for n := 0; n < itemArray; n++ {
+		for range itemArray {
 			key, err := dec.Decode()
 			if err != nil {
 				return nil, err

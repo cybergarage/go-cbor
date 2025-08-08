@@ -115,7 +115,7 @@ func (dec *Decoder) unmarshalArrayToArray(fromArrayVal reflect.Value, toArrayVal
 		return newErrorUnmarshalDataTypes(fromArrayVal.Interface(), toArrayVal.Interface())
 	}
 
-	for n := 0; n < fromArrayLen; n++ {
+	for n := range fromArrayLen {
 		fromVal := fromArrayVal.Index(n)
 		toVal := toArrayVal.Index(n)
 		err := dec.unmarshalValueToValue(fromVal, toVal)
