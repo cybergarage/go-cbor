@@ -37,9 +37,8 @@ func NewDecoder(r io.Reader) *Decoder {
 	}
 }
 
-// nolint: gocyclo, maintidx, exhaustive
 // Decode returns a next decoded item from the specified reader if available, otherwise returns EOF or another error.
-func (dec *Decoder) Decode() (any, error) {
+func (dec *Decoder) Decode() (any, error) { //nolint:gocyclo,maintidx,exhaustive
 	returnDecordedUint8 := func(v uint8) any {
 		if math.MaxInt8 < v {
 			return v

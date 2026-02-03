@@ -34,9 +34,8 @@ func UnmarshalTo(cborBytes []byte, s any) error {
 	return decoder.Unmarshal(s)
 }
 
-// nolint: exhaustive
 // Unmarshal decodes a next encoded item from the specified reader and stores the decoded item to the specified data type if appropriate.
-func (dec *Decoder) Unmarshal(toObj any) error {
+func (dec *Decoder) Unmarshal(toObj any) error { //nolint:exhaustive
 	fromObj, err := dec.Decode()
 	if err != nil {
 		return err
