@@ -42,7 +42,7 @@ type EmbeddedStruct struct {
 func TestStructEncoding(t *testing.T) {
 	tests := []struct {
 		name  string
-		value interface{}
+		value any
 	}{
 		{
 			"SimpleStruct",
@@ -94,7 +94,7 @@ func TestStructEncoding(t *testing.T) {
 			}
 
 			// Check that the result is a map with the expected fields
-			resultMap, ok := result.(map[interface{}]interface{})
+			resultMap, ok := result.(map[any]any)
 			if !ok {
 				t.Errorf("Expected map result for struct, got %T", result)
 				return

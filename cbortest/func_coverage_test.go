@@ -25,7 +25,7 @@ func TestSpecificIntegerSizes(t *testing.T) {
 	// Test specific byte size encodings
 	tests := []struct {
 		name  string
-		value interface{}
+		value any
 	}{
 		// Test values that trigger specific byte sizes
 		{"Int8Max", int8(127)},
@@ -71,7 +71,7 @@ func TestSpecificIntegerSizes(t *testing.T) {
 
 func TestDirectDecoderUsage(t *testing.T) {
 	// Test direct decoder usage to hit more code paths
-	data, _ := cbor.Marshal(map[string]interface{}{
+	data, _ := cbor.Marshal(map[string]any{
 		"number": 42,
 		"string": "hello",
 		"array":  []int{1, 2, 3},
@@ -85,7 +85,7 @@ func TestDirectDecoderUsage(t *testing.T) {
 	}
 
 	// Verify the structure
-	if resultMap, ok := result.(map[interface{}]interface{}); ok {
+	if resultMap, ok := result.(map[any]any); ok {
 		if resultMap["number"] != int64(42) {
 			t.Errorf("Expected number 42, got %v", resultMap["number"])
 		}
@@ -143,7 +143,7 @@ func TestBoundaryValues(t *testing.T) {
 	// Test boundary values for different integer types
 	tests := []struct {
 		name  string
-		value interface{}
+		value any
 	}{
 		{"Zero", 0},
 		{"One", 1},
@@ -193,7 +193,7 @@ func TestArrayConversionFunctions(t *testing.T) {
 	}
 
 	// Verify conversion worked
-	if resultArray, ok := result.([]interface{}); ok {
+	if resultArray, ok := result.([]any); ok {
 		if len(resultArray) != 3 {
 			t.Errorf("Expected array length 3, got %d", len(resultArray))
 		}
@@ -221,7 +221,7 @@ func TestMapConversionFunctions(t *testing.T) {
 	}
 
 	// Verify conversion worked
-	if resultMap, ok := result.(map[interface{}]interface{}); ok {
+	if resultMap, ok := result.(map[any]any); ok {
 		if len(resultMap) != 2 {
 			t.Errorf("Expected map length 2, got %d", len(resultMap))
 		}

@@ -88,7 +88,7 @@ func TestErrors(t *testing.T) {
 
 func TestReflectTypeErrors(t *testing.T) {
 	// Test reflect.Value related errors through complex unmarshaling scenarios
-	data, _ := cbor.Marshal(map[string]interface{}{"key": 42})
+	data, _ := cbor.Marshal(map[string]any{"key": 42})
 	var stringVar string
 	err := cbor.UnmarshalTo(data, &stringVar)
 	if err == nil {

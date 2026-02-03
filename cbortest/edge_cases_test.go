@@ -61,7 +61,7 @@ func TestErrorConditions(t *testing.T) {
 
 func TestUnsupportedTypes(t *testing.T) {
 	// Test encoding unsupported types
-	unsupportedValues := []interface{}{
+	unsupportedValues := []any{
 		complex(1, 2),      // Complex numbers
 		complex64(3 + 4i),  // Complex64
 		complex128(5 + 6i), // Complex128

@@ -25,7 +25,7 @@ import (
 func TestNegativeIntegers(t *testing.T) {
 	tests := []struct {
 		name  string
-		value interface{}
+		value any
 	}{
 		{"NegativeInt8", int8(-1)},
 		{"NegativeInt8Min", int8(math.MinInt8)},
@@ -61,7 +61,7 @@ func TestNegativeIntegers(t *testing.T) {
 func TestEdgeCaseNumbers(t *testing.T) {
 	tests := []struct {
 		name  string
-		value interface{}
+		value any
 	}{
 		{"MaxFloat32", float32(math.MaxFloat32)},
 		{"SmallestFloat32", float32(math.SmallestNonzeroFloat32)},

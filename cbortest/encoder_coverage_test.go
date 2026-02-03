@@ -87,7 +87,7 @@ func TestTextStringEncoding(t *testing.T) {
 func TestPrimitiveTypesEncoding(t *testing.T) {
 	tests := []struct {
 		name  string
-		value interface{}
+		value any
 	}{
 		{"BoolTrue", true},
 		{"BoolFalse", false},
@@ -141,7 +141,7 @@ func TestEncoderBufferWriting(t *testing.T) {
 	encoder := cbor.NewEncoder(&buf)
 
 	// Test multiple writes to the same buffer
-	values := []interface{}{
+	values := []any{
 		42,
 		"hello",
 		[]int{1, 2, 3},
