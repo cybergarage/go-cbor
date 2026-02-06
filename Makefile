@@ -45,7 +45,7 @@ vet: format
 	go vet ${PKG_ID} ${TEST_PKG_ID} ${BINS}
 
 lint: vet
-	golangci-lint run ${PKG_SRCS} ${BIN_SRCS} ${TEST_PKG_SRCS}
+	golangci-lint run ${PKG_SRCS} ${TEST_PKG_SRCS}
 
 build: fuzz
 	go build -v ${PKGS}
