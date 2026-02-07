@@ -51,7 +51,7 @@ build: fuzz
 	go build -v ${PKGS}
 
 test: lint
-	go test -v -timeout 60s ${PKGS} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out ${TEST_PKGS}
+	go test -v -timeout 60s ${TEST_PKGS} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out
 	go tool cover -html=${PKG_COVER}.out -o ${PKG_COVER}.html
 
 cover: test
