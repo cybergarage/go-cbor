@@ -17,6 +17,7 @@ package cbortest
 import (
 	"bytes"
 	"testing"
+	"time"
 
 	"github.com/cybergarage/go-cbor/cbor"
 )
@@ -231,4 +232,390 @@ func TestMapConversionFunctions(t *testing.T) {
 	} else {
 		t.Errorf("Expected map[interface{}]interface{}, got %T", result)
 	}
+}
+
+func TestNegativeIntegerEncoding(t *testing.T) {
+	// Test negative integers that trigger nint32 and nint64 byte encodations
+	tests := []struct {
+		name  string
+		value any
+	}{
+		{"NegInt32_1", int32(-256)},
+		{"NegInt32_2", int32(-65536)},
+		{"NegInt32_3", int32(-2147483648)},
+		{"NegInt64_1", int64(-4294967296)},
+		{"NegInt64_2", int64(-9223372036854775808)},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data, err := cbor.Marshal(tt.value)
+			if err != nil {
+				t.Fatalf("Marshal failed: %v", err)
+			}
+
+			result, err := cbor.Unmarshal(data)
+			if err != nil {
+				t.Fatalf("Unmarshal failed: %v", err)
+			}
+
+			if err := deepEqual(tt.value, result); err != nil {
+				t.Errorf("Values not equal: %v", err)
+			}
+		})
+	}
+}
+
+func TestByteStringConversions(t *testing.T) {
+	// Test []byte to string and string to []byte conversions
+	t.Run("ByteArrayToString", func(t *testing.T) {
+		original := []byte("hello world")
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var resultStr string
+		err = cbor.UnmarshalTo(data, &resultStr)
+		if err != nil {
+			t.Fatalf("UnmarshalTo string failed: %v", err)
+		}
+
+		if resultStr != string(original) {
+			t.Errorf("Expected '%s', got '%s'", string(original), resultStr)
+		}
+	})
+
+	t.Run("ByteArrayToByteArray", func(t *testing.T) {
+		original := []byte{0x01, 0x02, 0x03, 0x04}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var resultBytes []byte
+		err = cbor.UnmarshalTo(data, &resultBytes)
+		if err != nil {
+			t.Fatalf("UnmarshalTo []byte failed: %v", err)
+		}
+
+		if !bytes.Equal(original, resultBytes) {
+			t.Errorf("Expected %v, got %v", original, resultBytes)
+		}
+	})
+
+	t.Run("StringToString", func(t *testing.T) {
+		original := "test string"
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var resultStr string
+		err = cbor.UnmarshalTo(data, &resultStr)
+		if err != nil {
+			t.Fatalf("UnmarshalTo string failed: %v", err)
+		}
+
+		if resultStr != original {
+			t.Errorf("Expected '%s', got '%s'", original, resultStr)
+		}
+	})
+}
+
+func TestTimeConversions(t *testing.T) {
+	// Test time.Time conversions
+	t.Run("TimeToString", func(t *testing.T) {
+		original, err := time.Parse(time.RFC3339, "2024-03-21T20:04:00Z")
+		if err != nil {
+			t.Fatalf("Parse time failed: %v", err)
+		}
+
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var resultStr string
+		err = cbor.UnmarshalTo(data, &resultStr)
+		if err != nil {
+			t.Fatalf("UnmarshalTo string failed: %v", err)
+		}
+
+		expectedStr := original.Format(time.RFC3339)
+		if resultStr != expectedStr {
+			t.Errorf("Expected '%s', got '%s'", expectedStr, resultStr)
+		}
+	})
+
+	t.Run("TimeToTime", func(t *testing.T) {
+		original, err := time.Parse(time.RFC3339, "2024-03-21T20:04:00Z")
+		if err != nil {
+			t.Fatalf("Parse time failed: %v", err)
+		}
+
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var resultTime time.Time
+		err = cbor.UnmarshalTo(data, &resultTime)
+		if err != nil {
+			t.Fatalf("UnmarshalTo time.Time failed: %v", err)
+		}
+
+		if !original.Equal(resultTime) {
+			t.Errorf("Expected '%v', got '%v'", original, resultTime)
+		}
+	})
+}
+
+func TestArrayToArrayConversions(t *testing.T) {
+	// Test array to array conversions with different target types
+	t.Run("SliceToSlice", func(t *testing.T) {
+		original := []int{1, 2, 3, 4, 5}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var result []int
+		err = cbor.UnmarshalTo(data, &result)
+		if err != nil {
+			t.Fatalf("UnmarshalTo slice failed: %v", err)
+		}
+
+		if len(result) != len(original) {
+			t.Errorf("Length mismatch: expected %d, got %d", len(original), len(result))
+		}
+
+		for i, v := range original {
+			if int64(result[i]) != int64(v) {
+				t.Errorf("Index %d: expected %d, got %d", i, v, result[i])
+			}
+		}
+	})
+
+	t.Run("SliceOfStrings", func(t *testing.T) {
+		original := []string{"hello", "world", "test"}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var result []string
+		err = cbor.UnmarshalTo(data, &result)
+		if err != nil {
+			t.Fatalf("UnmarshalTo string slice failed: %v", err)
+		}
+
+		if len(result) != len(original) {
+			t.Errorf("Length mismatch: expected %d, got %d", len(original), len(result))
+		}
+
+		for i, v := range original {
+			if result[i] != v {
+				t.Errorf("Index %d: expected %s, got %s", i, v, result[i])
+			}
+		}
+	})
+
+	t.Run("EmptySlice", func(t *testing.T) {
+		original := []int{}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var result []int
+		err = cbor.UnmarshalTo(data, &result)
+		if err != nil {
+			t.Fatalf("UnmarshalTo empty slice failed: %v", err)
+		}
+
+		if len(result) != 0 {
+			t.Errorf("Expected empty slice, got length %d", len(result))
+		}
+	})
+}
+
+func TestMapToMapConversions(t *testing.T) {
+	// Test map to map conversions to improve coverage
+	t.Run("MapWithIntKeys", func(t *testing.T) {
+		original := map[int]string{1: "one", 2: "two", 3: "three"}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		result := make(map[int]string)
+		err = cbor.UnmarshalTo(data, result)
+		if err != nil {
+			t.Fatalf("UnmarshalTo map failed: %v", err)
+		}
+
+		if len(result) != len(original) {
+			t.Errorf("Length mismatch: expected %d, got %d", len(original), len(result))
+		}
+
+		for k, v := range original {
+			if result[k] != v {
+				t.Errorf("Key %d: expected %s, got %s", k, v, result[k])
+			}
+		}
+	})
+
+	t.Run("MapWithMixedTypes", func(t *testing.T) {
+		original := map[string]any{"number": 42, "text": "hello", "flag": true}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		result := make(map[string]any)
+		err = cbor.UnmarshalTo(data, result)
+		if err != nil {
+			t.Fatalf("UnmarshalTo map failed: %v", err)
+		}
+
+		if len(result) != len(original) {
+			t.Errorf("Length mismatch: expected %d, got %d", len(original), len(result))
+		}
+	})
+}
+
+func TestAdditionalStructEncoding(t *testing.T) {
+	// Test struct encoding to improve encodeStruct coverage
+	type Person struct {
+		Name   string
+		Age    int
+		Active bool
+	}
+
+	t.Run("SimpleStruct", func(t *testing.T) {
+		original := Person{Name: "John", Age: 30, Active: true}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var result Person
+		err = cbor.UnmarshalTo(data, &result)
+		if err != nil {
+			t.Fatalf("UnmarshalTo failed: %v", err)
+		}
+
+		if result.Name != original.Name || result.Age != original.Age || result.Active != original.Active {
+			t.Errorf("Struct mismatch: expected %+v, got %+v", original, result)
+		}
+	})
+
+	t.Run("NestedStruct", func(t *testing.T) {
+		type Address struct {
+			City    string
+			ZipCode int
+		}
+		type Employee struct {
+			Name    string
+			Address Address
+		}
+
+		original := Employee{
+			Name:    "Jane",
+			Address: Address{City: "Tokyo", ZipCode: 12345},
+		}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		var result Employee
+		err = cbor.UnmarshalTo(data, &result)
+		if err != nil {
+			t.Fatalf("UnmarshalTo failed: %v", err)
+		}
+
+		if result.Name != original.Name || result.Address.City != original.Address.City {
+			t.Errorf("Nested struct mismatch: expected %+v, got %+v", original, result)
+		}
+	})
+}
+
+func TestComplexDataStructures(t *testing.T) {
+	// Test more complex structures to improve overall coverage
+	t.Run("SliceOfMaps", func(t *testing.T) {
+		original := []map[string]int{
+			{"a": 1, "b": 2},
+			{"c": 3, "d": 4},
+		}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		result, err := cbor.Unmarshal(data)
+		if err != nil {
+			t.Fatalf("Unmarshal failed: %v", err)
+		}
+
+		if result == nil {
+			t.Errorf("Expected non-nil result")
+		}
+	})
+
+	t.Run("MapOfSlices", func(t *testing.T) {
+		original := map[string][]int{
+			"evens": {2, 4, 6},
+			"odds":  {1, 3, 5},
+		}
+		data, err := cbor.Marshal(original)
+		if err != nil {
+			t.Fatalf("Marshal failed: %v", err)
+		}
+
+		result, err := cbor.Unmarshal(data)
+		if err != nil {
+			t.Fatalf("Unmarshal failed: %v", err)
+		}
+
+		if result == nil {
+			t.Errorf("Expected non-nil result")
+		}
+	})
+
+	t.Run("BoolValues", func(t *testing.T) {
+		tests := []bool{true, false}
+		for _, original := range tests {
+			data, err := cbor.Marshal(original)
+			if err != nil {
+				t.Fatalf("Marshal %v failed: %v", original, err)
+			}
+
+			result, err := cbor.Unmarshal(data)
+			if err != nil {
+				t.Fatalf("Unmarshal %v failed: %v", original, err)
+			}
+
+			if result != original {
+				t.Errorf("Expected %v, got %v", original, result)
+			}
+		}
+	})
+
+	t.Run("NilValue", func(t *testing.T) {
+		data, err := cbor.Marshal(nil)
+		if err != nil {
+			t.Fatalf("Marshal nil failed: %v", err)
+		}
+
+		result, err := cbor.Unmarshal(data)
+		if err != nil {
+			t.Fatalf("Unmarshal nil failed: %v", err)
+		}
+
+		if result != nil {
+			t.Errorf("Expected nil, got %v", result)
+		}
+	})
 }
