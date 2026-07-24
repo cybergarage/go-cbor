@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"math"
 	"testing"
 	"time"
 
@@ -87,15 +88,12 @@ func TestEncoder(t *testing.T) {
 				// {value: float16(0.00006103515625), expected: "f90400"},
 				// {value: float16(-4.0), expected: "f9c400"},
 				{value: float64(-4.1), expected: "fbc010666666666666"},
-				// {value: float64(math.Inf), expected: "f97c00"},
-				// {value: float64(math.NaN), expected: "f97e00"},
-				// {value: float64(-math.Inf), expected: "f9fc00"},
-				// {value: float64(math.Inf), expected: "fa7f800000"},
-				// {value: float64(math.NaN), expected: "fa7fc00000"},
-				// {value: float64(-math.Inf), expected: "faff800000"},
-				// {value: float64(math.Inf), expected: "fb7ff0000000000000"},
-				// {value: float64(math.NaN), expected: "fb7ff8000000000000"},
-				// {value: float64(-math.Inf), expected: "fbfff0000000000000"},
+				{value: math.Inf(1), expected: "f97c00"},
+				{value: math.NaN(), expected: "f97e00"},
+				{value: math.Inf(-1), expected: "f9fc00"},
+				{value: float32(math.Inf(1)), expected: "f97c00"},
+				{value: float32(math.NaN()), expected: "f97e00"},
+				{value: float32(math.Inf(-1)), expected: "f9fc00"},
 				{value: false, expected: "f4"},
 				{value: true, expected: "f5"},
 				{value: nil, expected: "f6"},

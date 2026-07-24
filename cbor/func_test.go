@@ -249,6 +249,9 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			0,
 			1,
 			math.MaxFloat32,
+			float32(math.NaN()),
+			float32(math.Inf(1)),
+			float32(math.Inf(-1)),
 		}
 		for _, testVal := range testValues {
 			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
@@ -264,7 +267,11 @@ func TestEncodeDecodeFunc(t *testing.T) {
 					t.Error(err)
 					return
 				}
-				if val != testVal {
+				if math.IsNaN(float64(testVal)) {
+					if !math.IsNaN(float64(val)) {
+						t.Errorf("expected NaN, got %f", val)
+					}
+				} else if val != testVal {
 					t.Errorf("%f != %f", val, testVal)
 				}
 			})
@@ -277,6 +284,9 @@ func TestEncodeDecodeFunc(t *testing.T) {
 			0,
 			1,
 			math.MaxFloat64,
+			math.NaN(),
+			math.Inf(1),
+			math.Inf(-1),
 		}
 		for _, testVal := range testValues {
 			t.Run(fmt.Sprintf("%v", testVal), func(t *testing.T) {
@@ -292,7 +302,11 @@ func TestEncodeDecodeFunc(t *testing.T) {
 					t.Error(err)
 					return
 				}
-				if val != testVal {
+				if math.IsNaN(testVal) {
+					if !math.IsNaN(val) {
+						t.Errorf("expected NaN, got %f", val)
+					}
+				} else if val != testVal {
 					t.Errorf("%f != %f", val, testVal)
 				}
 			})

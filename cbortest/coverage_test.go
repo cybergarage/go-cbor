@@ -91,7 +91,12 @@ func TestEdgeCaseNumbers(t *testing.T) {
 			switch v := tt.value.(type) {
 			case float32:
 				if math.IsNaN(float64(v)) {
-					if !math.IsNaN(float64(result.(float32))) {
+					// float32 NaN is encoded as float16 NaN (preferred encoding),
+					// which decodes back as float64 NaN.
+					f64result, ok := result.(float64)
+					if !ok {
+						t.Errorf("Expected float64 NaN, got %T(%v)", result, result)
+					} else if !math.IsNaN(f64result) {
 						t.Errorf("Expected NaN, got %v", result)
 					}
 				} else {

@@ -248,11 +248,47 @@ func (enc *Encoder) encodePrimitiveTypes(item any) error {
 		}
 		return writeNint64Bytes(enc.writer, int64(v))
 	case float32:
+		if math.IsNaN(float64(v)) {
+			if err := writeHeader(enc.writer, mtFloat, fpnFloat16); err != nil {
+				return err
+			}
+			return writeUint16Bytes(enc.writer, 0x7e00) // canonical float16 NaN
+		}
+		if math.IsInf(float64(v), 1) {
+			if err := writeHeader(enc.writer, mtFloat, fpnFloat16); err != nil {
+				return err
+			}
+			return writeUint16Bytes(enc.writer, 0x7c00) // float16 +Inf
+		}
+		if math.IsInf(float64(v), -1) {
+			if err := writeHeader(enc.writer, mtFloat, fpnFloat16); err != nil {
+				return err
+			}
+			return writeUint16Bytes(enc.writer, 0xfc00) // float16 -Inf
+		}
 		if err := writeHeader(enc.writer, mtFloat, fpnFloat32); err != nil {
 			return err
 		}
 		return writeFloat32Bytes(enc.writer, v)
 	case float64:
+		if math.IsNaN(v) {
+			if err := writeHeader(enc.writer, mtFloat, fpnFloat16); err != nil {
+				return err
+			}
+			return writeUint16Bytes(enc.writer, 0x7e00) // canonical float16 NaN
+		}
+		if math.IsInf(v, 1) {
+			if err := writeHeader(enc.writer, mtFloat, fpnFloat16); err != nil {
+				return err
+			}
+			return writeUint16Bytes(enc.writer, 0x7c00) // float16 +Inf
+		}
+		if math.IsInf(v, -1) {
+			if err := writeHeader(enc.writer, mtFloat, fpnFloat16); err != nil {
+				return err
+			}
+			return writeUint16Bytes(enc.writer, 0xfc00) // float16 -Inf
+		}
 		if err := writeHeader(enc.writer, mtFloat, fpnFloat64); err != nil {
 			return err
 		}

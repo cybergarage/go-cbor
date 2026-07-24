@@ -232,7 +232,7 @@ func (dec *Decoder) Decode() (any, error) { //nolint:gocyclo,maintidx,exhaustive
 		case simpNull:
 			return nil, nil
 		case fpnFloat16:
-			return nil, newErrorNotSupportedAddInfo(mtFloat, majorInfo)
+			return readFloat16Bytes(dec.reader)
 		case fpnFloat32:
 			return readFloat32Bytes(dec.reader)
 		case fpnFloat64:
