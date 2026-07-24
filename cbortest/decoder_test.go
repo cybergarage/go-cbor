@@ -19,6 +19,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"math"
 	"testing"
 	"time"
 
@@ -91,15 +92,15 @@ func TestDecoder(t *testing.T) {
 				{encoded: "f90400", expected: float64(0.00006103515625)},
 				{encoded: "f9c400", expected: float64(-4.0)},
 				{encoded: "fbc010666666666666", expected: float64(-4.1)},
-				// {encoded: "f97c00", expected: math.Inf},
-				// {encoded: "f97e00", expected: math.NaN},
-				// {encoded: "f9fc00", expected: -math.Inf},
-				// {encoded: "fa7f800000", expected: math.Inf},
-				// {encoded: "fa7fc00000", expected: math.NaN},
-				// {encoded: "faff800000", expected: -math.Inf},
-				// {encoded: "fb7ff0000000000000", expected: math.Inf},
-				// {encoded: "fb7ff8000000000000", expected: math.NaN},
-				// {encoded: "fbfff0000000000000", expected: -math.Inf},
+				{encoded: "f97c00", expected: math.Inf(1)},
+				{encoded: "f97e00", expected: math.NaN()},
+				{encoded: "f9fc00", expected: math.Inf(-1)},
+				{encoded: "fa7f800000", expected: float32(math.Inf(1))},
+				{encoded: "fa7fc00000", expected: float32(math.NaN())},
+				{encoded: "faff800000", expected: float32(math.Inf(-1))},
+				{encoded: "fb7ff0000000000000", expected: math.Inf(1)},
+				{encoded: "fb7ff8000000000000", expected: math.NaN()},
+				{encoded: "fbfff0000000000000", expected: math.Inf(-1)},
 				{encoded: "f4", expected: false},
 				{encoded: "f5", expected: true},
 				{encoded: "f6", expected: nil},

@@ -285,6 +285,51 @@ func writeNint64Bytes(w io.Writer, v int64) error {
 }
 
 ////////////////////////////////////////////////////////////
+// float16 (IEEE 754 half-precision, read-only)
+////////////////////////////////////////////////////////////
+
+func float16ToFloat64(bits uint16) float64 {
+	sign := uint64((bits >> 15) & 0x1)
+	exp := uint64((bits >> 10) & 0x1F)
+	mant := uint64(bits & 0x3FF)
+
+	var f64bits uint64
+	switch {
+	case exp == 0 && mant == 0:
+		// ±zero
+		f64bits = sign << 63
+	case exp == 0:
+		// Subnormal float16 → normalized float64
+		e := uint64(1023 - 14) // bias adjustment: float64_bias - float16_min_exp
+		for (mant & 0x400) == 0 {
+			mant <<= 1
+			e--
+		}
+		mant &= 0x3FF // remove implicit leading 1
+		f64bits = (sign << 63) | (e << 52) | (mant << 42)
+	case exp == 31 && mant == 0:
+		// ±Inf
+		f64bits = (sign << 63) | (0x7FF << 52)
+	case exp == 31:
+		// NaN (preserve mantissa payload)
+		f64bits = (sign << 63) | (0x7FF << 52) | (mant << 42)
+	default:
+		// Normal: rebias exponent from 15 to 1023 (offset = 1008)
+		f64bits = (sign << 63) | ((exp + 1008) << 52) | (mant << 42)
+	}
+
+	return math.Float64frombits(f64bits)
+}
+
+func readFloat16Bytes(r io.Reader) (float64, error) {
+	v, err := readUint16Bytes(r)
+	if err != nil {
+		return 0, err
+	}
+	return float16ToFloat64(v), nil
+}
+
+////////////////////////////////////////////////////////////
 // float32
 ////////////////////////////////////////////////////////////
 

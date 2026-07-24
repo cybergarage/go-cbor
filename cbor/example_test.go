@@ -51,7 +51,7 @@ func ExampleDecoder_Decode() {
 	// 1000
 	// -1000
 	// 1.1
-	// <nil>
+	// 5.960464477539063e-08
 	// false
 	// true
 	// <nil>
@@ -89,7 +89,7 @@ func ExampleUnmarshal() {
 	// 1000
 	// -1000
 	// 1.1
-	// <nil>
+	// 5.960464477539063e-08
 	// false
 	// true
 	// <nil>
