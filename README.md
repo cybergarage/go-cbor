@@ -76,6 +76,25 @@ encoder.Encode(map[any]any{"b": 2, "a": 1})
 
 `MapSortEnabled` sorts map keys in the bytewise lexicographic order of their encodings in `EncodeModePreferred` and `EncodeModeTypePreserving`.
 
+### Indefinite-Length Encoding
+
+To stream strings, arrays, and maps whose lengths are not known in advance, `Encoder` can write indefinite-length items (RFC 8949 Section 3.2). Between `StartIndefinite*()` and `EndIndefinite()`, each `Encode()` call writes a chunk of a string or an element of an array or a map (keys and values alternately). The deterministic encode modes do not allow indefinite-length items.
+
+```
+var buf bytes.Buffer
+encoder := cbor.NewEncoder(&buf)
+encoder.StartIndefiniteMap()
+encoder.Encode("a")
+encoder.Encode(1)
+encoder.Encode("b")
+encoder.StartIndefiniteArray()
+encoder.Encode(2)
+encoder.Encode(3)
+encoder.EndIndefinite()
+encoder.EndIndefinite()
+// bf61610161629f0203ffff
+```
+
 ### Decode Options
 
 `Decoder` validates input as follows, which can be configured with the `Config` methods.

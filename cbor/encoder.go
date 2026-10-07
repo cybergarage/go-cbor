@@ -30,7 +30,14 @@ import (
 type Encoder struct {
 	*Config
 
-	writer io.Writer
+	writer     io.Writer
+	indefinite []*indefiniteItem
+}
+
+// indefiniteItem represents an indefinite-length item that is being encoded.
+type indefiniteItem struct {
+	majorType majorType
+	elements  int
 }
 
 // NewEncoder returns a new encoder that writes to the specified writer.
@@ -42,7 +49,17 @@ func NewEncoder(w io.Writer) *Encoder {
 }
 
 // Encode writes the specified object to the specified writer.
+// Between StartIndefinite*() and EndIndefinite(), Encode writes an element of the indefinite-length
+// item: a chunk of the same string type for strings, or an item for arrays and maps (keys and values
+// alternately).
 func (enc *Encoder) Encode(item any) error {
+	if err := enc.beforeIndefiniteElement(item); err != nil {
+		return err
+	}
+	return enc.encode(item)
+}
+
+func (enc *Encoder) encode(item any) error {
 	// Special data types that cannot be determined by reflect package
 	switch v := item.(type) {
 	case []byte: // Recognize as a byte array instead of a uint8 array。
@@ -342,7 +359,7 @@ func (enc *Encoder) encodeArray(item any) error {
 			return err
 		}
 		for n := range cnt {
-			if err := enc.Encode(v[n]); err != nil {
+			if err := enc.encode(v[n]); err != nil {
 				return err
 			}
 		}
@@ -378,7 +395,7 @@ func (enc *Encoder) isMapKeySortRequired() bool {
 func (enc *Encoder) encodeToBytes(item any) ([]byte, error) {
 	var buf bytes.Buffer
 	sub := &Encoder{Config: enc.Config, writer: &buf}
-	if err := sub.Encode(item); err != nil {
+	if err := sub.encode(item); err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil
@@ -391,10 +408,10 @@ func (enc *Encoder) encodeAnyMap(m map[any]any) error {
 
 	if !enc.isMapKeySortRequired() {
 		for k, v := range m {
-			if err := enc.Encode(k); err != nil {
+			if err := enc.encode(k); err != nil {
 				return err
 			}
-			if err := enc.Encode(v); err != nil {
+			if err := enc.encode(v); err != nil {
 				return err
 			}
 		}
@@ -431,7 +448,7 @@ func (enc *Encoder) encodeAnyMap(m map[any]any) error {
 		if err := writeBytes(enc.writer, pair.key); err != nil {
 			return err
 		}
-		if err := enc.Encode(pair.val); err != nil {
+		if err := enc.encode(pair.val); err != nil {
 			return err
 		}
 	}
@@ -557,7 +574,7 @@ func (enc *Encoder) encodeTag(number uint64, content any) error {
 	if err := enc.encodeArgument(mtTag, number); err != nil {
 		return err
 	}
-	return enc.Encode(content)
+	return enc.encode(content)
 }
 
 func (enc *Encoder) encodeStdStruct(item any) error {
@@ -570,9 +587,9 @@ func (enc *Encoder) encodeStdStruct(item any) error {
 				return err
 			}
 			if v.Nanosecond() == 0 {
-				return enc.Encode(v.Unix())
+				return enc.encode(v.Unix())
 			}
-			return enc.Encode(float64(v.Unix()) + float64(v.Nanosecond())/1e9)
+			return enc.encode(float64(v.Unix()) + float64(v.Nanosecond())/1e9)
 		}
 		if err := enc.encodeArgument(mtTag, tagStdDateTime); err != nil {
 			return err
@@ -624,7 +641,7 @@ func (enc *Encoder) encodeStruct(item any) error {
 		if err := enc.encodeTextString(itemStruct.Type().Field(n).Name); err != nil {
 			return err
 		}
-		if err := enc.Encode(itemStruct.Field(n).Interface()); err != nil {
+		if err := enc.encode(itemStruct.Field(n).Interface()); err != nil {
 			return err
 		}
 	}
