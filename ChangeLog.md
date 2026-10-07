@@ -1,6 +1,14 @@
 # Changelog
 
-## Unreleased
+## v1.4.1 (2026-10-08)
+
+### Fixes
+- Fixed Decoder::Unmarshal() and UnmarshalTo() to return ErrUnmarshal instead of panicking when incompatible scalar or map values are supplied for array or slice destinations
+- Fixed Decoder::Unmarshal() and UnmarshalTo() to decode into fixed-array pointers and already populated slice pointers without panicking, and to return ErrUnmarshal for undersized fixed arrays
+- Fixed Decoder::Unmarshal() and UnmarshalTo() to return ErrUnmarshal instead of panicking when map keys select unexported struct fields or promoted fields behind nil embedded pointers
+- Added regression tests for invalid typed assignments and valid array, slice, and struct destinations through both Decoder::Unmarshal() and UnmarshalTo()
+
+### Changes
 - Added AGENTS.md for coding agents
 - Added doc/img/tools to regenerate the conversion tables from the measured behavior
 
