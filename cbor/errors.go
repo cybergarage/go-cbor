@@ -46,6 +46,7 @@ const (
 	errorDecodeInvalidTag       = "%w : invalid content (%v:%T) for tag (%d)"
 	errorEncodeReservedSimple   = "%w : simple value (%d) is reserved"
 	errorEncodeDuplicateMapKey  = "%w : duplicate map key (0x%X)"
+	errorEncodeIndefinite       = "%w : %s"
 	errorDecodeNotDeterministic = "%w : %s is not allowed in the core deterministic encoding"
 	errorInvalidUTF8            = "%w : text string is %w"
 	errorDecodeTooDeep          = "%w : nesting depth exceeds the maximum (%d)"
@@ -139,4 +140,8 @@ func newErrorDecodeDuplicateMapKey(key any) error {
 
 func newErrorDecodeExtraneousData(n int) error {
 	return fmt.Errorf(errorDecodeExtraneousData, ErrDecode, n)
+}
+
+func newErrorEncodeIndefinite(reason string) error {
+	return fmt.Errorf(errorEncodeIndefinite, ErrEncode, reason)
 }
