@@ -75,7 +75,6 @@ func (dec *Decoder) unmarshalArrayToArray(fromArrayVal reflect.Value, toArrayVal
 	// NOTE: The Laws of Reflection - The Go Programming Language
 	// https://go.dev/blog/laws-of-reflection
 
-	fromArrayType := fromArrayVal.Type()
 	fromArrayLen := fromArrayVal.Len()
 	toArrayType := toArrayVal.Type()
 	switch toArrayType.Kind() {
@@ -88,7 +87,7 @@ func (dec *Decoder) unmarshalArrayToArray(fromArrayVal reflect.Value, toArrayVal
 			if !toArrayVal.CanSet() {
 				return newErrorUnmarshalArraySize(fromArrayVal, toArrayVal)
 			}
-			toArrayVal.Set(reflect.MakeSlice(fromArrayType, fromArrayLen, fromArrayLen))
+			toArrayVal.Set(reflect.MakeSlice(toArrayType, fromArrayLen, fromArrayLen))
 		}
 	case reflect.Pointer:
 		elem := toArrayVal.Elem()
@@ -161,9 +160,11 @@ func (dec *Decoder) unmarshalMapToStruct(fromMap map[any]any, toStructVal reflec
 			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 		}
 		fromMapElemVal := reflect.ValueOf(fromMapElem)
-		fromMapElemKind := fromMapElemVal.Type().Kind()
+		if !fromMapElemVal.IsValid() {
+			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
+		}
 		toStructFieldKind := toStructField.Type().Kind()
-		if fromMapElemKind == toStructFieldKind {
+		if fromMapElemVal.Type().AssignableTo(toStructField.Type()) {
 			toStructField.Set(fromMapElemVal)
 			continue
 		}
@@ -186,12 +187,18 @@ func (dec *Decoder) unmarshalMapToStruct(fromMap map[any]any, toStructVal reflec
 }
 
 func (dec *Decoder) unmarshalValueToValue(fromVal reflect.Value, toVal reflect.Value) error {
+	// Elements of decoded arrays and maps are interface values, so unwrap them to the concrete values.
+	for fromVal.Kind() == reflect.Interface && !fromVal.IsNil() {
+		fromVal = fromVal.Elem()
+	}
+	if !fromVal.IsValid() || fromVal.Kind() == reflect.Interface {
+		return newErrorUnmarshalReflectValues(fromVal, toVal)
+	}
 	from := fromVal.Interface()
 	fromType := fromVal.Type()
-	fromKind := fromType.Kind()
 	toType := toVal.Type()
 	toKind := toType.Kind()
-	if fromKind == toKind {
+	if fromType.AssignableTo(toType) {
 		toVal.Set(fromVal)
 		return nil
 	}
