@@ -64,6 +64,8 @@ func (enc *Encoder) encode(item any) error {
 	switch v := item.(type) {
 	case []byte: // Recognize as a byte array instead of a uint8 array。
 		return enc.encodePrimitiveTypes(item)
+	case rawCBOR:
+		return writeBytes(enc.writer, v)
 	case time.Time:
 		return enc.encodeStdStruct(item)
 	case SimpleValue:

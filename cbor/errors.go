@@ -26,6 +26,9 @@ var ErrUnmarshal = errors.New("unmarshal error")
 var ErrDecode = errors.New("decode error")
 var ErrEncode = errors.New("encode error")
 
+// ErrJSON is returned when data cannot be converted between CBOR and JSON (RFC 8949 Section 6).
+var ErrJSON = errors.New("JSON conversion error")
+
 // ErrInvalidUTF8 is wrapped with ErrEncode or ErrDecode when a text string is not valid UTF-8 (RFC 8949 Section 5.3.1).
 var ErrInvalidUTF8 = errors.New("not valid UTF-8")
 
@@ -144,4 +147,16 @@ func newErrorDecodeExtraneousData(n int) error {
 
 func newErrorEncodeIndefinite(reason string) error {
 	return fmt.Errorf(errorEncodeIndefinite, ErrEncode, reason)
+}
+
+func newErrorJSON(err error) error {
+	return fmt.Errorf("%w : %w", ErrJSON, err)
+}
+
+func newErrorJSONKeyCollision(key string) error {
+	return fmt.Errorf("%w : duplicate object member name (%q)", ErrJSON, key)
+}
+
+func newErrorJSONUnsupportedKey(key string) error {
+	return fmt.Errorf("%w : map key (%s) cannot be converted to a JSON object member name", ErrJSON, key)
 }
