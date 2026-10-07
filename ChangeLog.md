@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- Updated Decoder::Decode() to decode URIs (tag 32) into *url.URL and Encoder::Encode() to encode url.URL and *url.URL as tag 32 (RFC 8949 Section 3.4.5.3)
+- Updated Decoder::Decode() to validate the content of tags 24, 32, 33, 34, 35, and 36 and return ErrDecode for invalid content (RFC 8949 Sections 3.4.5.1 and 3.4.5.3)
+
 ## v1.3.4 (2026-10-07)
 
 ### Breaking changes

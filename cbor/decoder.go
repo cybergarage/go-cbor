@@ -16,10 +16,13 @@ package cbor
 
 import (
 	"bytes"
+	"encoding/base64"
 	"io"
 	"math"
 	"math/big"
+	"net/url"
 	"reflect"
+	"strings"
 	"time"
 	"unicode/utf8"
 )
@@ -378,6 +381,36 @@ func (dec *Decoder) readTag(ai majorInfo) (any, error) {
 			v.Neg(v)
 		}
 		return v, nil
+	case tagEncodedCBOR:
+		// 3.4.5.1. The content must be a byte string that encodes a well-formed CBOR data item.
+		// The embedded data item is not decoded, and Tag is returned as is.
+		b, ok := content.([]byte)
+		if !ok || !dec.isWellFormedItem(b) {
+			return nil, newErrorDecodeInvalidTagContent(tagNumber, content)
+		}
+	case tagURI:
+		// 3.4.5.3. The content must match the URI-reference production of RFC 3986.
+		str, ok := content.(string)
+		if !ok {
+			return nil, newErrorDecodeInvalidTagContent(tagNumber, content)
+		}
+		u, err := parseURIReference(str)
+		if err != nil {
+			return nil, newErrorDecodeInvalidTagContent(tagNumber, content)
+		}
+		return u, nil
+	case tagBase64URL, tagBase64:
+		// 3.4.5.3. The content must be a valid base64url (without padding) or base64 (with padding) string.
+		str, ok := content.(string)
+		if !ok || !isValidBase64Text(str, tagNumber == tagBase64URL) {
+			return nil, newErrorDecodeInvalidTagContent(tagNumber, content)
+		}
+	case tagRegexp, tagMIMEMessage:
+		// 3.4.5.3. The content must be a text string. MIME messages are not validated further,
+		// as the specification allows generic decoders not to offer it.
+		if _, ok := content.(string); !ok {
+			return nil, newErrorDecodeInvalidTagContent(tagNumber, content)
+		}
 	case tagSelfDescribed:
 		// 3.4.6. Self-Described CBOR: the tag only marks the data as CBOR and does not change its meaning.
 		return content, nil
@@ -581,4 +614,60 @@ func isShortestFloat64(v float64) bool {
 		return false
 	}
 	return float64(float32(v)) != v
+}
+
+// isWellFormedItem returns true if the specified bytes encode exactly one well-formed data item
+// (RFC 8949 Section 3.4.5.1). The nesting depth of the enclosing items is taken into account.
+func (dec *Decoder) isWellFormedItem(b []byte) bool {
+	reader := bytes.NewReader(b)
+	sub := &Decoder{Config: dec.Config, reader: reader, header: make([]byte, 1), depth: dec.depth}
+	if _, err := sub.Decode(); err != nil {
+		return false
+	}
+	return reader.Len() == 0
+}
+
+// parseURIReference parses the specified string as a URI-reference of RFC 3986.
+// In addition to url.Parse, it checks that the string consists only of the characters
+// allowed in URI references and that percent-encodings are valid.
+func parseURIReference(str string) (*url.URL, error) {
+	isHex := func(c byte) bool {
+		return ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+	}
+	fragments := 0
+	for n := 0; n < len(str); n++ {
+		c := str[n]
+		switch {
+		case 'a' <= c && c <= 'z', 'A' <= c && c <= 'Z', '0' <= c && c <= '9':
+		case strings.IndexByte("-._~:/?[]@!$&'()*+,;=", c) >= 0:
+		case c == '#':
+			fragments++
+			if 1 < fragments {
+				return nil, newErrorDecodeInvalidTagContent(tagURI, str)
+			}
+		case c == '%':
+			if len(str) <= n+2 || !isHex(str[n+1]) || !isHex(str[n+2]) {
+				return nil, newErrorDecodeInvalidTagContent(tagURI, str)
+			}
+			n += 2
+		default:
+			return nil, newErrorDecodeInvalidTagContent(tagURI, str)
+		}
+	}
+	return url.Parse(str)
+}
+
+// isValidBase64Text returns true if the specified string is valid base64url without padding
+// (tag 33) or valid base64 with padding (tag 34) as defined in RFC 8949 Section 3.4.5.3.
+func isValidBase64Text(str string, urlEncoding bool) bool {
+	// The Go decoders ignore CR and LF even in the strict mode.
+	if strings.ContainsAny(str, "\r\n") {
+		return false
+	}
+	enc := base64.StdEncoding.Strict()
+	if urlEncoding {
+		enc = base64.RawURLEncoding.Strict()
+	}
+	_, err := enc.DecodeString(str)
+	return err == nil
 }

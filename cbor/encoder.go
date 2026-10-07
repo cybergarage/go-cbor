@@ -19,6 +19,7 @@ import (
 	"io"
 	"math"
 	"math/big"
+	"net/url"
 	"reflect"
 	"sort"
 	"time"
@@ -57,6 +58,14 @@ func (enc *Encoder) Encode(item any) error {
 			return enc.encodePrimitiveTypes(nil)
 		}
 		return enc.encodeBigInt(v)
+	case url.URL:
+		// 3.4.5.3. URIs are encoded as tag 32.
+		return enc.encodeTag(tagURI, v.String())
+	case *url.URL:
+		if v == nil {
+			return enc.encodePrimitiveTypes(nil)
+		}
+		return enc.encodeTag(tagURI, v.String())
 	case Tag:
 		return enc.encodeTag(v.Number, v.Content)
 	case *Tag:
