@@ -5,6 +5,11 @@
 - Fixed Decoder::Decode() to return io.ErrUnexpectedEOF for truncated data items instead of silently returning wrong values
 - Fixed Decoder::Decode() to return an error instead of panicking for map keys that cannot be used as Go map keys (arrays, maps, and byte strings)
 - Fixed Decoder::Decode() to reject lengths that overflow int and to avoid preallocating memory for untrusted byte and text string lengths
+- Added indefinite-length decoding for byte strings, text strings, arrays, and maps (RFC 8949 Section 3.2)
+- Added Tag type; Decoder::Decode() returns Tag for tag numbers it does not interpret instead of an error, and Encoder::Encode() encodes Tag and *Tag (RFC 8949 Section 3.4)
+- Added support for tag numbers encoded with 1 to 8 byte arguments
+- Updated Decoder::Decode() to skip the self-described CBOR tag (55799)
+- Updated Decoder::Decode() to return ErrDecode for a misplaced break stop code (0xFF) or an invalid chunk in an indefinite-length string
 
 ## v1.3.3 (2026-02-03)
 - Updated go-safecast package from v1.3.4 to v1.3.5

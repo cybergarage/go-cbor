@@ -41,6 +41,9 @@ const (
 	aiTwoByte   majorInfo = 25
 	aiFourByte  majorInfo = 26
 	aiEightByte majorInfo = 27
+	// 3.2. Indefinite Lengths for Some Major Types.
+	aiIndefinite majorInfo = 31
+	breakCode    byte      = 0xFF
 	// 3.3. Floating-Point Numbers and Values with No Content.
 	fpnFloat16 majorInfo = 25
 	fpnFloat32 majorInfo = 26
@@ -48,7 +51,11 @@ const (
 	simpFalse  majorInfo = 20
 	simpTrue   majorInfo = 21
 	simpNull   majorInfo = 22
+)
+
+const (
 	// 3.4. Tagging of Items.
-	tagStdDateTime   majorInfo = 0
-	tagEpochDateTime majorInfo = 1
+	tagStdDateTime   uint64 = 0
+	tagEpochDateTime uint64 = 1
+	tagSelfDescribed uint64 = 55799
 )

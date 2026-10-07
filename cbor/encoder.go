@@ -41,11 +41,18 @@ func NewEncoder(w io.Writer) *Encoder {
 // Encode writes the specified object to the specified writer.
 func (enc *Encoder) Encode(item any) error {
 	// Special data types that cannot be determined by reflect package
-	switch item.(type) {
+	switch v := item.(type) {
 	case []byte: // Recognize as a byte array instead of a uint8 array。
 		return enc.encodePrimitiveTypes(item)
 	case time.Time:
 		return enc.encodeStdStruct(item)
+	case Tag:
+		return enc.encodeTag(v.Number, v.Content)
+	case *Tag:
+		if v == nil {
+			return enc.encodePrimitiveTypes(nil)
+		}
+		return enc.encodeTag(v.Number, v.Content)
 	case nil:
 		return enc.encodePrimitiveTypes(item)
 	}
@@ -390,10 +397,45 @@ func (enc *Encoder) encodeMap(item any) error {
 	return writeAnyMap(v)
 }
 
+// encodeArgument writes the initial byte and the argument in the shortest form (RFC 8949 Section 3).
+func (enc *Encoder) encodeArgument(mt majorType, n uint64) error {
+	switch {
+	case n < uint64(aiOneByte):
+		return writeHeader(enc.writer, mt, majorInfo(n))
+	case n <= math.MaxUint8:
+		if err := writeHeader(enc.writer, mt, aiOneByte); err != nil {
+			return err
+		}
+		return writeUint8Bytes(enc.writer, uint8(n))
+	case n <= math.MaxUint16:
+		if err := writeHeader(enc.writer, mt, aiTwoByte); err != nil {
+			return err
+		}
+		return writeUint16Bytes(enc.writer, uint16(n))
+	case n <= math.MaxUint32:
+		if err := writeHeader(enc.writer, mt, aiFourByte); err != nil {
+			return err
+		}
+		return writeUint32Bytes(enc.writer, uint32(n))
+	}
+	if err := writeHeader(enc.writer, mt, aiEightByte); err != nil {
+		return err
+	}
+	return writeUint64Bytes(enc.writer, n)
+}
+
+// encodeTag writes a tagged data item (RFC 8949 Section 3.4).
+func (enc *Encoder) encodeTag(number uint64, content any) error {
+	if err := enc.encodeArgument(mtTag, number); err != nil {
+		return err
+	}
+	return enc.Encode(content)
+}
+
 func (enc *Encoder) encodeStdStruct(item any) error {
 	switch v := item.(type) {
 	case time.Time:
-		if err := writeHeader(enc.writer, mtTag, tagStdDateTime); err != nil {
+		if err := enc.encodeArgument(mtTag, tagStdDateTime); err != nil {
 			return err
 		}
 		return enc.encodeTextString(v.Format(time.RFC3339))
