@@ -37,6 +37,8 @@ const (
 	errorUnmarshalReflectValues = "%w : cound not convert from %v to %T"
 	errorDecodeLengthTooLarge   = "%w : length (%d) exceeds the maximum supported length (%d)"
 	errorDecodeUnhashableKey    = "%w : map key (%T) cannot be used as a Go map key"
+	errorDecodeUnexpectedBreak  = "%w : unexpected break stop code"
+	errorDecodeInvalidChunk     = "%w : invalid chunk (0x%02X) in indefinite-length string of major type (%d)"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -77,4 +79,12 @@ func newErrorDecodeLengthTooLarge(n uint64) error {
 
 func newErrorDecodeUnhashableKey(key any) error {
 	return fmt.Errorf(errorDecodeUnhashableKey, ErrDecode, key)
+}
+
+func newErrorDecodeUnexpectedBreak() error {
+	return fmt.Errorf(errorDecodeUnexpectedBreak, ErrDecode)
+}
+
+func newErrorDecodeInvalidChunk(m majorType, header byte) error {
+	return fmt.Errorf(errorDecodeInvalidChunk, ErrDecode, header, (m >> 5))
 }

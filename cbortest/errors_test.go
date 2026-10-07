@@ -32,7 +32,7 @@ func TestErrors(t *testing.T) {
 			name: "NotSupportedMajorType",
 			testFunc: func() error {
 				// Trigger by encoding an unsupported type
-				data := []byte{0xFF} // Invalid major type
+				data := []byte{0x1C} // Reserved additional information (28)
 				_, err := cbor.Unmarshal(data)
 				return err
 			},
