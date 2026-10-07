@@ -98,6 +98,16 @@ func (dec *Decoder) unmarshalArrayToArray(fromArrayVal reflect.Value, toArrayVal
 	// NOTE: The Laws of Reflection - The Go Programming Language
 	// https://go.dev/blog/laws-of-reflection
 
+	if fromArrayVal.Kind() != reflect.Array && fromArrayVal.Kind() != reflect.Slice {
+		return newErrorUnmarshalReflectValues(fromArrayVal, toArrayVal)
+	}
+	pointerDestination := toArrayVal.Kind() == reflect.Pointer
+	if pointerDestination {
+		if toArrayVal.IsNil() {
+			return newErrorUnmarshalReflectValues(fromArrayVal, toArrayVal)
+		}
+		toArrayVal = toArrayVal.Elem()
+	}
 	fromArrayLen := fromArrayVal.Len()
 	toArrayType := toArrayVal.Type()
 	switch toArrayType.Kind() {
@@ -110,27 +120,12 @@ func (dec *Decoder) unmarshalArrayToArray(fromArrayVal reflect.Value, toArrayVal
 			if !toArrayVal.CanSet() {
 				return newErrorUnmarshalArraySize(fromArrayVal, toArrayVal)
 			}
-			toArrayVal.Set(reflect.MakeSlice(toArrayType, fromArrayLen, fromArrayLen))
-		}
-	case reflect.Pointer:
-		elem := toArrayVal.Elem()
-		switch elem.Type().Kind() {
-		case reflect.Array:
-			if elem.Len() < fromArrayLen {
-				return newErrorUnmarshalArraySize(fromArrayVal, toArrayVal)
+			if pointerDestination {
+				appendLen := fromArrayLen - toArrayVal.Len()
+				toArrayVal.Set(reflect.AppendSlice(toArrayVal, reflect.MakeSlice(toArrayType, appendLen, appendLen)))
+			} else {
+				toArrayVal.Set(reflect.MakeSlice(toArrayType, fromArrayLen, fromArrayLen))
 			}
-		case reflect.Slice:
-			if elem.Len() < fromArrayLen {
-				if !elem.CanSet() {
-					return newErrorUnmarshalArraySize(fromArrayVal, toArrayVal)
-				}
-				toArrayType = elem.Type()
-				appendLen := fromArrayLen - elem.Len()
-				elem.Set(reflect.AppendSlice(elem, reflect.MakeSlice(toArrayType, appendLen, appendLen)))
-				toArrayVal = elem
-			}
-		default:
-			return newErrorUnmarshalDataTypes(fromArrayVal.Interface(), toArrayVal.Interface())
 		}
 	default:
 		return newErrorUnmarshalDataTypes(fromArrayVal.Interface(), toArrayVal.Interface())
@@ -178,8 +173,12 @@ func (dec *Decoder) unmarshalMapToStruct(fromMap map[any]any, toStructVal reflec
 		if !ok {
 			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 		}
-		toStructField := toStructVal.FieldByName(key)
-		if !toStructField.IsValid() {
+		field, ok := toStructVal.Type().FieldByName(key)
+		if !ok {
+			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
+		}
+		toStructField, err := toStructVal.FieldByIndexErr(field.Index)
+		if err != nil || !toStructField.CanInterface() {
 			return newErrorUnmarshalDataTypes(fromMap, toStructVal)
 		}
 		fromMapElemVal := reflect.ValueOf(fromMapElem)
@@ -188,6 +187,9 @@ func (dec *Decoder) unmarshalMapToStruct(fromMap map[any]any, toStructVal reflec
 		}
 		toStructFieldKind := toStructField.Type().Kind()
 		if fromMapElemVal.Type().AssignableTo(toStructField.Type()) {
+			if !toStructField.CanSet() {
+				return newErrorUnmarshalDataTypes(fromMap, toStructVal)
+			}
 			toStructField.Set(fromMapElemVal)
 			continue
 		}
@@ -221,11 +223,20 @@ func (dec *Decoder) unmarshalValueToValue(fromVal reflect.Value, toVal reflect.V
 	fromType := fromVal.Type()
 	toType := toVal.Type()
 	toKind := toType.Kind()
+	if !toVal.CanSet() && toKind != reflect.Array && toKind != reflect.Slice {
+		return newErrorUnmarshalReflectValues(fromVal, toVal)
+	}
 	if fromType.AssignableTo(toType) {
+		if !toVal.CanSet() {
+			return newErrorUnmarshalReflectValues(fromVal, toVal)
+		}
 		toVal.Set(fromVal)
 		return nil
 	}
 	if fromVal.CanConvert(toType) {
+		if !toVal.CanSet() {
+			return newErrorUnmarshalReflectValues(fromVal, toVal)
+		}
 		toVal.Set(fromVal.Convert(toType))
 		return nil
 	}
