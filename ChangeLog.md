@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+- Fixed Decoder::Decode() to decode negative integers (major type 1) correctly for all argument values, returning *big.Int for values less than math.MinInt64
+- Fixed Decoder::Decode() to return io.ErrUnexpectedEOF for truncated data items instead of silently returning wrong values
+- Fixed Decoder::Decode() to return an error instead of panicking for map keys that cannot be used as Go map keys (arrays, maps, and byte strings)
+- Fixed Decoder::Decode() to reject lengths that overflow int and to avoid preallocating memory for untrusted byte and text string lengths
+
 ## v1.3.3 (2026-02-03)
 - Updated go-safecast package from v1.3.4 to v1.3.5
 - Fix golangci-lint issues

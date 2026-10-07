@@ -17,6 +17,7 @@ package cbor
 import (
 	"errors"
 	"fmt"
+	"math"
 	"reflect"
 )
 
@@ -34,6 +35,8 @@ const (
 	errorUnmarshalCastTypes     = "%w : cound not cast from %v (%T) to %T"
 	errorSortedMapEncode        = "%w : map key (%v:%T) could not be sorted"
 	errorUnmarshalReflectValues = "%w : cound not convert from %v to %T"
+	errorDecodeLengthTooLarge   = "%w : length (%d) exceeds the maximum supported length (%d)"
+	errorDecodeUnhashableKey    = "%w : map key (%T) cannot be used as a Go map key"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -66,4 +69,12 @@ func newErrorSortedMapEncode(key any) error {
 
 func newErrorUnmarshalReflectValues(from reflect.Value, to reflect.Value) error {
 	return fmt.Errorf(errorUnmarshalReflectValues, ErrUnmarshal, from.Kind().String(), to.Kind().String())
+}
+
+func newErrorDecodeLengthTooLarge(n uint64) error {
+	return fmt.Errorf(errorDecodeLengthTooLarge, ErrDecode, n, math.MaxInt)
+}
+
+func newErrorDecodeUnhashableKey(key any) error {
+	return fmt.Errorf(errorDecodeUnhashableKey, ErrDecode, key)
 }

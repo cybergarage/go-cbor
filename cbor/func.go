@@ -15,8 +15,11 @@
 package cbor
 
 import (
+	"bytes"
+	"errors"
 	"io"
 	"math"
+	"math/big"
 	"reflect"
 )
 
@@ -38,12 +41,27 @@ func writeString(w io.Writer, val string) error {
 	return writeBytes(w, []byte(val))
 }
 
+// maxPreallocBytes is the largest byte string length that readBytes allocates up front.
+// Longer strings are read incrementally so that a forged length in the header cannot
+// force a huge allocation before the data is actually available (RFC 8949 Section 10).
+const maxPreallocBytes = 64 * 1024
+
 func readBytes(r io.Reader, n int) ([]byte, error) {
-	buf := make([]byte, n)
-	if _, err := io.ReadFull(r, buf); err != nil {
+	if n <= maxPreallocBytes {
+		buf := make([]byte, n)
+		if _, err := io.ReadFull(r, buf); err != nil {
+			return nil, err
+		}
+		return buf, nil
+	}
+	var buf bytes.Buffer
+	if _, err := io.CopyN(&buf, r, int64(n)); err != nil {
+		if errors.Is(err, io.EOF) {
+			return nil, io.ErrUnexpectedEOF
+		}
 		return nil, err
 	}
-	return buf, nil
+	return buf.Bytes(), nil
 }
 
 ////////////////////////////////////////////////////////////
@@ -62,7 +80,7 @@ func writeHeader(w io.Writer, m majorType, i majorInfo) error {
 
 func readInt8Bytes(r io.Reader) (int8, error) {
 	buf := []byte{0}
-	if _, err := r.Read(buf); err != nil {
+	if _, err := io.ReadFull(r, buf); err != nil {
 		return 0, err
 	}
 	return int8(buf[0]), nil
@@ -79,7 +97,7 @@ func writeInt8Bytes(w io.Writer, v int8) error {
 
 func readUint8Bytes(r io.Reader) (uint8, error) {
 	buf := []byte{0}
-	if _, err := r.Read(buf); err != nil {
+	if _, err := io.ReadFull(r, buf); err != nil {
 		return 0, err
 	}
 	return buf[0], nil
@@ -94,14 +112,6 @@ func writeUint8Bytes(w io.Writer, v uint8) error {
 // nint8 (CBOR)
 ////////////////////////////////////////////////////////////
 
-func readNint8Bytes(r io.Reader) (int8, error) {
-	v, err := readUint8Bytes(r)
-	if err != nil {
-		return 0, err
-	}
-	return -int8(v + 1), nil
-}
-
 func writeNint8Bytes(w io.Writer, v int8) error {
 	return writeUint8Bytes(w, uint8(-(v + 1)))
 }
@@ -112,7 +122,7 @@ func writeNint8Bytes(w io.Writer, v int8) error {
 
 func readInt16Bytes(r io.Reader) (int16, error) {
 	buf := []byte{0, 0}
-	if _, err := r.Read(buf); err != nil {
+	if _, err := io.ReadFull(r, buf); err != nil {
 		return 0, err
 	}
 	return (int16(buf[0])<<8 | int16(buf[1])), nil
@@ -131,7 +141,7 @@ func writeInt16Bytes(w io.Writer, v int16) error {
 
 func readUint16Bytes(r io.Reader) (uint16, error) {
 	buf := []byte{0, 0}
-	if _, err := r.Read(buf); err != nil {
+	if _, err := io.ReadFull(r, buf); err != nil {
 		return 0, err
 	}
 	return (uint16(buf[0])<<8 | uint16(buf[1])), nil
@@ -148,14 +158,6 @@ func writeUint16Bytes(w io.Writer, v uint16) error {
 // nint16 (CBOR)
 ////////////////////////////////////////////////////////////
 
-func readNint16Bytes(r io.Reader) (int16, error) {
-	v, err := readUint16Bytes(r)
-	if err != nil {
-		return 0, err
-	}
-	return -int16(v + 1), nil
-}
-
 func writeNint16Bytes(w io.Writer, v int16) error {
 	return writeUint16Bytes(w, uint16(-(v + 1)))
 }
@@ -166,7 +168,7 @@ func writeNint16Bytes(w io.Writer, v int16) error {
 
 func readInt32Bytes(r io.Reader) (int32, error) {
 	buf := []byte{0, 0, 0, 0}
-	if _, err := r.Read(buf); err != nil {
+	if _, err := io.ReadFull(r, buf); err != nil {
 		return 0, err
 	}
 	return (int32(buf[0])<<24 | int32(buf[1])<<16 | int32(buf[2])<<8 | int32(buf[3])), nil
@@ -187,7 +189,7 @@ func writeInt32Bytes(w io.Writer, v int32) error {
 
 func readUint32Bytes(r io.Reader) (uint32, error) {
 	buf := []byte{0, 0, 0, 0}
-	if _, err := r.Read(buf); err != nil {
+	if _, err := io.ReadFull(r, buf); err != nil {
 		return 0, err
 	}
 	return (uint32(buf[0])<<24 | uint32(buf[1])<<16 | uint32(buf[2])<<8 | uint32(buf[3])), nil
@@ -206,14 +208,6 @@ func writeUint32Bytes(w io.Writer, v uint32) error {
 // nint32 (CBOR)
 ////////////////////////////////////////////////////////////
 
-func readNint32Bytes(r io.Reader) (int32, error) {
-	v, err := readUint32Bytes(r)
-	if err != nil {
-		return 0, err
-	}
-	return -int32(v + 1), nil
-}
-
 func writeNint32Bytes(w io.Writer, v int32) error {
 	return writeUint32Bytes(w, uint32(-(v + 1)))
 }
@@ -224,7 +218,7 @@ func writeNint32Bytes(w io.Writer, v int32) error {
 
 func readInt64Bytes(r io.Reader) (int64, error) {
 	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0}
-	if _, err := r.Read(buf); err != nil {
+	if _, err := io.ReadFull(r, buf); err != nil {
 		return 0, err
 	}
 	return (int64(buf[0])<<56 | int64(buf[1])<<48 | int64(buf[2])<<40 | int64(buf[3])<<32 | int64(buf[4])<<24 | int64(buf[5])<<16 | int64(buf[6])<<8 | int64(buf[7])), nil
@@ -249,7 +243,7 @@ func writeInt64Bytes(w io.Writer, v int64) error {
 
 func readUint64Bytes(r io.Reader) (uint64, error) {
 	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0}
-	if _, err := r.Read(buf); err != nil {
+	if _, err := io.ReadFull(r, buf); err != nil {
 		return 0, err
 	}
 	return (uint64(buf[0])<<56 | uint64(buf[1])<<48 | uint64(buf[2])<<40 | uint64(buf[3])<<32 | uint64(buf[4])<<24 | uint64(buf[5])<<16 | uint64(buf[6])<<8 | uint64(buf[7])), nil
@@ -272,16 +266,65 @@ func writeUint64Bytes(w io.Writer, v uint64) error {
 // nint64 (CBOR)
 ////////////////////////////////////////////////////////////
 
-func readNint64Bytes(r io.Reader) (int64, error) {
-	v, err := readUint64Bytes(r)
-	if err != nil {
-		return 0, err
-	}
-	return -int64(v + 1), nil
-}
-
 func writeNint64Bytes(w io.Writer, v int64) error {
 	return writeUint64Bytes(w, uint64(-(v + 1)))
+}
+
+////////////////////////////////////////////////////////////
+// nint (CBOR major type 1)
+////////////////////////////////////////////////////////////
+
+// nintValue returns the value of a CBOR negative integer (major type 1) whose
+// argument is n, that is -1 - n (RFC 8949 Section 3.1).
+// The value is returned as the smallest Go signed integer type, no smaller than
+// the argument size (in bytes), that can hold it. Values less than math.MinInt64
+// (-2^64 <= value < -2^63) are returned as *big.Int.
+func nintValue(n uint64, size int) any {
+	switch {
+	case size <= 1 && n <= math.MaxInt8:
+		return -int8(n) - 1
+	case size <= 2 && n <= math.MaxInt16:
+		return -int16(n) - 1
+	case size <= 4 && n <= math.MaxInt32:
+		return -int32(n) - 1
+	case n <= math.MaxInt64:
+		return -int64(n) - 1
+	}
+	v := new(big.Int).SetUint64(n)
+	v.Add(v, big.NewInt(1))
+	return v.Neg(v)
+}
+
+func readNint8Bytes(r io.Reader) (any, error) {
+	v, err := readUint8Bytes(r)
+	if err != nil {
+		return nil, err
+	}
+	return nintValue(uint64(v), 1), nil
+}
+
+func readNint16Bytes(r io.Reader) (any, error) {
+	v, err := readUint16Bytes(r)
+	if err != nil {
+		return nil, err
+	}
+	return nintValue(uint64(v), 2), nil
+}
+
+func readNint32Bytes(r io.Reader) (any, error) {
+	v, err := readUint32Bytes(r)
+	if err != nil {
+		return nil, err
+	}
+	return nintValue(uint64(v), 4), nil
+}
+
+func readNint64Bytes(r io.Reader) (any, error) {
+	v, err := readUint64Bytes(r)
+	if err != nil {
+		return nil, err
+	}
+	return nintValue(v, 8), nil
 }
 
 ////////////////////////////////////////////////////////////
