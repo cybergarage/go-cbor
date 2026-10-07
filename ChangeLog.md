@@ -10,6 +10,12 @@
 - Added support for tag numbers encoded with 1 to 8 byte arguments
 - Updated Decoder::Decode() to skip the self-described CBOR tag (55799)
 - Updated Decoder::Decode() to return ErrDecode for a misplaced break stop code (0xFF) or an invalid chunk in an indefinite-length string
+- Added SimpleValue type and Undefined; Decoder::Decode() decodes all simple values (RFC 8949 Section 3.3) and Encoder::Encode() encodes SimpleValue
+- Updated Decoder::Decode() to decode epoch-based date/time (tag 1) into time.Time in UTC (RFC 8949 Section 3.4.2)
+- Updated Decoder::Decode() to decode bignums (tags 2 and 3) into *big.Int, and Encoder::Encode() to encode big.Int and *big.Int (RFC 8949 Section 3.4.3)
+- Updated Encoder::Encode() to keep fractional seconds when encoding time.Time as tag 0
+- Fixed Encoder::Encode() to encode struct fields in declaration order instead of random order
+- Fixed Encoder::Encode() to skip unexported struct fields instead of panicking
 
 ## v1.3.3 (2026-02-03)
 - Updated go-safecast package from v1.3.4 to v1.3.5

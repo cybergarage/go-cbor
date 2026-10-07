@@ -51,11 +51,17 @@ const (
 	simpFalse  majorInfo = 20
 	simpTrue   majorInfo = 21
 	simpNull   majorInfo = 22
+	// simpOneByte is the additional information for a simple value in the following byte (32..255).
+	simpOneByte majorInfo = 24
+	// simpMinOneByte is the minimum simple value that can be encoded in the following byte.
+	simpMinOneByte = 32
 )
 
 const (
 	// 3.4. Tagging of Items.
-	tagStdDateTime   uint64 = 0
-	tagEpochDateTime uint64 = 1
-	tagSelfDescribed uint64 = 55799
+	tagStdDateTime    uint64 = 0
+	tagEpochDateTime  uint64 = 1
+	tagPositiveBignum uint64 = 2
+	tagNegativeBignum uint64 = 3
+	tagSelfDescribed  uint64 = 55799
 )

@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"math/big"
 	"reflect"
 	"sort"
 	"time"
@@ -46,6 +47,15 @@ func (enc *Encoder) Encode(item any) error {
 		return enc.encodePrimitiveTypes(item)
 	case time.Time:
 		return enc.encodeStdStruct(item)
+	case SimpleValue:
+		return enc.encodeSimpleValue(v)
+	case big.Int:
+		return enc.encodeBigInt(&v)
+	case *big.Int:
+		if v == nil {
+			return enc.encodePrimitiveTypes(nil)
+		}
+		return enc.encodeBigInt(v)
 	case Tag:
 		return enc.encodeTag(v.Number, v.Content)
 	case *Tag:
@@ -424,6 +434,38 @@ func (enc *Encoder) encodeArgument(mt majorType, n uint64) error {
 	return writeUint64Bytes(enc.writer, n)
 }
 
+// encodeSimpleValue writes a simple value (RFC 8949 Section 3.3).
+func (enc *Encoder) encodeSimpleValue(v SimpleValue) error {
+	switch {
+	case v < SimpleValue(simpOneByte):
+		return writeHeader(enc.writer, mtFloat, majorInfo(v))
+	case v < simpMinOneByte:
+		return newErrorEncodeReservedSimpleValue(v)
+	}
+	if err := writeHeader(enc.writer, mtFloat, simpOneByte); err != nil {
+		return err
+	}
+	return writeUint8Bytes(enc.writer, uint8(v))
+}
+
+// encodeBigInt writes an integer as major type 0 or 1 if it fits in 64 bits,
+// otherwise as a bignum (tag 2 or 3) as defined in RFC 8949 Section 3.4.3.
+func (enc *Encoder) encodeBigInt(v *big.Int) error {
+	if 0 <= v.Sign() {
+		if v.IsUint64() {
+			return enc.encodeArgument(mtUint, v.Uint64())
+		}
+		return enc.encodeTag(tagPositiveBignum, v.Bytes())
+	}
+	// A negative integer n is encoded as -1 - n.
+	n := new(big.Int).Neg(v)
+	n.Sub(n, big.NewInt(1))
+	if n.IsUint64() {
+		return enc.encodeArgument(mtNInt, n.Uint64())
+	}
+	return enc.encodeTag(tagNegativeBignum, n.Bytes())
+}
+
 // encodeTag writes a tagged data item (RFC 8949 Section 3.4).
 func (enc *Encoder) encodeTag(number uint64, content any) error {
 	if err := enc.encodeArgument(mtTag, number); err != nil {
@@ -438,7 +480,8 @@ func (enc *Encoder) encodeStdStruct(item any) error {
 		if err := enc.encodeArgument(mtTag, tagStdDateTime); err != nil {
 			return err
 		}
-		return enc.encodeTextString(v.Format(time.RFC3339))
+		// RFC3339Nano keeps fractional seconds and omits them when they are zero.
+		return enc.encodeTextString(v.Format(time.RFC3339Nano))
 	default:
 		return newErrorNotSupportedNativeType(item)
 	}
@@ -459,11 +502,34 @@ func (enc *Encoder) encodeStruct(item any) error {
 		return newErrorNotSupportedNativeType(item)
 	}
 
-	structMap := map[any]any{}
-	numField := itemStruct.NumField()
-	for n := range numField {
-		typeField := itemStruct.Type().Field(n)
-		structMap[typeField.Name] = itemStruct.Field(n).Interface()
+	// Unexported fields are skipped like encoding/json, because their values cannot be read through reflection.
+	fields := make([]int, 0, itemStruct.NumField())
+	for n := range itemStruct.NumField() {
+		if itemStruct.Type().Field(n).IsExported() {
+			fields = append(fields, n)
+		}
 	}
-	return enc.encodeMap(structMap)
+
+	if enc.MapSortEnabled {
+		structMap := map[any]any{}
+		for _, n := range fields {
+			typeField := itemStruct.Type().Field(n)
+			structMap[typeField.Name] = itemStruct.Field(n).Interface()
+		}
+		return enc.encodeMap(structMap)
+	}
+
+	// Encode the fields in the declaration order so that the output is deterministic.
+	if err := enc.encodeNumberOfBytes(mtMap, len(fields)); err != nil {
+		return err
+	}
+	for _, n := range fields {
+		if err := enc.encodeTextString(itemStruct.Type().Field(n).Name); err != nil {
+			return err
+		}
+		if err := enc.Encode(itemStruct.Field(n).Interface()); err != nil {
+			return err
+		}
+	}
+	return nil
 }

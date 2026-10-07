@@ -136,10 +136,6 @@ func TestRFC8949Tags(t *testing.T) {
 		encoded  string
 		expected any
 	}{
-		{"c11a514b67b0", cbor.Tag{Number: 1, Content: int32(1363896240)}},
-		{"c1fb41d452d9ec200000", cbor.Tag{Number: 1, Content: float64(1363896240.5)}},
-		{"c249010000000000000000", cbor.Tag{Number: 2, Content: []byte{0x01, 0, 0, 0, 0, 0, 0, 0, 0}}},
-		{"c349010000000000000000", cbor.Tag{Number: 3, Content: []byte{0x01, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		{"c48221196ab3", cbor.Tag{Number: 4, Content: []any{int8(-2), int16(27315)}}},
 		{"d74401020304", cbor.Tag{Number: 23, Content: []byte{0x01, 0x02, 0x03, 0x04}}},
 		{"d818456449455446", cbor.Tag{Number: 24, Content: []byte("dIETF")}},
@@ -148,7 +144,7 @@ func TestRFC8949Tags(t *testing.T) {
 		{"da0001000001", cbor.Tag{Number: 65536, Content: int8(1)}},
 		{"dbffffffffffffffff01", cbor.Tag{Number: 18446744073709551615, Content: int8(1)}},
 		{"d8189f01ff", cbor.Tag{Number: 24, Content: []any{int8(1)}}},
-		{"c1c201", cbor.Tag{Number: 1, Content: cbor.Tag{Number: 2, Content: int8(1)}}},
+		{"d81ad81b01", cbor.Tag{Number: 26, Content: cbor.Tag{Number: 27, Content: int8(1)}}},
 		// 3.4.6. Self-Described CBOR
 		{"d9d9f700", int8(0)},
 		{"d9d9f783010203", []any{int8(1), int8(2), int8(3)}},
@@ -176,11 +172,11 @@ func TestRFC8949Tags(t *testing.T) {
 }
 
 func TestRFC8949TagMapKeys(t *testing.T) {
-	v, err := decodeHex(t, "a1c10102")
+	v, err := decodeHex(t, "a1d81b0102")
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := map[any]any{cbor.Tag{Number: 1, Content: int8(1)}: int8(2)}
+	want := map[any]any{cbor.Tag{Number: 27, Content: int8(1)}: int8(2)}
 	if !reflect.DeepEqual(v, want) {
 		t.Errorf("got %#v, want %#v", v, want)
 	}
