@@ -459,11 +459,28 @@ func (enc *Encoder) encodeStruct(item any) error {
 		return newErrorNotSupportedNativeType(item)
 	}
 
-	structMap := map[any]any{}
 	numField := itemStruct.NumField()
-	for n := range numField {
-		typeField := itemStruct.Type().Field(n)
-		structMap[typeField.Name] = itemStruct.Field(n).Interface()
+
+	if enc.MapSortEnabled {
+		structMap := map[any]any{}
+		for n := range numField {
+			typeField := itemStruct.Type().Field(n)
+			structMap[typeField.Name] = itemStruct.Field(n).Interface()
+		}
+		return enc.encodeMap(structMap)
 	}
-	return enc.encodeMap(structMap)
+
+	// Encode the fields in the declaration order so that the output is deterministic.
+	if err := enc.encodeNumberOfBytes(mtMap, numField); err != nil {
+		return err
+	}
+	for n := range numField {
+		if err := enc.encodeTextString(itemStruct.Type().Field(n).Name); err != nil {
+			return err
+		}
+		if err := enc.Encode(itemStruct.Field(n).Interface()); err != nil {
+			return err
+		}
+	}
+	return nil
 }
