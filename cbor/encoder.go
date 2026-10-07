@@ -15,7 +15,7 @@
 package cbor
 
 import (
-	"fmt"
+	"bytes"
 	"io"
 	"math"
 	"math/big"
@@ -106,41 +106,9 @@ func (enc *Encoder) Encode(item any) error {
 	return newErrorNotSupportedNativeType(item)
 }
 
-func (enc *Encoder) encodeNumberOfBytes(mt majorType, n int) error {
-	header := byte(mt)
-	switch {
-	case n < int(aiOneByte):
-		header |= uint8(n)
-	case n < math.MaxUint8:
-		header |= byte(aiOneByte)
-	case n < math.MaxUint16:
-		header |= byte(aiTwoByte)
-	case n < math.MaxUint32:
-		header |= byte(aiFourByte)
-	default:
-		header |= byte(aiEightByte)
-	}
-	if err := writeByte(enc.writer, header); err != nil {
-		return err
-	}
-
-	switch {
-	case n < int(aiOneByte):
-		return nil
-	case n < math.MaxUint8:
-		return writeUint8Bytes(enc.writer, uint8(n))
-	case n < math.MaxUint16:
-		return writeUint16Bytes(enc.writer, uint16(n))
-	case n < math.MaxUint32:
-		return writeUint32Bytes(enc.writer, uint32(n))
-	default:
-		return writeUint64Bytes(enc.writer, uint64(n))
-	}
-}
-
 func (enc *Encoder) encodeTextString(v string) error {
 	n := len(v)
-	if err := enc.encodeNumberOfBytes(mtText, n); err != nil {
+	if err := enc.encodeArgument(mtText, uint64(n)); err != nil {
 		return err
 	}
 	return writeString(enc.writer, v)
@@ -148,7 +116,7 @@ func (enc *Encoder) encodeTextString(v string) error {
 
 func (enc *Encoder) encodeByteString(v []byte) error {
 	n := len(v)
-	if err := enc.encodeNumberOfBytes(mtBytes, n); err != nil {
+	if err := enc.encodeArgument(mtBytes, uint64(n)); err != nil {
 		return err
 	}
 	return writeBytes(enc.writer, v)
@@ -205,6 +173,36 @@ func (enc *Encoder) encodePrimitiveTypes(item any) error {
 	}
 
 	// 3. Specification of the CBOR Encoding.
+
+	if enc.encodeMode != EncodeModeTypePreserving {
+		// 4.1. Preferred Serialization
+		switch v := item.(type) {
+		case uint8:
+			return enc.encodeArgument(mtUint, uint64(v))
+		case uint16:
+			return enc.encodeArgument(mtUint, uint64(v))
+		case uint32:
+			return enc.encodeArgument(mtUint, uint64(v))
+		case uint64:
+			return enc.encodeArgument(mtUint, v)
+		case uint:
+			return enc.encodeArgument(mtUint, uint64(v))
+		case int8:
+			return enc.encodeInt(int64(v))
+		case int16:
+			return enc.encodeInt(int64(v))
+		case int32:
+			return enc.encodeInt(int64(v))
+		case int64:
+			return enc.encodeInt(v)
+		case int:
+			return enc.encodeInt(int64(v))
+		case float32:
+			return enc.encodePreferredFloat(float64(v))
+		case float64:
+			return enc.encodePreferredFloat(v)
+		}
+	}
 
 	switch v := item.(type) {
 	case uint8:
@@ -326,7 +324,7 @@ func (enc *Encoder) encodePrimitiveTypes(item any) error {
 func (enc *Encoder) encodeArray(item any) error {
 	writeAnyArray := func(v []any) error {
 		cnt := len(v)
-		if err := enc.encodeNumberOfBytes(mtArray, cnt); err != nil {
+		if err := enc.encodeArgument(mtArray, uint64(cnt)); err != nil {
 			return err
 		}
 		for n := range cnt {
@@ -351,36 +349,33 @@ func (enc *Encoder) encodeArray(item any) error {
 	return writeAnyArray(v)
 }
 
-func encodeMapWithSort[K comparable, V any](enc *Encoder, m map[K]V) error {
-	keys := make([]K, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
+// isMapKeySortRequired returns true if map keys must be sorted.
+func (enc *Encoder) isMapKeySortRequired() bool {
+	switch enc.encodeMode {
+	case EncodeModeCoreDeterministic, EncodeModeLengthFirstDeterministic:
+		return true
+	case EncodeModePreferred, EncodeModeTypePreserving:
+		return enc.MapSortEnabled
 	}
-	sort.Slice(keys, func(i, j int) bool {
-		return fmt.Sprintf("%v", keys[i]) < fmt.Sprintf("%v", keys[j])
-	})
-	for _, k := range keys {
-		if err := enc.Encode(k); err != nil {
-			return err
-		}
-		v := m[k]
-		if err := enc.Encode(v); err != nil {
-			return err
-		}
-	}
-	return nil
+	return enc.MapSortEnabled
 }
 
-func (enc *Encoder) encodeMap(item any) error {
-	writeAnyMap := func(m map[any]any) error {
-		if err := enc.encodeNumberOfBytes(mtMap, len(m)); err != nil {
-			return err
-		}
+// encodeToBytes returns the encoding of the specified item with the same configuration.
+func (enc *Encoder) encodeToBytes(item any) ([]byte, error) {
+	var buf bytes.Buffer
+	sub := &Encoder{Config: enc.Config, writer: &buf}
+	if err := sub.Encode(item); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
 
-		if enc.MapSortEnabled {
-			return encodeMapWithSort(enc, m)
-		}
+func (enc *Encoder) encodeAnyMap(m map[any]any) error {
+	if err := enc.encodeArgument(mtMap, uint64(len(m))); err != nil {
+		return err
+	}
 
+	if !enc.isMapKeySortRequired() {
 		for k, v := range m {
 			if err := enc.Encode(k); err != nil {
 				return err
@@ -389,22 +384,99 @@ func (enc *Encoder) encodeMap(item any) error {
 				return err
 			}
 		}
-
 		return nil
 	}
 
+	// 4.2.1. Core Deterministic Encoding Requirements: the keys are sorted by their encodings.
+	type encodedPair struct {
+		key []byte
+		val any
+	}
+	pairs := make([]encodedPair, 0, len(m))
+	for k, v := range m {
+		key, err := enc.encodeToBytes(k)
+		if err != nil {
+			return err
+		}
+		pairs = append(pairs, encodedPair{key: key, val: v})
+	}
+	lengthFirst := enc.encodeMode == EncodeModeLengthFirstDeterministic
+	sort.Slice(pairs, func(i, j int) bool {
+		// 4.2.3. Length-First Map Key Ordering
+		if lengthFirst && len(pairs[i].key) != len(pairs[j].key) {
+			return len(pairs[i].key) < len(pairs[j].key)
+		}
+		return bytes.Compare(pairs[i].key, pairs[j].key) < 0
+	})
+	for n, pair := range pairs {
+		// Different Go keys, such as int8(1) and int(1), can have the same encoding,
+		// which would produce a map with duplicate keys (RFC 8949 Section 5.6).
+		if 0 < n && bytes.Equal(pairs[n-1].key, pair.key) {
+			return newErrorEncodeDuplicateMapKey(pair.key)
+		}
+		if err := writeBytes(enc.writer, pair.key); err != nil {
+			return err
+		}
+		if err := enc.Encode(pair.val); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (enc *Encoder) encodeMap(item any) error {
 	// Major type 5: A map of pairs of data items.
 
 	v, ok := item.(map[any]any)
 	if ok {
-		return writeAnyMap(v)
+		return enc.encodeAnyMap(v)
 	}
 
 	v, err := mapToAnyMap(item)
 	if err != nil {
 		return err
 	}
-	return writeAnyMap(v)
+	return enc.encodeAnyMap(v)
+}
+
+// encodeInt writes a signed integer in the shortest form.
+func (enc *Encoder) encodeInt(v int64) error {
+	if 0 <= v {
+		return enc.encodeArgument(mtUint, uint64(v))
+	}
+	// A negative integer n is encoded as -1 - n.
+	return enc.encodeArgument(mtNInt, uint64(-(v + 1)))
+}
+
+// encodePreferredFloat writes a floating-point value in the shortest form that preserves the value (RFC 8949 Section 4.1).
+func (enc *Encoder) encodePreferredFloat(v float64) error {
+	writeFloat16 := func(bits uint16) error {
+		if err := writeHeader(enc.writer, mtFloat, fpnFloat16); err != nil {
+			return err
+		}
+		return writeUint16Bytes(enc.writer, bits)
+	}
+	switch {
+	case math.IsNaN(v):
+		return writeFloat16(float16NaN)
+	case math.IsInf(v, 1):
+		return writeFloat16(float16PositiveInf)
+	case math.IsInf(v, -1):
+		return writeFloat16(float16NegativeInf)
+	}
+	if bits, ok := float64ToFloat16(v); ok {
+		return writeFloat16(bits)
+	}
+	if f32 := float32(v); float64(f32) == v {
+		if err := writeHeader(enc.writer, mtFloat, fpnFloat32); err != nil {
+			return err
+		}
+		return writeFloat32Bytes(enc.writer, f32)
+	}
+	if err := writeHeader(enc.writer, mtFloat, fpnFloat64); err != nil {
+		return err
+	}
+	return writeFloat64Bytes(enc.writer, v)
 }
 
 // encodeArgument writes the initial byte and the argument in the shortest form (RFC 8949 Section 3).
@@ -510,7 +582,7 @@ func (enc *Encoder) encodeStruct(item any) error {
 		}
 	}
 
-	if enc.MapSortEnabled {
+	if enc.isMapKeySortRequired() {
 		structMap := map[any]any{}
 		for _, n := range fields {
 			typeField := itemStruct.Type().Field(n)
@@ -520,7 +592,7 @@ func (enc *Encoder) encodeStruct(item any) error {
 	}
 
 	// Encode the fields in the declaration order so that the output is deterministic.
-	if err := enc.encodeNumberOfBytes(mtMap, len(fields)); err != nil {
+	if err := enc.encodeArgument(mtMap, uint64(len(fields))); err != nil {
 		return err
 	}
 	for _, n := range fields {

@@ -1,6 +1,16 @@
 # Changelog
 
 ## Unreleased
+
+### Breaking changes
+- Encoder::Encode() and Marshal() now use the preferred serialization of RFC 8949 Section 4.1 by default: integers, lengths, and floating-point values use the shortest form, so decoded values may have smaller Go types (for example int(1) is decoded as int8(1)). Use EncodeModeTypePreserving for the previous behavior
+- MapSortEnabled now sorts map keys in the bytewise lexicographic order of their encodings (RFC 8949 Section 4.2.1) instead of the string order of fmt.Sprintf("%v")
+
+### Changes
+- Added EncodeMode and Config::SetEncodeMode() with EncodeModePreferred, EncodeModeTypePreserving, EncodeModeCoreDeterministic (RFC 8949 Section 4.2.1), and EncodeModeLengthFirstDeterministic (RFC 8949 Section 4.2.3)
+- Fixed Encoder::Encode() to encode lengths of 255, 65535, and 4294967295 in the shortest form
+- Fixed Encoder::Encode() to return ErrEncode instead of writing duplicate map keys when different Go keys have the same encoding in sorted maps
+- Fixed Decoder::Unmarshal() and UnmarshalTo() panicking when unmarshaling nested arrays such as [][]byte
 - Fixed Decoder::Decode() to decode negative integers (major type 1) correctly for all argument values, returning *big.Int for values less than math.MinInt64
 - Fixed Decoder::Decode() to return io.ErrUnexpectedEOF for truncated data items instead of silently returning wrong values
 - Fixed Decoder::Decode() to return an error instead of panicking for map keys that cannot be used as Go map keys (arrays, maps, and byte strings)

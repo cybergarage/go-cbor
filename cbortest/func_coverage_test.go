@@ -87,7 +87,7 @@ func TestDirectDecoderUsage(t *testing.T) {
 
 	// Verify the structure
 	if resultMap, ok := result.(map[any]any); ok {
-		if resultMap["number"] != int64(42) {
+		if resultMap["number"] != int8(42) {
 			t.Errorf("Expected number 42, got %v", resultMap["number"])
 		}
 		if resultMap["string"] != "hello" {
@@ -199,7 +199,7 @@ func TestArrayConversionFunctions(t *testing.T) {
 			t.Errorf("Expected array length 3, got %d", len(resultArray))
 		}
 		for i, v := range resultArray {
-			if v != int64(i+1) {
+			if v != int8(i+1) { //nolint:gosec
 				t.Errorf("Array element %d: expected %d, got %v", i, i+1, v)
 			}
 		}
@@ -226,7 +226,7 @@ func TestMapConversionFunctions(t *testing.T) {
 		if len(resultMap) != 2 {
 			t.Errorf("Expected map length 2, got %d", len(resultMap))
 		}
-		if resultMap["a"] != int64(1) || resultMap["b"] != int64(2) {
+		if resultMap["a"] != int8(1) || resultMap["b"] != int8(2) {
 			t.Errorf("Map values incorrect: %v", resultMap)
 		}
 	} else {

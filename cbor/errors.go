@@ -42,6 +42,7 @@ const (
 	errorDecodeInvalidSimple    = "%w : simple value (%d) must not be encoded in the following byte"
 	errorDecodeInvalidTag       = "%w : invalid content (%v:%T) for tag (%d)"
 	errorEncodeReservedSimple   = "%w : simple value (%d) is reserved"
+	errorEncodeDuplicateMapKey  = "%w : duplicate map key (0x%X)"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -102,4 +103,8 @@ func newErrorDecodeInvalidTagContent(number uint64, content any) error {
 
 func newErrorEncodeReservedSimpleValue(v SimpleValue) error {
 	return fmt.Errorf(errorEncodeReservedSimple, ErrEncode, uint8(v))
+}
+
+func newErrorEncodeDuplicateMapKey(key []byte) error {
+	return fmt.Errorf(errorEncodeDuplicateMapKey, ErrEncode, key)
 }
