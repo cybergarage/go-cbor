@@ -28,3 +28,6 @@ cbortest/testdata/
 # Coverage
 cbor-cover.*
 *.html
+
+# Python
+__pycache__/
