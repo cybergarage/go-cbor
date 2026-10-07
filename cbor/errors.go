@@ -26,6 +26,9 @@ var ErrUnmarshal = errors.New("unmarshal error")
 var ErrDecode = errors.New("decode error")
 var ErrEncode = errors.New("encode error")
 
+// ErrInvalidUTF8 is wrapped with ErrEncode or ErrDecode when a text string is not valid UTF-8 (RFC 8949 Section 5.3.1).
+var ErrInvalidUTF8 = errors.New("not valid UTF-8")
+
 const (
 	errorUnkonwnNativeType      = "%T (%v) is %w"
 	errorUnkonwnMajorType       = "major type (%d) is %w"
@@ -43,6 +46,11 @@ const (
 	errorDecodeInvalidTag       = "%w : invalid content (%v:%T) for tag (%d)"
 	errorEncodeReservedSimple   = "%w : simple value (%d) is reserved"
 	errorEncodeDuplicateMapKey  = "%w : duplicate map key (0x%X)"
+	errorDecodeNotDeterministic = "%w : %s is not allowed in the core deterministic encoding"
+	errorInvalidUTF8            = "%w : text string is %w"
+	errorDecodeTooDeep          = "%w : nesting depth exceeds the maximum (%d)"
+	errorDecodeDuplicateMapKey  = "%w : duplicate map key (%v)"
+	errorDecodeExtraneousData   = "%w : %d bytes of extraneous data after the data item"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -107,4 +115,28 @@ func newErrorEncodeReservedSimpleValue(v SimpleValue) error {
 
 func newErrorEncodeDuplicateMapKey(key []byte) error {
 	return fmt.Errorf(errorEncodeDuplicateMapKey, ErrEncode, key)
+}
+
+func newErrorDecodeNotDeterministic(what string) error {
+	return fmt.Errorf(errorDecodeNotDeterministic, ErrDecode, what)
+}
+
+func newErrorDecodeInvalidUTF8() error {
+	return fmt.Errorf(errorInvalidUTF8, ErrDecode, ErrInvalidUTF8)
+}
+
+func newErrorEncodeInvalidUTF8() error {
+	return fmt.Errorf(errorInvalidUTF8, ErrEncode, ErrInvalidUTF8)
+}
+
+func newErrorDecodeTooDeep(maxLevels int) error {
+	return fmt.Errorf(errorDecodeTooDeep, ErrDecode, maxLevels)
+}
+
+func newErrorDecodeDuplicateMapKey(key any) error {
+	return fmt.Errorf(errorDecodeDuplicateMapKey, ErrDecode, key)
+}
+
+func newErrorDecodeExtraneousData(n int) error {
+	return fmt.Errorf(errorDecodeExtraneousData, ErrDecode, n)
 }

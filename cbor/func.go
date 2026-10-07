@@ -295,38 +295,6 @@ func nintValue(n uint64, size int) any {
 	return v.Neg(v)
 }
 
-func readNint8Bytes(r io.Reader) (any, error) {
-	v, err := readUint8Bytes(r)
-	if err != nil {
-		return nil, err
-	}
-	return nintValue(uint64(v), 1), nil
-}
-
-func readNint16Bytes(r io.Reader) (any, error) {
-	v, err := readUint16Bytes(r)
-	if err != nil {
-		return nil, err
-	}
-	return nintValue(uint64(v), 2), nil
-}
-
-func readNint32Bytes(r io.Reader) (any, error) {
-	v, err := readUint32Bytes(r)
-	if err != nil {
-		return nil, err
-	}
-	return nintValue(uint64(v), 4), nil
-}
-
-func readNint64Bytes(r io.Reader) (any, error) {
-	v, err := readUint64Bytes(r)
-	if err != nil {
-		return nil, err
-	}
-	return nintValue(v, 8), nil
-}
-
 ////////////////////////////////////////////////////////////
 // float16 (IEEE 754 half-precision, read-only)
 ////////////////////////////////////////////////////////////

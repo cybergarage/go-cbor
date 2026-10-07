@@ -5,12 +5,18 @@
 ### Breaking changes
 - Encoder::Encode() and Marshal() now use the preferred serialization of RFC 8949 Section 4.1 by default: integers, lengths, and floating-point values use the shortest form, so decoded values may have smaller Go types (for example int(1) is decoded as int8(1)). Use EncodeModeTypePreserving for the previous behavior
 - MapSortEnabled now sorts map keys in the bytewise lexicographic order of their encodings (RFC 8949 Section 4.2.1) instead of the string order of fmt.Sprintf("%v")
+- Decoder::Decode() and Encoder::Encode() now validate text strings as UTF-8 and return errors wrapping ErrInvalidUTF8 (RFC 8949 Section 5.3.1). Use Config::SetUTF8ValidationEnabled(false) for the previous behavior
+- Decoder::Decode() now limits the nesting depth of arrays, maps, and tags to DefaultMaxNestedLevels (128) by default (RFC 8949 Section 10). Use Config::SetMaxNestedLevels() to change it
+- Unmarshal() and UnmarshalTo() now return ErrDecode when extraneous data follows the data item. Use Decoder to read a sequence of data items
 
 ### Changes
 - Added EncodeMode and Config::SetEncodeMode() with EncodeModePreferred, EncodeModeTypePreserving, EncodeModeCoreDeterministic (RFC 8949 Section 4.2.1), and EncodeModeLengthFirstDeterministic (RFC 8949 Section 4.2.3)
 - Fixed Encoder::Encode() to encode lengths of 255, 65535, and 4294967295 in the shortest form
 - Fixed Encoder::Encode() to return ErrEncode instead of writing duplicate map keys when different Go keys have the same encoding in sorted maps
 - Fixed Decoder::Unmarshal() and UnmarshalTo() panicking when unmarshaling nested arrays such as [][]byte
+- Added DecodeMode and Config::SetDecodeMode() with DecodeModeLenient (default) and DecodeModeCoreDeterministic, which accepts only the core deterministic encoding (RFC 8949 Section 4.2.1)
+- Added DuplicateMapKeyMode and Config::SetDuplicateMapKeyMode() to reject duplicate map keys (RFC 8949 Section 5.6)
+- Fixed Encoder::Encode() to encode time.Time with years outside 0000..9999, which RFC 3339 cannot represent, as epoch-based date/time (tag 1)
 - Fixed Decoder::Decode() to decode negative integers (major type 1) correctly for all argument values, returning *big.Int for values less than math.MinInt64
 - Fixed Decoder::Decode() to return io.ErrUnexpectedEOF for truncated data items instead of silently returning wrong values
 - Fixed Decoder::Decode() to return an error instead of panicking for map keys that cannot be used as Go map keys (arrays, maps, and byte strings)

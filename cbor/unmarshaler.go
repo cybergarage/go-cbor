@@ -23,15 +23,32 @@ import (
 )
 
 // Unmarshal decodes the specified CBOR-encoded bytes and returns the data representation of Go. Unmarshal is a sugar function of Decoder::Decode().
+// Unmarshal returns ErrDecode if extraneous data follows the data item.
 func Unmarshal(cborBytes []byte) (any, error) {
-	decoder := NewDecoder(bytes.NewReader(cborBytes))
-	return decoder.Decode()
+	reader := bytes.NewReader(cborBytes)
+	decoder := NewDecoder(reader)
+	v, err := decoder.Decode()
+	if err != nil {
+		return nil, err
+	}
+	if 0 < reader.Len() {
+		return nil, newErrorDecodeExtraneousData(reader.Len())
+	}
+	return v, nil
 }
 
 // UnmarshalTo decodes the specified CBOR-encoded bytes and stores the decoded item to the specified data type if appropriate. UnmarshalTo is a sugar function of Decoder::Unmarshal().
+// UnmarshalTo returns ErrDecode if extraneous data follows the data item.
 func UnmarshalTo(cborBytes []byte, s any) error {
-	decoder := NewDecoder(bytes.NewReader(cborBytes))
-	return decoder.Unmarshal(s)
+	reader := bytes.NewReader(cborBytes)
+	decoder := NewDecoder(reader)
+	if err := decoder.Unmarshal(s); err != nil {
+		return err
+	}
+	if 0 < reader.Len() {
+		return newErrorDecodeExtraneousData(reader.Len())
+	}
+	return nil
 }
 
 // Unmarshal decodes a next encoded item from the specified reader and stores the decoded item to the specified data type if appropriate.

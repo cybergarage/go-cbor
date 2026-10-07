@@ -76,6 +76,19 @@ encoder.Encode(map[any]any{"b": 2, "a": 1})
 
 `MapSortEnabled` sorts map keys in the bytewise lexicographic order of their encodings in `EncodeModePreferred` and `EncodeModeTypePreserving`.
 
+### Decode Options
+
+`Decoder` validates input as follows, which can be configured with the `Config` methods.
+
+| Option | Default | Description |
+|---|---|---|
+| `SetDecodeMode()` | `DecodeModeLenient` | `DecodeModeCoreDeterministic` accepts only the core deterministic encoding (RFC 8949 Section 4.2.1) and rejects non-shortest arguments and floating-point values, indefinite-length items, unsorted or duplicate map keys, and non-preferred bignums. |
+| `SetDuplicateMapKeyMode()` | `DuplicateMapKeyAllowed` | `DuplicateMapKeyRejected` returns `ErrDecode` for maps with duplicate keys (RFC 8949 Section 5.6). |
+| `SetMaxNestedLevels()` | `128` | The maximum nesting depth of arrays, maps, and tags (RFC 8949 Section 10). |
+| `SetUTF8ValidationEnabled()` | `true` | Validates text strings as UTF-8 when decoding and encoding (RFC 8949 Section 5.3.1). |
+
+`Unmarshal()` and `UnmarshalTo()` decode a single data item and return `ErrDecode` if extraneous data follows it. Use `Decoder::Decode()` to read a sequence of data items.
+
 ### Decoding - Converting from CBOR to Go
 
 `Decoder::Decode()` and `Unmarshal()` convert from the specified data model of CBOR into the equivalent data model of Go as the following.
