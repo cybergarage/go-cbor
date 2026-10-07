@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- Added AGENTS.md and CLAUDE.md for coding agents
+- Added AGENTS.md for coding agents
 - Added doc/img/tools to regenerate the conversion tables from the measured behavior
 
 ## v1.4.0 (2026-10-08)
