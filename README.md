@@ -20,9 +20,13 @@ By default, `go-cobor` encodes data items with the preferred serialization of RF
 
 ### Encoding - Converting from Go to CBOR
 
-`Decoder::Decode()` and `Marshal()` convert from the specified data model of Go into the equivalent data model of CBOR as the following.
+`Encoder::Encode()` and `Marshal()` convert from the specified data model of Go into the equivalent data model of CBOR as the following.
 
 ![](doc/img/conv_table_from.png)
+
+- \*1 The shortest form (RFC 8949 Section 4.1). With `EncodeModeTypePreserving`, integers use the width of their Go types: `24 or <24` for 8 bits, `25` for 16 bits, `26` for 32 bits, and `27` for 64 bits, `int`, and `uint`.
+- \*2 The shortest of `25` (float16), `26` (float32), and `27` (float64) that preserves the value; NaN and infinities use `25`. With `EncodeModeTypePreserving`, `float32` uses `26` and `float64` uses `27`.
+- `big.Int`, `url.URL`, and `cbor.Tag` can also be passed as pointers. `struct` encodes exported fields only.
 
 To convert data from Go to CBOR, `go-cbor` offers `Marshal()`. `Marshal()` converts from the specified data model of Go into the equivalent data model of CBOR. In addition to the basic Go data types, `go-cbor` supports additional tag major types such as `time.Time` as the following.
 
@@ -126,6 +130,10 @@ cborBytes, _ := cbor.FromJSON([]byte(`{"a":1,"b":[2,3.5]}`))
 
 ![](doc/img/conv_table_to.png)
 
+- Integers are decoded to the smallest Go type of the argument width that can hold the value.
+- Indefinite-length strings, arrays, and maps (additional information 31) are decoded to the same types as the definite-length ones.
+- Tag 55799 (self-described CBOR) is skipped, and its content is decoded. Tags 21-24 and 33-36 are returned as `cbor.Tag` after their content is validated.
+
 To convert data from CBOR to Go, `go-cbor` offers `Unmarshal()`. `Unmarshal()` converts from an encoded bytes of CBOR into the equivalent data model of Go as the following.
 
 - [Examples - Unmarshal](https://pkg.go.dev/github.com/cybergarage/go-cbor/cbor#example-Unmarshal)
@@ -158,9 +166,13 @@ To unmarshal to a user-defined struct, `go-cbor` offers `Decoder::Unmarshal()` a
 
 ![](doc/img/unmarshal_table_to_basic.png)
 
-In addition to the basic standard data types of Go, The unmarshal functions support any user-defined maps and structs, as well as the standard struct such as time.Time as the following.
+In addition to the basic standard data types of Go, the unmarshal functions support any user-defined maps and structs, standard types such as `time.Time`, `big.Int`, and `url.URL`, and the go-cbor types `cbor.Tag` and `cbor.SimpleValue` as the following.
 
 ![](doc/img/unmarshal_table_to_special.png)
+
+- `O`: the value is converted when it is in the range of the destination type. For example, text strings are converted to numbers and booleans only when they represent them.
+- `(bit)?` means `8`, `16`, `32`, `64`, or none, as in `int8` or `int`.
+- Values that cannot be converted return `ErrUnmarshal`.
 
 To unmarshal to a user-defined struct, `go-cbor` offers `UnmarshalTo()`. `Unmarshal()To` tries to convert from an encoded bytes of CBOR into the specified user-defined struct or map as the following.
 
