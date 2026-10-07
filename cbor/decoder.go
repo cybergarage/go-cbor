@@ -15,11 +15,13 @@
 package cbor
 
 import (
+	"bytes"
 	"io"
 	"math"
 	"math/big"
 	"reflect"
 	"time"
+	"unicode/utf8"
 )
 
 // breakStopCode is returned internally by readItem when the "break" stop code (0xFF) is read.
@@ -31,6 +33,19 @@ type Decoder struct {
 
 	reader io.Reader
 	header []byte
+	depth  int
+}
+
+// recordingReader records the bytes read through it, to compare the encodings of map keys.
+type recordingReader struct {
+	reader io.Reader
+	buf    []byte
+}
+
+func (r *recordingReader) Read(p []byte) (int, error) {
+	n, err := r.reader.Read(p)
+	r.buf = append(r.buf, p[:n]...)
+	return n, err
 }
 
 // NewDecoder returns a new decoder that reads from the specified writer.
@@ -69,24 +84,76 @@ func (dec *Decoder) readItem() (any, error) {
 	return item, err
 }
 
+// isDeterministic returns true if only the core deterministic encoding is accepted.
+func (dec *Decoder) isDeterministic() bool {
+	return dec.DecodeMode() == DecodeModeCoreDeterministic
+}
+
+// enterNested increments the nesting depth and returns an error if it exceeds the maximum (RFC 8949 Section 10).
+// The caller must call leaveNested whether or not an error is returned.
+func (dec *Decoder) enterNested() error {
+	dec.depth++
+	if maxLevels := dec.MaxNestedLevels(); maxLevels < dec.depth {
+		return newErrorDecodeTooDeep(maxLevels)
+	}
+	return nil
+}
+
+func (dec *Decoder) leaveNested() {
+	dec.depth--
+}
+
 // readArgument reads the argument of the data item following the initial byte (RFC 8949 Section 3).
 func (dec *Decoder) readArgument(mt majorType, ai majorInfo) (uint64, error) {
+	var v uint64
+	var err error
+	var shortest bool
 	switch {
 	case ai < aiOneByte:
 		return uint64(ai), nil
 	case ai == aiOneByte:
-		v, err := readUint8Bytes(dec.reader)
-		return uint64(v), err
+		var v8 uint8
+		v8, err = readUint8Bytes(dec.reader)
+		v = uint64(v8)
+		shortest = uint64(aiOneByte) <= v
 	case ai == aiTwoByte:
-		v, err := readUint16Bytes(dec.reader)
-		return uint64(v), err
+		var v16 uint16
+		v16, err = readUint16Bytes(dec.reader)
+		v = uint64(v16)
+		shortest = math.MaxUint8 < v
 	case ai == aiFourByte:
-		v, err := readUint32Bytes(dec.reader)
-		return uint64(v), err
+		var v32 uint32
+		v32, err = readUint32Bytes(dec.reader)
+		v = uint64(v32)
+		shortest = math.MaxUint16 < v
 	case ai == aiEightByte:
-		return readUint64Bytes(dec.reader)
+		v, err = readUint64Bytes(dec.reader)
+		shortest = math.MaxUint32 < v
+	default:
+		return 0, newErrorNotSupportedAddInfo(mt, ai)
 	}
-	return 0, newErrorNotSupportedAddInfo(mt, ai)
+	if err != nil {
+		return 0, err
+	}
+	// 4.2.1. Arguments must be as short as possible.
+	if !shortest && dec.isDeterministic() {
+		return 0, newErrorDecodeNotDeterministic("non-shortest argument")
+	}
+	return v, nil
+}
+
+// argumentSize returns the size in bytes of the argument for the specified additional information,
+// treating the arguments in the initial byte as one byte.
+func argumentSize(ai majorInfo) int {
+	switch ai {
+	case aiTwoByte:
+		return 2
+	case aiFourByte:
+		return 4
+	case aiEightByte:
+		return 8
+	}
+	return 1
 }
 
 // readLength reads the length (or the number of items) of a definite-length data item.
@@ -104,12 +171,25 @@ func (dec *Decoder) readLength(mt majorType, ai majorInfo) (int, error) {
 
 // readString reads a byte or text string, which may be an indefinite-length string (RFC 8949 Section 3.2.3).
 func (dec *Decoder) readString(mt majorType, ai majorInfo) ([]byte, error) {
+	// 5.3.1. A text string must be a valid UTF-8 string, and so must be each chunk of
+	// an indefinite-length text string (3.2.3).
+	validateUTF8 := mt == mtText && dec.IsUTF8ValidationEnabled()
 	if ai != aiIndefinite {
 		n, err := dec.readLength(mt, ai)
 		if err != nil {
 			return nil, err
 		}
-		return readBytes(dec.reader, n)
+		str, err := readBytes(dec.reader, n)
+		if err != nil {
+			return nil, err
+		}
+		if validateUTF8 && !utf8.Valid(str) {
+			return nil, newErrorDecodeInvalidUTF8()
+		}
+		return str, nil
+	}
+	if dec.isDeterministic() {
+		return nil, newErrorDecodeNotDeterministic("indefinite-length item")
 	}
 	// An indefinite-length string is a sequence of definite-length strings of the same major type,
 	// called chunks, terminated by the "break" stop code.
@@ -135,14 +215,24 @@ func (dec *Decoder) readString(mt majorType, ai majorInfo) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
+		if validateUTF8 && !utf8.Valid(chunk) {
+			return nil, newErrorDecodeInvalidUTF8()
+		}
 		str = append(str, chunk...)
 	}
 }
 
 // readArray reads an array, which may be an indefinite-length array (RFC 8949 Section 3.2.2).
 func (dec *Decoder) readArray(ai majorInfo) ([]any, error) {
+	defer dec.leaveNested()
+	if err := dec.enterNested(); err != nil {
+		return nil, err
+	}
 	itemArray := make([]any, 0)
 	if ai == aiIndefinite {
+		if dec.isDeterministic() {
+			return nil, newErrorDecodeNotDeterministic("indefinite-length item")
+		}
 		for {
 			item, err := dec.readItem()
 			if err != nil {
@@ -170,12 +260,21 @@ func (dec *Decoder) readArray(ai majorInfo) ([]any, error) {
 
 // readMap reads a map, which may be an indefinite-length map (RFC 8949 Section 3.2.2).
 func (dec *Decoder) readMap(ai majorInfo) (map[any]any, error) {
+	defer dec.leaveNested()
+	if err := dec.enterNested(); err != nil {
+		return nil, err
+	}
+	rejectDuplicates := dec.isDeterministic() || dec.DuplicateMapKeyMode() == DuplicateMapKeyRejected
 	itemMap := map[any]any{}
 	readPair := func(key any) error {
 		// RFC 8949 allows any data item as a map key, but Go maps panic on
 		// non-comparable keys such as slices and maps.
 		if !isHashableKey(key) {
 			return newErrorDecodeUnhashableKey(key)
+		}
+		// 5.6. Maps with duplicate keys are not valid.
+		if _, ok := itemMap[key]; ok && rejectDuplicates {
+			return newErrorDecodeDuplicateMapKey(key)
 		}
 		val, err := dec.Decode()
 		if err != nil {
@@ -185,6 +284,9 @@ func (dec *Decoder) readMap(ai majorInfo) (map[any]any, error) {
 		return nil
 	}
 	if ai == aiIndefinite {
+		if dec.isDeterministic() {
+			return nil, newErrorDecodeNotDeterministic("indefinite-length item")
+		}
 		for {
 			key, err := dec.readItem()
 			if err != nil {
@@ -202,11 +304,31 @@ func (dec *Decoder) readMap(ai majorInfo) (map[any]any, error) {
 	if err != nil {
 		return nil, err
 	}
+	var prevKey []byte
 	for range itemCount {
+		if !dec.isDeterministic() {
+			key, err := dec.Decode()
+			if err != nil {
+				return nil, err
+			}
+			if err := readPair(key); err != nil {
+				return nil, err
+			}
+			continue
+		}
+		// 4.2.1. The keys must be sorted in the bytewise lexicographic order of their encodings,
+		// which also rejects duplicate keys.
+		recorder := &recordingReader{reader: dec.reader, buf: nil}
+		dec.reader = recorder
 		key, err := dec.Decode()
+		dec.reader = recorder.reader
 		if err != nil {
 			return nil, err
 		}
+		if prevKey != nil && 0 <= bytes.Compare(prevKey, recorder.buf) {
+			return nil, newErrorDecodeNotDeterministic("unsorted or duplicate map key")
+		}
+		prevKey = recorder.buf
 		if err := readPair(key); err != nil {
 			return nil, err
 		}
@@ -216,6 +338,10 @@ func (dec *Decoder) readMap(ai majorInfo) (map[any]any, error) {
 
 // readTag reads a tagged data item (RFC 8949 Section 3.4).
 func (dec *Decoder) readTag(ai majorInfo) (any, error) {
+	defer dec.leaveNested()
+	if err := dec.enterNested(); err != nil {
+		return nil, err
+	}
 	tagNumber, err := dec.readArgument(mtTag, ai)
 	if err != nil {
 		return nil, err
@@ -239,6 +365,11 @@ func (dec *Decoder) readTag(ai majorInfo) (any, error) {
 		b, ok := content.([]byte)
 		if !ok {
 			return nil, newErrorDecodeInvalidTagContent(tagNumber, content)
+		}
+		// The preferred serialization of a bignum has no leading zeroes, and values that fit
+		// in 64 bits are encoded as major type 0 or 1 instead.
+		if dec.isDeterministic() && (len(b) <= 8 || b[0] == 0) {
+			return nil, newErrorDecodeNotDeterministic("non-preferred bignum")
 		}
 		v := new(big.Int).SetBytes(b)
 		if tagNumber == tagNegativeBignum {
@@ -294,51 +425,25 @@ func (dec *Decoder) decodeItem(header byte) (any, error) { //nolint:gocyclo,exha
 
 	switch majorType {
 	case mtUint:
-		if majorInfo < aiOneByte {
-			return returnDecordedUint8(uint8(majorInfo)), nil
+		v, err := dec.readArgument(mtUint, majorInfo)
+		if err != nil {
+			return nil, err
 		}
-		switch majorInfo {
-		case aiOneByte:
-			v, err := readUint8Bytes(dec.reader)
-			if err != nil {
-				return 0, err
-			}
-			return returnDecordedUint8(v), nil
-		case aiTwoByte:
-			v, err := readUint16Bytes(dec.reader)
-			if err != nil {
-				return 0, err
-			}
-			return returnDecordedUint16(v), nil
-		case aiFourByte:
-			v, err := readUint32Bytes(dec.reader)
-			if err != nil {
-				return 0, err
-			}
-			return returnDecordedUint32(v), nil
-		case aiEightByte:
-			v, err := readUint64Bytes(dec.reader)
-			if err != nil {
-				return 0, err
-			}
-			return returnDecordedUint64(v), nil
+		switch argumentSize(majorInfo) {
+		case 1:
+			return returnDecordedUint8(uint8(v)), nil
+		case 2:
+			return returnDecordedUint16(uint16(v)), nil
+		case 4:
+			return returnDecordedUint32(uint32(v)), nil
 		}
-		return nil, newErrorNotSupportedAddInfo(mtUint, majorInfo)
+		return returnDecordedUint64(v), nil
 	case mtNInt:
-		if majorInfo < aiOneByte {
-			return -int8(majorInfo + 1), nil
+		v, err := dec.readArgument(mtNInt, majorInfo)
+		if err != nil {
+			return nil, err
 		}
-		switch majorInfo {
-		case aiOneByte:
-			return readNint8Bytes(dec.reader)
-		case aiTwoByte:
-			return readNint16Bytes(dec.reader)
-		case aiFourByte:
-			return readNint32Bytes(dec.reader)
-		case aiEightByte:
-			return readNint64Bytes(dec.reader)
-		}
-		return nil, newErrorNotSupportedAddInfo(mtNInt, majorInfo)
+		return nintValue(v, argumentSize(majorInfo)), nil
 	case mtBytes:
 		return dec.readString(mtBytes, majorInfo)
 	case mtText:
@@ -378,9 +483,24 @@ func (dec *Decoder) decodeItem(header byte) (any, error) { //nolint:gocyclo,exha
 		case fpnFloat16:
 			return readFloat16Bytes(dec.reader)
 		case fpnFloat32:
-			return readFloat32Bytes(dec.reader)
+			v, err := readFloat32Bytes(dec.reader)
+			if err != nil {
+				return nil, err
+			}
+			// 4.2.1. Floating-point values must use the shortest form that preserves the value.
+			if dec.isDeterministic() && !isShortestFloat32(v) {
+				return nil, newErrorDecodeNotDeterministic("non-shortest floating-point value")
+			}
+			return v, nil
 		case fpnFloat64:
-			return readFloat64Bytes(dec.reader)
+			v, err := readFloat64Bytes(dec.reader)
+			if err != nil {
+				return nil, err
+			}
+			if dec.isDeterministic() && !isShortestFloat64(v) {
+				return nil, newErrorDecodeNotDeterministic("non-shortest floating-point value")
+			}
+			return v, nil
 		}
 		return nil, newErrorNotSupportedAddInfo(mtFloat, majorInfo)
 	}
@@ -442,4 +562,23 @@ func epochToTime(content any) (time.Time, error) {
 	}
 	nsec := math.Round((secs - sec) * 1e9)
 	return time.Unix(int64(sec), int64(nsec)).UTC(), nil
+}
+
+// isShortestFloat32 returns true if the single-precision value cannot be encoded as a half-precision value.
+// NaN and infinities are encoded as half-precision values in the preferred serialization.
+func isShortestFloat32(v float32) bool {
+	f := float64(v)
+	if math.IsNaN(f) || math.IsInf(f, 0) {
+		return false
+	}
+	_, ok := float64ToFloat16(f)
+	return !ok
+}
+
+// isShortestFloat64 returns true if the double-precision value cannot be encoded as a shorter value.
+func isShortestFloat64(v float64) bool {
+	if math.IsNaN(v) || math.IsInf(v, 0) {
+		return false
+	}
+	return float64(float32(v)) != v
 }

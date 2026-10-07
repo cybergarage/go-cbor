@@ -22,6 +22,7 @@ import (
 	"reflect"
 	"sort"
 	"time"
+	"unicode/utf8"
 )
 
 // An Encoder writes CBOR values to an output stream.
@@ -107,6 +108,10 @@ func (enc *Encoder) Encode(item any) error {
 }
 
 func (enc *Encoder) encodeTextString(v string) error {
+	// 5.3.1. A text string must be a valid UTF-8 string.
+	if enc.IsUTF8ValidationEnabled() && !utf8.ValidString(v) {
+		return newErrorEncodeInvalidUTF8()
+	}
 	n := len(v)
 	if err := enc.encodeArgument(mtText, uint64(n)); err != nil {
 		return err
@@ -549,6 +554,17 @@ func (enc *Encoder) encodeTag(number uint64, content any) error {
 func (enc *Encoder) encodeStdStruct(item any) error {
 	switch v := item.(type) {
 	case time.Time:
+		// RFC 3339 cannot represent years outside 0000..9999, so such times are encoded
+		// as epoch-based date/time (tag 1) instead of standard date/time strings (tag 0).
+		if year := v.Year(); year < 0 || 9999 < year {
+			if err := enc.encodeArgument(mtTag, tagEpochDateTime); err != nil {
+				return err
+			}
+			if v.Nanosecond() == 0 {
+				return enc.Encode(v.Unix())
+			}
+			return enc.Encode(float64(v.Unix()) + float64(v.Nanosecond())/1e9)
+		}
 		if err := enc.encodeArgument(mtTag, tagStdDateTime); err != nil {
 			return err
 		}

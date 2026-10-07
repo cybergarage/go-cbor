@@ -17,6 +17,7 @@ package cbortest
 import (
 	"bytes"
 	"encoding/hex"
+	"errors"
 	"math"
 	"reflect"
 	"testing"
@@ -31,6 +32,10 @@ func fuzzUnmarshalTest(t *testing.T, v any) {
 	enc := cbor.NewEncoder(&buf)
 	enc.SetEncodeMode(cbor.EncodeModeTypePreserving)
 	if err := enc.Encode(v); err != nil {
+		// Go strings can hold invalid UTF-8, which cannot be encoded as CBOR text strings.
+		if errors.Is(err, cbor.ErrInvalidUTF8) {
+			return
+		}
 		t.Errorf("Marshal(%v) : %s", v, err)
 		return
 	}
@@ -61,6 +66,9 @@ func fuzzUnmarshalToTest(t *testing.T, v any, to any) {
 	t.Helper()
 	b, err := cbor.Marshal(v)
 	if err != nil {
+		if errors.Is(err, cbor.ErrInvalidUTF8) {
+			return
+		}
 		t.Errorf("Marshal(%v) : %s", v, err)
 		return
 	}
