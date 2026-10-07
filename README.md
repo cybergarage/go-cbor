@@ -95,6 +95,18 @@ encoder.EndIndefinite()
 // bf61610161629f0203ffff
 ```
 
+### Converting between CBOR and JSON
+
+`ToJSON()` and `FromJSON()` convert between CBOR and JSON as suggested in RFC 8949 Section 6. `Decoder::DecodeJSON()` and `Encoder::EncodeJSON()` do the same with the decoder and encoder configurations, such as `MaxNestedLevels` and `EncodeMode`.
+
+```
+jsonBytes, _ := cbor.ToJSON(cborBytes)
+cborBytes, _ := cbor.FromJSON([]byte(`{"a":1,"b":[2,3.5]}`))
+```
+
+- CBOR to JSON (Section 6.1): integers keep all their digits, and floating-point values always have a fractional part or an exponent (for example `1.0`) so that they are converted back to floating-point values. NaN, infinities, `undefined`, and the other simple values become `null`. Byte strings become base64url strings, or base64 or base16 strings with tags 22 and 23. Bignums become base64url strings, with a `~` prefix for negative bignums. Other tags are ignored and their contents are converted. Map keys that are numbers, `false`, `true`, or `null` become strings such as `"1"`; other keys and keys that collide return `ErrJSON`.
+- JSON to CBOR (Section 6.2): numbers without fractions or exponents become integers, or bignums beyond 64 bits; the other numbers become floating-point values in the shortest form. Object members keep their order unless map keys are sorted. Duplicate member names return `ErrJSON`.
+
 ### Decode Options
 
 `Decoder` validates input as follows, which can be configured with the `Config` methods.
