@@ -17,6 +17,7 @@ package cbor
 import (
 	"io"
 	"math"
+	"math/big"
 	"reflect"
 	"time"
 )
@@ -225,11 +226,27 @@ func (dec *Decoder) readTag(ai majorInfo) (any, error) {
 	}
 	switch tagNumber {
 	case tagStdDateTime:
+		// 3.4.1. Standard Date/Time String
 		dateTimeStr, ok := content.(string)
 		if !ok {
-			return nil, newErrorNotSupportedAddInfo(mtTag, majorInfo(tagNumber))
+			return nil, newErrorDecodeInvalidTagContent(tagNumber, content)
 		}
 		return time.Parse(time.RFC3339, dateTimeStr)
+	case tagEpochDateTime:
+		return epochToTime(content)
+	case tagPositiveBignum, tagNegativeBignum:
+		// 3.4.3. Bignums
+		b, ok := content.([]byte)
+		if !ok {
+			return nil, newErrorDecodeInvalidTagContent(tagNumber, content)
+		}
+		v := new(big.Int).SetBytes(b)
+		if tagNumber == tagNegativeBignum {
+			// The value of a negative bignum is -1 - n.
+			v.Add(v, big.NewInt(1))
+			v.Neg(v)
+		}
+		return v, nil
 	case tagSelfDescribed:
 		// 3.4.6. Self-Described CBOR: the tag only marks the data as CBOR and does not change its meaning.
 		return content, nil
@@ -337,6 +354,10 @@ func (dec *Decoder) decodeItem(header byte) (any, error) { //nolint:gocyclo,exha
 	case mtTag:
 		return dec.readTag(majorInfo)
 	case mtFloat:
+		// 3.3. Simple values 0..19 are unassigned and 23 is "undefined".
+		if majorInfo < simpFalse || SimpleValue(majorInfo) == Undefined {
+			return SimpleValue(majorInfo), nil
+		}
 		switch majorInfo {
 		case simpFalse:
 			return false, nil
@@ -344,6 +365,16 @@ func (dec *Decoder) decodeItem(header byte) (any, error) { //nolint:gocyclo,exha
 			return true, nil
 		case simpNull:
 			return nil, nil
+		case simpOneByte:
+			v, err := readUint8Bytes(dec.reader)
+			if err != nil {
+				return nil, err
+			}
+			// 3.3. Simple values 0..31 must use the one-byte form, so "f8 00".."f8 1f" is not well-formed.
+			if v < simpMinOneByte {
+				return nil, newErrorDecodeInvalidSimpleValue(v)
+			}
+			return SimpleValue(v), nil
 		case fpnFloat16:
 			return readFloat16Bytes(dec.reader)
 		case fpnFloat32:
@@ -366,4 +397,49 @@ func isHashableKey(key any) bool {
 		return isHashableKey(k.Content)
 	}
 	return reflect.TypeOf(key).Comparable()
+}
+
+// epochToTime converts the content of an epoch-based date/time (tag 1) to time.Time in UTC (RFC 8949 Section 3.4.2).
+func epochToTime(content any) (time.Time, error) {
+	invalidContent := func() (time.Time, error) {
+		return time.Time{}, newErrorDecodeInvalidTagContent(tagEpochDateTime, content)
+	}
+	var secs float64
+	switch v := content.(type) {
+	case int8:
+		return time.Unix(int64(v), 0).UTC(), nil
+	case int16:
+		return time.Unix(int64(v), 0).UTC(), nil
+	case int32:
+		return time.Unix(int64(v), 0).UTC(), nil
+	case int64:
+		return time.Unix(v, 0).UTC(), nil
+	case uint8:
+		return time.Unix(int64(v), 0).UTC(), nil
+	case uint16:
+		return time.Unix(int64(v), 0).UTC(), nil
+	case uint32:
+		return time.Unix(int64(v), 0).UTC(), nil
+	case uint64:
+		if math.MaxInt64 < v {
+			return invalidContent()
+		}
+		return time.Unix(int64(v), 0).UTC(), nil
+	case float32:
+		secs = float64(v)
+	case float64:
+		secs = v
+	default:
+		return invalidContent()
+	}
+	if math.IsNaN(secs) || math.IsInf(secs, 0) {
+		return invalidContent()
+	}
+	sec := math.Floor(secs)
+	// float64(math.MaxInt64) rounds up to 2^63, so it is excluded.
+	if sec < math.MinInt64 || float64(math.MaxInt64) <= sec {
+		return invalidContent()
+	}
+	nsec := math.Round((secs - sec) * 1e9)
+	return time.Unix(int64(sec), int64(nsec)).UTC(), nil
 }

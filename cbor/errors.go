@@ -39,6 +39,9 @@ const (
 	errorDecodeUnhashableKey    = "%w : map key (%T) cannot be used as a Go map key"
 	errorDecodeUnexpectedBreak  = "%w : unexpected break stop code"
 	errorDecodeInvalidChunk     = "%w : invalid chunk (0x%02X) in indefinite-length string of major type (%d)"
+	errorDecodeInvalidSimple    = "%w : simple value (%d) must not be encoded in the following byte"
+	errorDecodeInvalidTag       = "%w : invalid content (%v:%T) for tag (%d)"
+	errorEncodeReservedSimple   = "%w : simple value (%d) is reserved"
 )
 
 func newErrorNotSupportedMajorType(m majorType) error {
@@ -87,4 +90,16 @@ func newErrorDecodeUnexpectedBreak() error {
 
 func newErrorDecodeInvalidChunk(m majorType, header byte) error {
 	return fmt.Errorf(errorDecodeInvalidChunk, ErrDecode, header, (m >> 5))
+}
+
+func newErrorDecodeInvalidSimpleValue(v uint8) error {
+	return fmt.Errorf(errorDecodeInvalidSimple, ErrDecode, v)
+}
+
+func newErrorDecodeInvalidTagContent(number uint64, content any) error {
+	return fmt.Errorf(errorDecodeInvalidTag, ErrDecode, content, content, number)
+}
+
+func newErrorEncodeReservedSimpleValue(v SimpleValue) error {
+	return fmt.Errorf(errorEncodeReservedSimple, ErrEncode, uint8(v))
 }
