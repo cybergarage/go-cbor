@@ -141,7 +141,7 @@ func TestUTF8ValidationEncode(t *testing.T) {
 func TestMaxNestedLevels(t *testing.T) {
 	nestedArray := func(n int) string { return strings.Repeat("81", n) + "00" }
 	nestedIndefinite := func(n int) string { return strings.Repeat("9f", n) + strings.Repeat("ff", n) }
-	nestedTag := func(n int) string { return strings.Repeat("d818", n) + "00" }
+	nestedTag := func(n int) string { return strings.Repeat("d81a", n) + "00" }
 	nestedMap := func(n int) string { return strings.Repeat("a100", n) + "00" }
 
 	for _, nested := range []func(int) string{nestedArray, nestedIndefinite, nestedTag, nestedMap} {
@@ -211,7 +211,7 @@ func TestCoreDeterministicDecoding(t *testing.T) {
 		"40", "4100", "60", "6161", "80", "a0",
 		"f90000", "f93e00", "f97e00", "f97c00", "fa47c35000", "fb3ff199999999999a",
 		"f4", "f5", "f6", "f7", "f820",
-		"c11a514b67b0", "d818d81801",
+		"c11a514b67b0", "d81ad81a01",
 		"c249010000000000000000",
 		// The map in RFC 8949 Section 4.2.1 without the array keys, which cannot be Go map keys.
 		"a6" + "0a00" + "186401" + "2002" + "617a03" + "62616104" + "f407",
@@ -235,7 +235,7 @@ func TestCoreDeterministicDecoding(t *testing.T) {
 	invalid := []string{
 		// Non-shortest arguments
 		"1817", "1900ff", "1a0000ffff", "1b00000000ffffffff",
-		"3817", "390017", "5800", "5900014100", "7800", "9800", "b800", "d81700", "d9001800",
+		"3817", "390017", "5800", "5900014100", "7800", "9800", "b800", "d81700", "d9001a00",
 		// Non-shortest floating-point values
 		"fa3fc00000", "fb3ff8000000000000", "fb40f86a0000000000", "fa7fc00000", "fb7ff8000000000000", "fa7f800000",
 		// Indefinite-length items

@@ -139,11 +139,10 @@ func TestRFC8949Tags(t *testing.T) {
 		{"c48221196ab3", cbor.Tag{Number: 4, Content: []any{int8(-2), int16(27315)}}},
 		{"d74401020304", cbor.Tag{Number: 23, Content: []byte{0x01, 0x02, 0x03, 0x04}}},
 		{"d818456449455446", cbor.Tag{Number: 24, Content: []byte("dIETF")}},
-		{"d82076687474703a2f2f7777772e6578616d706c652e636f6d", cbor.Tag{Number: 32, Content: "http://www.example.com"}},
 		{"d903e801", cbor.Tag{Number: 1000, Content: int8(1)}},
 		{"da0001000001", cbor.Tag{Number: 65536, Content: int8(1)}},
 		{"dbffffffffffffffff01", cbor.Tag{Number: 18446744073709551615, Content: int8(1)}},
-		{"d8189f01ff", cbor.Tag{Number: 24, Content: []any{int8(1)}}},
+		{"d81a9f01ff", cbor.Tag{Number: 26, Content: []any{int8(1)}}},
 		{"d81ad81b01", cbor.Tag{Number: 26, Content: cbor.Tag{Number: 27, Content: int8(1)}}},
 		// 3.4.6. Self-Described CBOR
 		{"d9d9f700", int8(0)},
@@ -182,7 +181,7 @@ func TestRFC8949TagMapKeys(t *testing.T) {
 	}
 
 	// A tag enclosing an array cannot be a Go map key.
-	if _, err := decodeHex(t, "a1d8188201020304"); !errors.Is(err, cbor.ErrDecode) {
+	if _, err := decodeHex(t, "a1d81a8201020304"); !errors.Is(err, cbor.ErrDecode) {
 		t.Errorf("got err=%v, want %v", err, cbor.ErrDecode)
 	}
 }
@@ -213,7 +212,7 @@ func TestRFC8949TagEncode(t *testing.T) {
 	}
 
 	// Round trip
-	tag := cbor.NewTag(32, "http://www.example.com")
+	tag := cbor.NewTag(1000, "http://www.example.com")
 	b, _ := cbor.Marshal(tag)
 	v, err := cbor.Unmarshal(b)
 	if err != nil {

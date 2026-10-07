@@ -59,9 +59,18 @@ const (
 
 const (
 	// 3.4. Tagging of Items.
-	tagStdDateTime    uint64 = 0
-	tagEpochDateTime  uint64 = 1
-	tagPositiveBignum uint64 = 2
-	tagNegativeBignum uint64 = 3
-	tagSelfDescribed  uint64 = 55799
+	tagStdDateTime       uint64 = 0
+	tagEpochDateTime     uint64 = 1
+	tagPositiveBignum    uint64 = 2
+	tagNegativeBignum    uint64 = 3
+	tagExpectedBase64URL uint64 = 21
+	tagExpectedBase64    uint64 = 22
+	tagExpectedBase16    uint64 = 23
+	tagEncodedCBOR       uint64 = 24
+	tagURI               uint64 = 32
+	tagBase64URL         uint64 = 33
+	tagBase64            uint64 = 34
+	tagRegexp            uint64 = 35
+	tagMIMEMessage       uint64 = 36
+	tagSelfDescribed     uint64 = 55799
 )
