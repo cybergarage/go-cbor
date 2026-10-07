@@ -16,6 +16,8 @@ package cbor
 
 import (
 	"bytes"
+	"math/big"
+	"net/url"
 	"reflect"
 	"time"
 
@@ -58,6 +60,10 @@ func (dec *Decoder) Unmarshal(toObj any) error { //nolint:exhaustive
 		return err
 	}
 
+	if assignDecodedValue(fromObj, toObj) {
+		return nil
+	}
+
 	switch from := fromObj.(type) {
 	case map[any]any:
 		switch reflect.ValueOf(toObj).Type().Kind() {
@@ -80,7 +86,7 @@ func (dec *Decoder) Unmarshal(toObj any) error { //nolint:exhaustive
 			return dec.unmarshalArrayToArray(reflect.ValueOf(fromObj), reflect.ValueOf(toObj))
 		}
 		return newErrorUnmarshalDataTypes(fromObj, toObj)
-	case time.Time:
+	case time.Time, *big.Int, *url.URL:
 		return dec.unmarshalEmbedTypeTo(fromObj, toObj)
 	}
 
@@ -346,10 +352,11 @@ func (dec *Decoder) unmarshalBasicTypeTo(fromObj any, toObj any) error {
 		switch to := toObj.(type) {
 		case *string:
 			*to = string(from)
+			return nil
 		case *[]byte:
 			*to = from
+			return nil
 		}
-		return nil
 	case string:
 		return safecast.FromString(from, toObj)
 	default:
@@ -362,12 +369,61 @@ func (dec *Decoder) unmarshalEmbedTypeTo(fromObj any, toObj any) error {
 	case time.Time:
 		switch to := toObj.(type) {
 		case *string:
-			*to = from.Format(time.RFC3339)
+			*to = from.Format(time.RFC3339Nano)
+			return nil
 		case *time.Time:
 			*to = from
+			return nil
 		}
-	default:
-		return newErrorUnmarshalDataTypes(fromObj, toObj)
+	case *big.Int:
+		switch to := toObj.(type) {
+		case *big.Int:
+			to.Set(from)
+			return nil
+		case *string:
+			*to = from.String()
+			return nil
+		}
+		// Integers that fit in 64 bits are converted like the other integers.
+		if from.IsInt64() {
+			return safecast.FromInt64(from.Int64(), toObj)
+		}
+		if from.IsUint64() {
+			return safecast.FromUint64(from.Uint64(), toObj)
+		}
+	case *url.URL:
+		switch to := toObj.(type) {
+		case *url.URL:
+			*to = *from
+			return nil
+		case *string:
+			*to = from.String()
+			return nil
+		}
 	}
-	return nil
+	return newErrorUnmarshalDataTypes(fromObj, toObj)
+}
+
+// assignDecodedValue stores the decoded value as is if the destination is a pointer to a type that
+// can hold it, such as *any, **big.Int, *cbor.Tag, or *cbor.SimpleValue. A null is stored as the
+// zero value of a pointer, a map, a slice, or an interface. It returns false if the value is not stored.
+func assignDecodedValue(fromObj any, toObj any) bool {
+	toVal := reflect.ValueOf(toObj)
+	if !toVal.IsValid() || toVal.Kind() != reflect.Pointer || toVal.IsNil() {
+		return false
+	}
+	elem := toVal.Elem()
+	if fromObj == nil {
+		switch elem.Kind() { //nolint:exhaustive
+		case reflect.Interface, reflect.Pointer, reflect.Map, reflect.Slice:
+			elem.SetZero()
+			return true
+		}
+		return false
+	}
+	if !reflect.TypeOf(fromObj).AssignableTo(elem.Type()) {
+		return false
+	}
+	elem.Set(reflect.ValueOf(fromObj))
+	return true
 }
