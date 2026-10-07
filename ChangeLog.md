@@ -1,20 +1,18 @@
 # Changelog
 
-## Unreleased
-- Fixed Decoder::Unmarshal() and UnmarshalTo() to return ErrUnmarshal instead of ignoring byte strings and times that cannot be stored in the destination
-- Updated Decoder::Unmarshal() and UnmarshalTo() to unmarshal into *any, big.Int, url.URL, cbor.Tag, and cbor.SimpleValue, and to store null as the zero value of pointers, maps, slices, and interfaces
-- Updated the conversion tables in README.md and doc/conversion.md for v1.4.0
-
 ## v1.4.0 (2026-10-08)
 
 ### Breaking changes
 - Decoder::Decode() now decodes URIs (tag 32) into *url.URL instead of Tag (RFC 8949 Section 3.4.5.3)
 - Decoder::Decode() now validates the content of tags 24, 32, 33, 34, 35, and 36 and returns ErrDecode for invalid content (RFC 8949 Sections 3.4.5.1 and 3.4.5.3)
+- Decoder::Unmarshal() and UnmarshalTo() now return ErrUnmarshal instead of ignoring byte strings and times that cannot be stored in the destination
 
 ### Changes
 - Added ToJSON(), FromJSON(), Decoder::DecodeJSON(), and Encoder::EncodeJSON() to convert between CBOR and JSON (RFC 8949 Section 6), and ErrJSON
 - Added Encoder::StartIndefiniteByteString(), StartIndefiniteTextString(), StartIndefiniteArray(), StartIndefiniteMap(), EndIndefinite(), and IndefiniteDepth() to encode indefinite-length items (RFC 8949 Section 3.2)
 - Updated Encoder::Encode() to encode url.URL and *url.URL as tag 32 (RFC 8949 Section 3.4.5.3)
+- Updated Decoder::Unmarshal() and UnmarshalTo() to unmarshal into *any, big.Int, url.URL, cbor.Tag, and cbor.SimpleValue, and to store null as the zero value of pointers, maps, slices, and interfaces
+- Updated the conversion tables in README.md and doc/conversion.md
 
 ## v1.3.4 (2026-10-07)
 
