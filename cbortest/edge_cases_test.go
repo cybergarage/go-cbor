@@ -16,6 +16,7 @@ package cbortest
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/cybergarage/go-cbor/cbor"
@@ -168,23 +169,31 @@ func TestInvalidMajorTypes(t *testing.T) {
 
 func TestNumberOfBytesFunction(t *testing.T) {
 	// Test different number encodings to exercise encodeNumberOfBytes function
-	values := []uint64{
-		0,          // Should encode directly
-		23,         // Should encode directly
-		24,         // Should use 1 byte
-		255,        // Should use 1 byte
-		256,        // Should use 2 bytes
-		65535,      // Should use 2 bytes
-		65536,      // Should use 4 bytes
-		4294967295, // Should use 4 bytes
-		4294967296, // Should use 8 bytes
+	// The preferred serialization uses the shortest argument (RFC 8949 Section 4.1).
+	values := []struct {
+		value uint64
+		size  int
+	}{
+		{0, 1},          // Should encode directly
+		{23, 1},         // Should encode directly
+		{24, 2},         // Should use 1 byte
+		{255, 2},        // Should use 1 byte
+		{256, 3},        // Should use 2 bytes
+		{65535, 3},      // Should use 2 bytes
+		{65536, 5},      // Should use 4 bytes
+		{4294967295, 5}, // Should use 4 bytes
+		{4294967296, 9}, // Should use 8 bytes
 	}
 
-	for _, value := range values {
+	for _, test := range values {
+		value := test.value
 		data, err := cbor.Marshal(value)
 		if err != nil {
 			t.Errorf("Failed to marshal value %d: %v", value, err)
 			continue
+		}
+		if len(data) != test.size {
+			t.Errorf("Encoded size mismatch for %d: got %d bytes, want %d bytes", value, len(data), test.size)
 		}
 
 		result, err := cbor.Unmarshal(data)
@@ -193,7 +202,7 @@ func TestNumberOfBytesFunction(t *testing.T) {
 			continue
 		}
 
-		if result != value && result != int64(value) {
+		if fmt.Sprintf("%d", result) != fmt.Sprintf("%d", value) {
 			t.Errorf("Value mismatch for %d: got %v (%T)", value, result, result)
 		}
 	}

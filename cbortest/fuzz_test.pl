@@ -31,8 +31,10 @@ print<<HEADER;
 package cbortest
 
 import (
+	"bytes"
 	"encoding/hex"
 	"math"
+	"reflect"
 	"testing"
 
 	"github.com/cybergarage/go-cbor/cbor"
@@ -40,11 +42,15 @@ import (
 
 func fuzzUnmarshalTest(t *testing.T, v any) {
 	t.Helper()
-	b, err := cbor.Marshal(v)
-	if err != nil {
+	// EncodeModeTypePreserving encodes Go values so that Decode returns the same Go types.
+	var buf bytes.Buffer
+	enc := cbor.NewEncoder(&buf)
+	enc.SetEncodeMode(cbor.EncodeModeTypePreserving)
+	if err := enc.Encode(v); err != nil {
 		t.Errorf("Marshal(%v) : %s", v, err)
 		return
 	}
+	b := buf.Bytes()
 	r, err := cbor.Unmarshal(b)
 	if err != nil {
 		t.Errorf("Unmarshal(%v => %s) : %s", v, hex.EncodeToString(b), err)
@@ -56,6 +62,15 @@ func fuzzUnmarshalTest(t *testing.T, v any) {
 		t.Error(err)
 		return
 	}
+
+	// The preferred serialization (the default) may change the decoded Go types,
+	// but the values must be preserved when they are unmarshaled to the original type.
+	vt := reflect.TypeOf(v)
+	if vt.Kind() == reflect.Map {
+		fuzzUnmarshalToTest(t, v, reflect.MakeMap(vt).Interface())
+		return
+	}
+	fuzzUnmarshalToTest(t, v, reflect.New(vt).Interface())
 }
 
 func fuzzUnmarshalToTest(t *testing.T, v any, to any) {

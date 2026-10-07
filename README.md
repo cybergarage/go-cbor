@@ -10,7 +10,7 @@
 
 `go-cobor` was developed as a seamless serializer for the memory representation of any data types in Go like `encodiong/json`. `go-cobor` provides the optimized encoder and decoder to convert between CBOR and Go data models easily.
 
-Although CBOR is designed for very small code size and fairly small message size, `go-cobor` encodes the specified data model without downgrading the data type to ensure seamless data model compatibility when decoding the encoded data.
+By default, `go-cobor` encodes data items with the preferred serialization of RFC 8949 (Section 4.1), which uses the shortest form for integers, lengths, and floating-point values. Because the shortest form does not carry the Go type, decoded values may have a smaller Go type than the encoded ones, for example `int(1)` is decoded as `int8(1)`. `Unmarshal()` and `UnmarshalTo()` convert the decoded values to the destination types.
 
 ## Converting Data between Go and CBOR
 
@@ -54,6 +54,27 @@ for _, goObj := range goObjs {
     fmt.Printf("%s\n", hex.EncodeToString(cborBytes))
 }
 ```
+
+### Encode Modes
+
+`Encoder` supports the following encode modes, which can be set with `Encoder::SetEncodeMode()`.
+
+| Mode | Description |
+|---|---|
+| `EncodeModePreferred` (default) | Preferred serialization (RFC 8949 Section 4.1). Map keys are written in the Go map iteration order unless `MapSortEnabled` is set. |
+| `EncodeModeCoreDeterministic` | Core deterministic encoding (RFC 8949 Section 4.2.1): the preferred serialization with map keys sorted in the bytewise lexicographic order of their encodings. |
+| `EncodeModeLengthFirstDeterministic` | The preferred serialization with the length-first map key ordering (RFC 8949 Section 4.2.3, the canonical CBOR of RFC 7049). |
+| `EncodeModeTypePreserving` | Encodes integers and floating-point values with the width of their Go types, so that decoded values keep the same width. This was the default behavior of v1.3.3 and earlier, and it does not satisfy the preferred serialization. |
+
+```
+var buf bytes.Buffer
+encoder := cbor.NewEncoder(&buf)
+encoder.SetEncodeMode(cbor.EncodeModeCoreDeterministic)
+encoder.Encode(map[any]any{"b": 2, "a": 1})
+// a2616101616202
+```
+
+`MapSortEnabled` sorts map keys in the bytewise lexicographic order of their encodings in `EncodeModePreferred` and `EncodeModeTypePreserving`.
 
 ### Decoding - Converting from CBOR to Go
 

@@ -364,6 +364,51 @@ func float16ToFloat64(bits uint16) float64 {
 	return math.Float64frombits(f64bits)
 }
 
+const (
+	float16NaN         uint16 = 0x7E00
+	float16PositiveInf uint16 = 0x7C00
+	float16NegativeInf uint16 = 0xFC00
+)
+
+// float64ToFloat16 returns the IEEE 754 half-precision bits of the specified finite value
+// if the value can be represented exactly in half precision.
+func float64ToFloat16(v float64) (uint16, bool) {
+	f32 := float32(v)
+	if float64(f32) != v || math.IsInf(v, 0) || math.IsNaN(v) {
+		return 0, false
+	}
+	bits := math.Float32bits(f32)
+	sign := uint16(bits>>16) & 0x8000
+	exp := int((bits>>23)&0xFF) - 127
+	mant := bits & 0x7FFFFF
+
+	switch {
+	case exp == -127:
+		// ±zero, or a float32 subnormal that is too small for float16
+		if mant == 0 {
+			return sign, true
+		}
+		return 0, false
+	case 15 < exp:
+		return 0, false
+	case -14 <= exp:
+		// Normal float16 with a 10-bit mantissa
+		if mant&0x1FFF != 0 {
+			return 0, false
+		}
+		return sign | uint16(exp+15)<<10 | uint16(mant>>13), true
+	case -24 <= exp:
+		// Subnormal float16: the value is m * 2^-24
+		full := mant | 0x800000
+		shift := uint(-(exp + 1))
+		if full&((1<<shift)-1) != 0 {
+			return 0, false
+		}
+		return sign | uint16(full>>shift), true
+	}
+	return 0, false
+}
+
 func readFloat16Bytes(r io.Reader) (float64, error) {
 	v, err := readUint16Bytes(r)
 	if err != nil {
