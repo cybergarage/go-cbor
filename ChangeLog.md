@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+- Fixed Decoder::Unmarshal() and UnmarshalTo() to return ErrUnmarshal instead of ignoring byte strings and times that cannot be stored in the destination
+- Updated Decoder::Unmarshal() and UnmarshalTo() to unmarshal into *any, big.Int, url.URL, cbor.Tag, and cbor.SimpleValue, and to store null as the zero value of pointers, maps, slices, and interfaces
+- Updated the conversion tables in README.md and doc/conversion.md for v1.4.0
+
 ## v1.4.0 (2026-10-08)
 
 ### Breaking changes
