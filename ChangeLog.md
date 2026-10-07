@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.3.4 (2026-10-07)
 
 ### Breaking changes
 - Encoder::Encode() and Marshal() now use the preferred serialization of RFC 8949 Section 4.1 by default: integers, lengths, and floating-point values use the shortest form, so decoded values may have smaller Go types (for example int(1) is decoded as int8(1)). Use EncodeModeTypePreserving for the previous behavior
