@@ -17,6 +17,7 @@ package cbor
 import (
 	"io"
 	"math"
+	"reflect"
 	"time"
 )
 
@@ -38,7 +39,21 @@ func NewDecoder(r io.Reader) *Decoder {
 }
 
 // Decode returns a next decoded item from the specified reader if available, otherwise returns EOF or another error.
-func (dec *Decoder) Decode() (any, error) { //nolint:gocyclo,maintidx,exhaustive
+// Decode returns io.EOF only when no more data is available at the beginning of an item.
+// If the input ends in the middle of an item, Decode returns io.ErrUnexpectedEOF (RFC 8949 Appendix F).
+func (dec *Decoder) Decode() (any, error) {
+	// 3. Specification of the CBOR Encoding.
+	if _, err := io.ReadFull(dec.reader, dec.header); err != nil {
+		return nil, err
+	}
+	item, err := dec.decodeItem(dec.header[0])
+	if err == io.EOF { //nolint:errorlint // io.EOF is returned unwrapped by io.Reader
+		return nil, io.ErrUnexpectedEOF
+	}
+	return item, err
+}
+
+func (dec *Decoder) decodeItem(header byte) (any, error) { //nolint:gocyclo,maintidx,exhaustive
 	returnDecordedUint8 := func(v uint8) any {
 		if math.MaxInt8 < v {
 			return v
@@ -68,36 +83,42 @@ func (dec *Decoder) Decode() (any, error) { //nolint:gocyclo,maintidx,exhaustive
 	}
 
 	readNumberOfItems := func(mt majorType, ai majorInfo) (int, error) {
-		if ai < aiOneByte {
-			return int(ai), nil
-		}
-		switch ai {
-		case aiOneByte:
+		var n uint64
+		switch {
+		case ai < aiOneByte:
+			n = uint64(ai)
+		case ai == aiOneByte:
 			v, err := readUint8Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
-			return int(v), nil
-		case aiTwoByte:
+			n = uint64(v)
+		case ai == aiTwoByte:
 			v, err := readUint16Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
-			return int(v), nil
-		case aiFourByte:
+			n = uint64(v)
+		case ai == aiFourByte:
 			v, err := readUint32Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
-			return int(v), nil
-		case aiEightByte:
+			n = uint64(v)
+		case ai == aiEightByte:
 			v, err := readUint64Bytes(dec.reader)
 			if err != nil {
 				return 0, err
 			}
-			return int(v), nil
+			n = v
+		default:
+			return 0, newErrorNotSupportedAddInfo(mt, ai)
 		}
-		return 0, newErrorNotSupportedAddInfo(mt, ai)
+		// Reject lengths that cannot be represented as a Go int instead of overflowing (RFC 8949 Section 10).
+		if uint64(math.MaxInt) < n {
+			return 0, newErrorDecodeLengthTooLarge(n)
+		}
+		return int(n), nil
 	}
 
 	readByteString := func(m majorType, i majorInfo) ([]byte, error) {
@@ -116,14 +137,8 @@ func (dec *Decoder) Decode() (any, error) { //nolint:gocyclo,maintidx,exhaustive
 		return string(bytes), nil
 	}
 
-	// 3. Specification of the CBOR Encoding.
-
-	if _, err := io.ReadFull(dec.reader, dec.header); err != nil {
-		return nil, err
-	}
-
-	majorType := majorType(dec.header[0] & majorTypeMask)
-	majorInfo := majorInfo(dec.header[0] & majorInfoMask)
+	majorType := majorType(header & majorTypeMask)
+	majorInfo := majorInfo(header & majorInfoMask)
 
 	switch majorType {
 	case mtUint:
@@ -191,15 +206,20 @@ func (dec *Decoder) Decode() (any, error) { //nolint:gocyclo,maintidx,exhaustive
 		}
 		return itemArray, nil
 	case mtMap:
-		itemArray, err := readNumberOfItems(mtArray, majorInfo)
+		itemCount, err := readNumberOfItems(mtMap, majorInfo)
 		if err != nil {
 			return nil, err
 		}
 		itemMap := map[any]any{}
-		for range itemArray {
+		for range itemCount {
 			key, err := dec.Decode()
 			if err != nil {
 				return nil, err
+			}
+			// RFC 8949 allows any data item as a map key, but Go maps panic on
+			// non-comparable keys such as slices and maps.
+			if key != nil && !reflect.TypeOf(key).Comparable() {
+				return nil, newErrorDecodeUnhashableKey(key)
 			}
 			val, err := dec.Decode()
 			if err != nil {
